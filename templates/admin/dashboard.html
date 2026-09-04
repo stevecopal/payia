@@ -1,0 +1,90 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Admin Dashboard{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-8">
+    <h1 class="text-2xl font-bold font-display">{% trans "Dashboard administrateur" %}</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-sm text-gray-400">{% trans "Total utilisateurs" %}</p>
+                <div class="w-10 h-10 bg-green-600/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold font-mono">{{ stats.total_users }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-sm text-gray-400">{% trans "Utilisateurs actifs" %}</p>
+                <div class="w-10 h-10 bg-green-600/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold font-mono text-green-400">{{ stats.active_users }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-sm text-gray-400">{% trans "Nouveaux (30j)" %}</p>
+                <div class="w-10 h-10 bg-blue-600/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold font-mono">{{ stats.new_users }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-sm text-gray-400">{% trans "Locations actives" %}</p>
+                <div class="w-10 h-10 bg-purple-600/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold font-mono">{{ stats.active_rentals }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <p class="text-sm text-gray-400 mb-1">{% trans "Dépôts totaux" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.total_deposits|floatformat:0 }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <p class="text-sm text-gray-400 mb-1">{% trans "Retraits totaux" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.total_withdrawals|floatformat:0 }}</p>
+        </div>
+        <a href="{% url 'admin_deposits' %}?status=pending_review" class="bg-yellow-500/10 backdrop-blur rounded-xl border border-yellow-500/20 p-6 hover:border-yellow-500/40 transition-all">
+            <p class="text-sm text-yellow-400 mb-1">{% trans "Dépôts en attente" %}</p>
+            <p class="text-3xl font-bold font-mono text-yellow-400">{{ stats.pending_deposits }}</p>
+        </a>
+        <a href="{% url 'admin_withdrawals' %}?status=pending" class="bg-red-500/10 backdrop-blur rounded-xl border border-red-500/20 p-6 hover:border-red-500/40 transition-all">
+            <p class="text-sm text-red-400 mb-1">{% trans "Retraits en attente" %}</p>
+            <p class="text-3xl font-bold font-mono text-red-400">{{ stats.pending_withdrawals }}</p>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{% url 'admin_deposits' %}?status=pending_review" class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6 hover:border-green-500/30 transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold group-hover:text-green-400 transition-colors">{% trans "Dépôts en attente" %}</h3>
+                <svg class="w-5 h-5 text-gray-500 group-hover:text-green-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+            <p class="text-4xl font-bold font-mono text-green-400">{{ stats.pending_deposits }}</p>
+        </a>
+        <a href="{% url 'admin_withdrawals' %}?status=pending" class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6 hover:border-yellow-500/30 transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold group-hover:text-yellow-400 transition-colors">{% trans "Retraits en attente" %}</h3>
+                <svg class="w-5 h-5 text-gray-500 group-hover:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+            <p class="text-4xl font-bold font-mono text-yellow-400">{{ stats.pending_withdrawals }}</p>
+        </a>
+        <a href="{% url 'admin_users' %}" class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6 hover:border-blue-500/30 transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold group-hover:text-blue-400 transition-colors">{% trans "Utilisateurs" %}</h3>
+                <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+            <p class="text-4xl font-bold font-mono">{{ stats.total_users }}</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

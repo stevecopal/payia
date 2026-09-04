@@ -1,0 +1,56 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Utilisateurs{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold font-display">{% trans "Utilisateurs" %}</h1>
+
+    <form method="get" class="flex flex-col sm:flex-row gap-3">
+        <input type="text" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher par nom, téléphone, email...' %}" class="flex-1 px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm">
+        <select name="status" class="px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white text-sm focus:ring-2 focus:ring-green-500 outline-none">
+            <option value="">{% trans "Tous" %}</option>
+            <option value="active" {% if status == 'active' %}selected{% endif %}>{% trans "Actifs" %}</option>
+            <option value="suspended" {% if status == 'suspended' %}selected{% endif %}>{% trans "Suspendus" %}</option>
+            <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>{% trans "Inactifs" %}</option>
+        </select>
+        <button type="submit" class="px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Filtrer" %}</button>
+    </form>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        {% for u in users %}
+        <a href="{% url 'admin_user_detail' pk=u.pk %}" class="flex items-center justify-between p-4 border-b border-gray-800/50 hover:bg-white/5 transition-colors">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono">
+                    {{ u.first_name|first|upper }}{{ u.last_name|first|upper }}
+                </div>
+                <div>
+                    <p class="font-medium text-sm">{{ u.first_name }} {{ u.last_name }}</p>
+                    <p class="text-xs text-gray-400 font-mono">{{ u.phone_number }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 text-xs rounded-full font-medium {% if u.is_suspended %}bg-red-500/15 text-red-400{% elif u.is_active %}bg-green-500/15 text-green-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
+                    {% if u.is_suspended %}{% trans "Suspendu" %}{% elif u.is_active %}{% trans "Actif" %}{% else %}{% trans "Inactif" %}{% endif %}
+                </span>
+                <span class="text-xs text-gray-500 hidden sm:inline">{{ u.date_joined|date:"d/m/Y" }}</span>
+                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+        </a>
+        {% empty %}
+        <p class="text-gray-500 text-center py-12">{% trans "Aucun utilisateur trouvé." %}</p>
+        {% endfor %}
+    </div>
+
+    {% if users.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if users.has_previous %}
+        <a href="?page={{ users.previous_page_number }}&q={{ q }}&status={{ status }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ users.number }} / {{ users.paginator.num_pages }}</span>
+        {% if users.has_next %}
+        <a href="?page={{ users.next_page_number }}&q={{ q }}&status={{ status }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

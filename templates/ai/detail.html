@@ -1,0 +1,68 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - {{ offer.name }}{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-lg mx-auto space-y-4">
+    <a href="{% url 'ai_catalog' %}" class="text-xs text-green-500 hover:text-green-400">{% trans "Retour au catalogue" %}</a>
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+        {% if offer.image %}
+        <div class="h-48 bg-gray-800 overflow-hidden">
+            <img src="{{ offer.image.url }}" alt="{{ offer.name }}" class="w-full h-full object-cover">
+        </div>
+        {% endif %}
+        <div class="p-5">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs rounded-full">{{ offer.ai_model }}</span>
+                {% if offer.category %}<span class="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs rounded-full">{{ offer.category }}</span>{% endif %}
+            </div>
+            <h1 class="text-xl font-display mb-3">{{ offer.name }}</h1>
+            <p class="text-sm text-gray-400 mb-5">{{ offer.description }}</p>
+
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="bg-gray-800 rounded-lg p-3 text-center">
+                    <p class="text-xl font-bold text-green-400">{{ offer.price|floatformat:0 }}</p>
+                    <p class="text-xs text-gray-500">{% trans "Prix" %}</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-3 text-center">
+                    <p class="text-xl font-bold">{{ offer.duration_days }}</p>
+                    <p class="text-xs text-gray-500">{% trans "Jours" %}</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-3 text-center">
+                    <p class="text-xl font-bold">{{ offer.revenue_value|floatformat:0 }}</p>
+                    <p class="text-xs text-gray-500">{{ offer.get_revenue_frequency_display }}</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-3 text-center">
+                    <p class="text-xl font-bold">{{ offer.total_rentals }}</p>
+                    <p class="text-xs text-gray-500">{% trans "Locations" %}</p>
+                </div>
+            </div>
+
+            {% if offer.conditions %}
+            <div class="bg-yellow-600/10 border border-yellow-600/20 rounded-lg p-3 mb-4">
+                <p class="text-xs text-yellow-400">{{ offer.conditions }}</p>
+            </div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                {% if has_active_rental %}
+                    <div class="bg-green-600/10 border border-green-600/20 rounded-lg p-3 text-center">
+                        <p class="text-xs text-green-400">{% trans "Location active" %}</p>
+                    </div>
+                {% else %}
+                    <form method="post" action="{% url 'ai_rent' slug=offer.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+                            {% trans "Louer" %} - {{ offer.price|floatformat:0 }}
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}" class="block w-full py-3 bg-gray-800 text-white font-semibold rounded-lg text-center text-sm">
+                    {% trans "Connectez-vous pour louer" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

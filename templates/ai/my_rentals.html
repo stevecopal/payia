@@ -1,0 +1,123 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Mes locations IA{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-xl font-display">{% trans "Mes locations IA" %}</h1>
+
+    <div>
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{% trans "Actives" %}</h2>
+        {% if active_data %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for item in active_data %}
+            <a href="{% url 'ai_rental_detail' pk=item.rental.pk %}" class="block bg-gray-900 rounded-xl border border-green-600/30 p-4 hover:border-green-500/50 transition-colors">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-semibold text-sm">{{ item.rental.offer.name }}</h3>
+                    <span class="px-2 py-0.5 bg-green-600/20 text-green-400 text-xs rounded-full">{% trans "Active" %}</span>
+                </div>
+                <p class="text-xs text-gray-500 mb-2">{{ item.rental.offer.ai_model }}</p>
+                <div class="bg-gray-800 rounded-lg p-3 mb-2">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Prochain paiement" %}</p>
+                    <p class="text-xs text-gray-400 mb-1 cd-label" data-rental="{{ item.rental.pk }}"></p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-bold font-mono text-green-400 cd-h" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-xl font-bold text-green-400/50">:</span>
+                        <span class="text-xl font-bold font-mono text-green-400 cd-m" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-xl font-bold text-green-400/50">:</span>
+                        <span class="text-xl font-bold font-mono text-green-400 cd-s" data-rental="{{ item.rental.pk }}">--</span>
+                    </div>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-500">{% trans "Expire:" %} {{ item.rental.end_date|date:"d/m/Y" }}</span>
+                    <span class="text-green-400 font-semibold">{{ item.rental.total_revenue_earned|floatformat:2 }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-sm">{% trans "Aucune location active" %}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{% trans "Expirées" %}</h2>
+        {% if expired_rentals %}
+        <div class="space-y-2">
+            {% for rental in expired_rentals %}
+            <div class="bg-gray-900 rounded-xl border border-gray-800 px-4 py-3 flex items-center justify-between">
+                <div>
+                    <p class="text-sm">{{ rental.offer.name }}</p>
+                    <p class="text-xs text-gray-500">{{ rental.end_date|date:"d/m/Y" }}</p>
+                </div>
+                <span class="px-2 py-0.5 bg-gray-800 text-gray-500 text-xs rounded-full">{% trans "Expirée" %}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-sm">{% trans "Aucune location expirée" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var rentals = [
+        {% for item in active_data %}
+        { id: {{ item.rental.pk }}, nextTs: {{ item.next_payment_ts }} }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    function pad(n) { return n < 10 ? '0' + n : n; }
+
+    function updateAll() {
+        var now = Date.now();
+        for (var i = 0; i < rentals.length; i++) {
+            var r = rentals[i];
+            var diff = r.nextTs - now;
+
+            var hEl = document.querySelector('.cd-h[data-rental="' + r.id + '"]');
+            var mEl = document.querySelector('.cd-m[data-rental="' + r.id + '"]');
+            var sEl = document.querySelector('.cd-s[data-rental="' + r.id + '"]');
+            var labelEl = document.querySelector('.cd-label[data-rental="' + r.id + '"]');
+
+            if (diff <= 0) {
+                if (hEl) hEl.textContent = '00';
+                if (mEl) mEl.textContent = '00';
+                if (sEl) sEl.textContent = '00';
+                if (labelEl) labelEl.textContent = '{% trans "Paiement en cours..." %}';
+            } else {
+                var hours = Math.floor(diff / 3600000);
+                var minutes = Math.floor((diff % 3600000) / 60000);
+                var seconds = Math.floor((diff % 60000) / 1000);
+
+                if (hEl) hEl.textContent = pad(hours);
+                if (mEl) mEl.textContent = pad(minutes);
+                if (sEl) sEl.textContent = pad(seconds);
+
+                if (labelEl) {
+                    var parts = [];
+                    if (hours > 0) parts.push(hours + 'h');
+                    parts.push(pad(minutes) + 'min');
+                    parts.push(pad(seconds) + 's');
+                    labelEl.textContent = '{% trans "Prochain paiement dans" %} ' + parts.join(' ');
+                }
+            }
+        }
+    }
+
+    updateAll();
+    setInterval(updateAll, 1000);
+
+    var firstMin = Infinity;
+    for (var j = 0; j < rentals.length; j++) {
+        var d = rentals[j].nextTs - Date.now();
+        if (d > 0 && d < firstMin) firstMin = d;
+    }
+    if (firstMin < Infinity && firstMin > 0) {
+        setTimeout(function() { location.reload(); }, firstMin + 8000);
+    }
+})();
+</script>
+{% endblock %}

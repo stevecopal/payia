@@ -1,0 +1,49 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Commissions{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold font-display">{% trans "Commissions" %}</h1>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-800 text-gray-400 text-left">
+                        <th class="p-4 font-medium">{% trans "Bénéficiaire" %}</th>
+                        <th class="p-4 font-medium">{% trans "Source" %}</th>
+                        <th class="p-4 font-medium">{% trans "Niveau" %}</th>
+                        <th class="p-4 font-medium">{% trans "Montant" %}</th>
+                        <th class="p-4 font-medium">{% trans "Statut" %}</th>
+                        <th class="p-4 font-medium">{% trans "Date" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in commissions %}
+                    <tr class="border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+                        <td class="p-4">
+                            <p class="font-medium">{{ c.user.first_name }} {{ c.user.last_name }}</p>
+                            <p class="text-xs text-gray-500 font-mono">{{ c.user.phone_number }}</p>
+                        </td>
+                        <td class="p-4">
+                            <p class="text-sm">{{ c.source_user.first_name }} {{ c.source_user.last_name }}</p>
+                            <p class="text-xs text-gray-500 font-mono">{{ c.source_user.phone_number }}</p>
+                        </td>
+                        <td class="p-4"><span class="px-2 py-1 text-xs rounded-full bg-blue-500/15 text-blue-400">{{ c.referral_level }}</span></td>
+                        <td class="p-4 font-bold font-mono text-green-400">{{ c.amount|floatformat:2 }}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 text-xs rounded-full {% if c.status == 'available' %}bg-green-500/15 text-green-400{% elif c.status == 'pending' %}bg-yellow-500/15 text-yellow-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
+                                {{ c.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-gray-400">{{ c.created_at|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="p-12 text-center text-gray-500">{% trans "Aucune commission." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

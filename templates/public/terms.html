@@ -1,0 +1,26 @@
+{% extends "base/public.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Conditions d'utilisation{% endblock %}
+{% block content %}
+<section class="py-20 px-4">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8">{% trans "Conditions d'utilisation" %}</h1>
+        <div class="prose prose-lg max-w-none text-gray-600 space-y-6">
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "1. Acceptation des conditions" %}</h2>
+            <p>{% trans "En utilisant la plateforme PAYIA, vous acceptez les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser la plateforme." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "2. Description du service" %}</h2>
+            <p>{% trans "PAYIA est une plateforme qui met en relation des utilisateurs avec des solutions d'intelligence artificielle dans le domaine de la finance. La plateforme permet d'investir, de générer des revenus et de participer au programme de parrainage." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "3. Inscription" %}</h2>
+            <p>{% trans "L'inscription est réservée aux personnes majeures (18 ans et plus). Chaque utilisateur ne peut créer qu'un seul compte. Les informations fournies lors de l'inscription doivent être exactes et à jour." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "4. Investissements" %}</h2>
+            <p>{% trans "Les investissements effectués via la plateforme sont soumis à des risques. Les performances passées ne garantissent pas les résultats futurs. PAYIA ne garantit pas de rendement spécifique." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "5. Programme de parrainage" %}</h2>
+            <p>{% trans "Les commissions de parrainage sont calculées sur les investissements directs des filleuls et sur 5 niveaux successifs. Les taux de commission sont définis dans la section Parrainage de la plateforme." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "6. Responsabilités" %}</h2>
+            <p>{% trans "L'utilisateur est responsable de la sécurité de son compte et de ses identifiants. PAYIA ne saurait être tenu responsable des pertes résultant d'une utilisation non autorisée du compte." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "7. Modification des conditions" %}</h2>
+            <p>{% trans "PAYIA se réserve le droit de modifier les présentes conditions à tout moment. Les utilisateurs seront informés des changements par email ou via la plateforme." %}</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

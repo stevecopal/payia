@@ -1,0 +1,29 @@
+{% extends "base/public.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Intelligence Artificielle et Finance{% endblock %}
+{% block content %}
+<section class="relative bg-black text-white overflow-hidden min-h-[85vh] flex items-center">
+    <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black"></div>
+    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8  w-full">
+        <div class="max-w-3xl">
+            <div class="inline-flex items-center px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full mb-8">
+                <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                <span class="text-sm text-green-400 font-mono">{% trans "Plateforme IA & Finance" %}</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-display font-normal leading-tight mb-6">
+                {% trans "Investissez dans l'avenir avec" %} <span class="text-green-500">PAYIA</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-400 mb-10 max-w-2xl font-mono leading-relaxed">
+                {% trans "Découvrez nos solutions d'intelligence artificielle, générez des revenus passifs et développez votre réseau grâce à notre système de parrainage innovant." %}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'register' %}" class="px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-all text-center text-lg">
+                    {% trans "Commencer maintenant" %}
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

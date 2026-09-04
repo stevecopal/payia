@@ -1,0 +1,83 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Ticket #{{ ticket.pk }}{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <a href="{% url 'admin_support' %}" class="inline-flex items-center text-sm text-green-400 hover:text-green-300 transition-colors">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        {% trans "Retour" %}
+    </a>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-xl font-bold">{{ ticket.subject }}</h1>
+                <p class="text-sm text-gray-400 mt-1">{{ ticket.user.first_name }} {{ ticket.user.last_name }} ({{ ticket.user.phone_number }}) - {{ ticket.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 text-xs font-medium rounded-full {% if ticket.status == 'OPEN' %}bg-yellow-500/15 text-yellow-400{% elif ticket.status == 'IN_PROGRESS' %}bg-blue-500/15 text-blue-400{% else %}bg-green-500/15 text-green-400{% endif %}">
+                    {{ ticket.get_status_display }}
+                </span>
+                <span class="px-2.5 py-1 text-xs rounded-full bg-white/5 text-gray-400">{{ ticket.get_category_display }}</span>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-6">
+            <form method="post" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="status">
+                <select name="new_status" onchange="this.form.submit()" class="px-3 py-1.5 bg-white/5 border border-gray-800 rounded-lg text-white text-xs focus:ring-2 focus:ring-green-500 outline-none">
+                    <option value="OPEN" {% if ticket.status == 'OPEN' %}selected{% endif %}>{% trans "Ouvert" %}</option>
+                    <option value="IN_PROGRESS" {% if ticket.status == 'IN_PROGRESS' %}selected{% endif %}>{% trans "En cours" %}</option>
+                    <option value="RESOLVED" {% if ticket.status == 'RESOLVED' %}selected{% endif %}>{% trans "Résolu" %}</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="space-y-3">
+        {% for msg in ticket_messages %}
+        <div class="bg-white/5 backdrop-blur rounded-xl border {% if msg.is_internal_note %}border-yellow-500/20 bg-yellow-500/5{% else %}border-gray-800{% endif %} p-4">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium {% if msg.sender.is_staff %}text-green-400{% endif %}">
+                    {% if msg.sender.is_staff %}{% trans "Admin" %}{% else %}{{ msg.sender.first_name }} {{ msg.sender.last_name }}{% endif %}
+                    {% if msg.is_internal_note %}<span class="ml-2 px-2 py-0.5 text-[10px] bg-yellow-500/20 text-yellow-400 rounded-full">{% trans "Note interne" %}</span>{% endif %}
+                </span>
+                <span class="text-xs text-gray-500">{{ msg.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <p class="text-sm text-gray-300 whitespace-pre-wrap">{{ msg.message }}</p>
+            {% if msg.attachment %}
+            <div class="mt-2">
+                {% if msg.attachment.url|slice:"-4:" == ".jpg" or msg.attachment.url|slice:"-5:" == ".jpeg" or msg.attachment.url|slice:"-4:" == ".png" or msg.attachment.url|slice:"-4:" == ".gif" or msg.attachment.url|slice:"-5:" == ".webp" %}
+                <a href="{{ msg.attachment.url }}" target="_blank">
+                    <img src="{{ msg.attachment.url }}" alt="{% trans 'Pièce jointe' %}" class="max-w-xs rounded-lg border border-gray-700 hover:border-green-500 transition-colors">
+                </a>
+                {% else %}
+                <a href="{{ msg.attachment.url }}" class="text-xs text-green-500 hover:text-green-400 inline-flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                    {{ msg.attachment.name|cut:"support_attachments/" }}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+        <h3 class="font-semibold mb-4">{% trans "Répondre" %}</h3>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="reply">
+            <textarea name="message" rows="4" required class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm" placeholder="{% trans 'Votre réponse...' %}"></textarea>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="is_internal_note" id="internal_note" class="w-4 h-4 text-yellow-500 bg-white/5 border-gray-800 rounded focus:ring-yellow-500">
+                    <label for="internal_note" class="text-sm text-gray-400">{% trans "Note interne" %}</label>
+                </div>
+                <button type="submit" class="px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Envoyer" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

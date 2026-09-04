@@ -1,0 +1,71 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - {% if method %}{% trans "Modifier" %}{% else %}{% trans "Créer" %}{% endif %} méthode de paiement{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-3xl mx-auto space-y-6">
+    <a href="{% url 'admin_payment_methods' %}" class="inline-flex items-center text-sm text-green-400 hover:text-green-300 transition-colors">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        {% trans "Retour" %}
+    </a>
+
+    <h1 class="text-2xl font-bold font-display">{% if method %}{% trans "Modifier la méthode" %} — {{ method.name }}{% else %}{% trans "Nouvelle méthode de paiement" %}{% endif %}</h1>
+
+    <form method="post" class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6 space-y-5">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Nom" %} *</label>
+            <input type="text" name="name" value="{{ method.name|default:'' }}" required class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm" placeholder="MTN Mobile Money">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Numéro de réception" %}</label>
+                <input type="text" name="phone_number" value="{{ method.phone_number|default:'' }}" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm font-mono" placeholder="690123456">
+                <p class="text-xs text-gray-600 mt-1">{% trans "Numéro utilisé pour recevoir les dépôts" %}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Nom de réception" %}</label>
+                <input type="text" name="reception_name" value="{{ method.reception_name|default:'' }}" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm" placeholder="Jean Mobile Money">
+                <p class="text-xs text-gray-600 mt-1">{% trans "Nom affiché au client lors du paiement" %}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Template USSD" %}</label>
+                <input type="text" name="ussd_template" value="{{ method.ussd_template|default:'' }}" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm font-mono" placeholder="*126*14#">
+                <p class="text-xs text-gray-600 mt-1">{% trans "Template USSD (le montant est ajouté automatiquement)" %}</p>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Description" %}</label>
+            <textarea name="description" rows="2" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm">{{ method.description|default:'' }}</textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Instructions de paiement" %}</label>
+            <textarea name="instructions" rows="3" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm" placeholder="{% trans 'Instructions affichées au client...' %}">{{ method.instructions|default:'' }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Montant minimum" %}</label>
+                <input type="number" name="min_amount" value="{{ method.min_amount|default:'' }}" min="0" step="1" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm font-mono" placeholder="500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1.5">{% trans "Montant maximum" %}</label>
+                <input type="number" name="max_amount" value="{{ method.max_amount|default:'' }}" min="0" step="1" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm font-mono" placeholder="500000">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <input type="checkbox" name="is_active" id="is_active" {% if not method or method.is_active %}checked{% endif %} class="w-4 h-4 text-green-600 bg-white/5 border-gray-800 rounded focus:ring-green-500">
+            <label for="is_active" class="text-sm text-gray-400">{% trans "Méthode active" %}</label>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-gray-800">
+            <a href="{% url 'admin_payment_methods' %}" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</a>
+            <button type="submit" class="px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Enregistrer" %}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Parrainages{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold font-display">{% trans "Parrainages" %}</h1>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-4">
+            <p class="text-xs text-gray-400 mb-1">{% trans "Total" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.total_referrals }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-4">
+            <p class="text-xs text-gray-400 mb-1">{% trans "Niveau 1" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.level_1 }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-4">
+            <p class="text-xs text-gray-400 mb-1">{% trans "Niveau 2" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.level_2 }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-4">
+            <p class="text-xs text-gray-400 mb-1">{% trans "Niveau 3" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.level_3 }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-4">
+            <p class="text-xs text-gray-400 mb-1">{% trans "Niveau 4" %}</p>
+            <p class="text-2xl font-bold font-mono">{{ stats.level_4 }}</p>
+        </div>
+        <div class="bg-green-600/10 backdrop-blur rounded-xl border border-green-500/20 p-4">
+            <p class="text-xs text-green-400 mb-1">{% trans "Commissions" %}</p>
+            <p class="text-2xl font-bold font-mono text-green-400">{{ stats.total_commissions|floatformat:0 }}</p>
+        </div>
+    </div>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-800 text-gray-400 text-left">
+                        <th class="p-4 font-medium">{% trans "Parrain" %}</th>
+                        <th class="p-4 font-medium">{% trans "Parrainé" %}</th>
+                        <th class="p-4 font-medium">{% trans "Niveau" %}</th>
+                        <th class="p-4 font-medium">{% trans "Date" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ref in referrals %}
+                    <tr class="border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+                        <td class="p-4">
+                            <p class="font-medium">{{ ref.referrer.first_name }} {{ ref.referrer.last_name }}</p>
+                            <p class="text-xs text-gray-500 font-mono">{{ ref.referrer.phone_number }}</p>
+                        </td>
+                        <td class="p-4">
+                            <p class="font-medium">{{ ref.referred_user.first_name }} {{ ref.referred_user.last_name }}</p>
+                            <p class="text-xs text-gray-500 font-mono">{{ ref.referred_user.phone_number }}</p>
+                        </td>
+                        <td class="p-4"><span class="px-2 py-1 text-xs rounded-full bg-blue-500/15 text-blue-400">{{ ref.referral_level }}</span></td>
+                        <td class="p-4 text-gray-400">{{ ref.created_at|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="p-12 text-center text-gray-500">{% trans "Aucun parrainage." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if referrals.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if referrals.has_previous %}
+        <a href="?page={{ referrals.previous_page_number }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ referrals.number }} / {{ referrals.paginator.num_pages }}</span>
+        {% if referrals.has_next %}
+        <a href="?page={{ referrals.next_page_number }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

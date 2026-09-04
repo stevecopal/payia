@@ -1,0 +1,34 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Nouveau ticket{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-lg mx-auto space-y-4">
+    <h1 class="text-xl font-display">{% trans "Nouveau ticket" %}</h1>
+    <form method="post" enctype="multipart/form-data" class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4">
+        {% csrf_token %}
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Sujet" %}</label>
+            {{ form.subject }}
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Catégorie" %}</label>
+                {{ form.category }}
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Priorité" %}</label>
+                {{ form.priority }}
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Message" %}</label>
+            {{ form.message }}
+        </div>
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Pièce jointe" %}</label>
+            {{ form.attachment }}
+        </div>
+        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">{% trans "Envoyer" %}</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - {{ offer.name }}{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-4">
+    <a href="{% url 'ai_my_rentals' %}" class="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        {% trans "Mes locations" %}
+    </a>
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
+        <div class="flex items-center justify-between mb-1">
+            <h1 class="text-lg font-semibold">{{ offer.name }}</h1>
+            {% if rental.status == 'active' %}
+            <span class="px-2 py-0.5 bg-green-600/20 text-green-400 text-xs rounded-full">{% trans "Active" %}</span>
+            {% elif rental.status == 'expired' %}
+            <span class="px-2 py-0.5 bg-gray-700 text-gray-400 text-xs rounded-full">{% trans "Expirée" %}</span>
+            {% else %}
+            <span class="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded-full">{{ rental.get_status_display }}</span>
+            {% endif %}
+        </div>
+        <p class="text-xs text-gray-500">{{ offer.ai_model }}</p>
+    </div>
+
+    {% if rental.status == 'active' %}
+    <div class="bg-gray-900 rounded-xl border border-green-600/30 p-4">
+        <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Prochain paiement" %}</p>
+        <p class="text-xs text-gray-400 mb-3" id="countdown-label"></p>
+        <div class="flex items-center justify-center gap-3 mb-3">
+            <div class="text-center">
+                <p class="text-3xl font-bold font-mono text-green-400" id="countdown-hours">--</p>
+                <p class="text-[10px] text-gray-500 uppercase">{% trans "Heures" %}</p>
+            </div>
+            <p class="text-2xl font-bold text-green-400/50">:</p>
+            <div class="text-center">
+                <p class="text-3xl font-bold font-mono text-green-400" id="countdown-minutes">--</p>
+                <p class="text-[10px] text-gray-500 uppercase">{% trans "Minutes" %}</p>
+            </div>
+            <p class="text-2xl font-bold text-green-400/50">:</p>
+            <div class="text-center">
+                <p class="text-3xl font-bold font-mono text-green-400" id="countdown-seconds">--</p>
+                <p class="text-[10px] text-gray-500 uppercase">{% trans "Secondes" %}</p>
+            </div>
+        </div>
+        <p class="text-xs text-center text-gray-500" id="countdown-date"></p>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Revenu / période" %}</p>
+            <p class="text-lg font-bold font-mono text-green-400">{{ revenue_per_period|floatformat:2 }}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Fréquence" %}</p>
+            <p class="text-lg font-bold font-mono">{{ frequency_label }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Type de revenu" %}</p>
+            <p class="text-sm font-semibold">{{ revenue_type_label }}</p>
+            {% if offer.revenue_type == 'percentage' %}
+            <p class="text-xs text-gray-500">{{ offer.revenue_value }}% de {{ offer.price }}</p>
+            {% endif %}
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Total gagné" %}</p>
+            <p class="text-lg font-bold font-mono text-green-400">{{ rental.total_revenue_earned|floatformat:2 }}</p>
+        </div>
+    </div>
+
+    {% if rental.status == 'active' %}
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
+        <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-2">{% trans "Paiements" %}</p>
+        <div class="flex items-center gap-3">
+            <div class="flex-1">
+                <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-green-500 rounded-full transition-all" style="width: {{ payment_progress }}%"></div>
+                </div>
+            </div>
+            <span class="text-xs font-mono text-gray-400">{{ payments_received }}/{{ total_periods }}</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1.5">{% trans "paiements reçus" %}</p>
+    </div>
+    {% endif %}
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
+        <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-3">{% trans "Détails" %}</p>
+        <div class="space-y-2.5">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Montant payé" %}</span>
+                <span class="text-sm font-mono font-semibold">{{ rental.amount_paid|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Durée" %}</span>
+                <span class="text-sm font-mono">{{ offer.duration_days }} {% trans "jours" %}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Début" %}</span>
+                <span class="text-sm font-mono">{{ rental.start_date|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Fin" %}</span>
+                <span class="text-sm font-mono">{{ rental.end_date|date:"d/m/Y H:i" }}</span>
+            </div>
+            {% if rental.status == 'active' %}
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Temps restant" %}</span>
+                <span class="text-sm font-mono text-green-400">{{ remaining_days }}j {{ remaining_hours }}h {{ remaining_minutes }}m</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var nextPaymentTs = {{ next_payment_timestamp }};
+    var endTs = {{ end_timestamp }};
+    var reloadTimer = null;
+
+    function pad(n) { return n < 10 ? '0' + n : n; }
+
+    function updateCountdown() {
+        var now = Date.now();
+        var diff = nextPaymentTs - now;
+
+        var hEl = document.getElementById('countdown-hours');
+        var mEl = document.getElementById('countdown-minutes');
+        var sEl = document.getElementById('countdown-seconds');
+        var labelEl = document.getElementById('countdown-label');
+        var dateEl = document.getElementById('countdown-date');
+
+        if (diff <= 0) {
+            if (hEl) hEl.textContent = '00';
+            if (mEl) mEl.textContent = '00';
+            if (sEl) sEl.textContent = '00';
+            if (labelEl) labelEl.textContent = '{% trans "Paiement en cours..." %}';
+            if (dateEl) dateEl.textContent = '';
+            if (!reloadTimer) {
+                reloadTimer = setTimeout(function() { location.reload(); }, 8000);
+            }
+            return;
+        }
+
+        var hours = Math.floor(diff / 3600000);
+        var minutes = Math.floor((diff % 3600000) / 60000);
+        var seconds = Math.floor((diff % 60000) / 1000);
+
+        if (hEl) hEl.textContent = pad(hours);
+        if (mEl) mEl.textContent = pad(minutes);
+        if (sEl) sEl.textContent = pad(seconds);
+
+        if (labelEl) {
+            var parts = [];
+            if (hours > 0) parts.push(hours + 'h');
+            parts.push(pad(minutes) + 'min');
+            parts.push(pad(seconds) + 's');
+            labelEl.textContent = '{% trans "Prochain paiement dans" %} ' + parts.join(' ');
+        }
+
+        if (dateEl) {
+            var d = new Date(nextPaymentTs);
+            dateEl.textContent = '{% trans "Le" %} ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+})();
+</script>
+{% endblock %}

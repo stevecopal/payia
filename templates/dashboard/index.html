@@ -1,0 +1,95 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Tableau de bord{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-xl font-display">{% trans "Tableau de bord" %}</h1>
+        <p class="text-gray-400 text-sm mt-0.5">{% trans "Bienvenue" %}, {{ user.first_name|default:user.username }}</p>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Solde" %}</p>
+            <p class="text-xl font-bold mt-1">{{ wallet.available_balance|floatformat:2 }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ user.profile.preferred_currency|default:"XOF" }}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Déposé" %}</p>
+            <p class="text-xl font-bold mt-1">{{ wallet.total_deposited|floatformat:2 }}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Retiré" %}</p>
+            <p class="text-xl font-bold mt-1">{{ wallet.total_withdrawn|floatformat:2 }}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Revenus" %}</p>
+            <p class="text-xl font-bold mt-1 text-green-400">{{ wallet.total_earnings|floatformat:2 }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3">
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 text-center">
+            <p class="text-2xl font-bold text-green-400">{{ active_rentals.count }}</p>
+            <p class="text-xs text-gray-500 mt-1">{% trans "IA actives" %}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 text-center">
+            <p class="text-2xl font-bold">{{ referral_stats.total }}</p>
+            <p class="text-xs text-gray-500 mt-1">{% trans "Filleuls" %}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 text-center">
+            <p class="text-2xl font-bold">{{ unread_notifications }}</p>
+            <p class="text-xs text-gray-500 mt-1">{% trans "Alertes" %}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="bg-gray-900 rounded-xl border border-gray-800">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <h2 class="text-sm font-semibold">{% trans "Transactions" %}</h2>
+                <a href="{% url 'transaction_list' %}" class="text-xs text-green-500 hover:text-green-400">{% trans "Voir tout" %}</a>
+            </div>
+            {% if recent_transactions %}
+                <div class="divide-y divide-gray-800">
+                    {% for entry in recent_transactions %}
+                    <div class="px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm">{{ entry.get_entry_type_display }}</p>
+                            <p class="text-xs text-gray-500">{{ entry.created_at|date:"d/m H:i" }}</p>
+                        </div>
+                        <span class="text-sm font-semibold {% if entry.amount > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+                            {% if entry.amount > 0 %}+{% endif %}{{ entry.amount|floatformat:2 }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-sm text-center py-8">{% trans "Aucune transaction" %}</p>
+            {% endif %}
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+                <h2 class="text-sm font-semibold">{% trans "Dépôts" %}</h2>
+                <a href="{% url 'deposit_list' %}" class="text-xs text-green-500 hover:text-green-400">{% trans "Voir tout" %}</a>
+            </div>
+            {% if recent_deposits %}
+                <div class="divide-y divide-gray-800">
+                    {% for deposit in recent_deposits %}
+                    <div class="px-4 py-3 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm">{{ deposit.amount|floatformat:2 }} {{ deposit.payment_method }}</p>
+                            <p class="text-xs text-gray-500">{{ deposit.created_at|date:"d/m" }}</p>
+                        </div>
+                        <span class="px-2 py-0.5 text-xs font-medium rounded-full {% if deposit.status == 'completed' %}bg-green-600/20 text-green-400{% elif deposit.status == 'pending_review' %}bg-yellow-600/20 text-yellow-400{% elif deposit.status == 'rejected' %}bg-red-600/20 text-red-400{% else %}bg-gray-700 text-gray-400{% endif %}">
+                            {{ deposit.get_status_display }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-sm text-center py-8">{% trans "Aucun dépôt" %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

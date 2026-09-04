@@ -1,0 +1,42 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Journal d'audit{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold font-display">{% trans "Journal d'audit" %}</h1>
+
+    <form method="get" class="flex gap-3">
+        <input type="text" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher par action, description, téléphone...' %}" class="flex-1 px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm">
+        <button type="submit" class="px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Rechercher" %}</button>
+    </form>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        {% for log in logs %}
+        <div class="p-4 border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+            <div class="flex items-center justify-between mb-1">
+                <span class="px-2 py-0.5 text-[10px] font-mono font-medium rounded-full bg-green-500/15 text-green-400">{{ log.action }}</span>
+                <span class="text-xs text-gray-500">{{ log.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <p class="text-sm text-gray-300 mt-1">{{ log.description }}</p>
+            {% if log.actor %}
+            <p class="text-xs text-gray-500 mt-1">{% trans "Par" %} <span class="font-mono">{{ log.actor.phone_number }}</span>{% if log.ip_address %} ({% trans "IP:" %} <span class="font-mono">{{ log.ip_address }}</span>){% endif %}</p>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-center py-12">{% trans "Aucune entrée." %}</p>
+        {% endfor %}
+    </div>
+
+    {% if logs.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if logs.has_previous %}
+        <a href="?page={{ logs.previous_page_number }}&q={{ q }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ logs.number }} / {{ logs.paginator.num_pages }}</span>
+        {% if logs.has_next %}
+        <a href="?page={{ logs.next_page_number }}&q={{ q }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

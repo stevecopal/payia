@@ -1,0 +1,13 @@
+{% extends "base/public.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Erreur serveur{% endblock %}
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+    <div class="text-center">
+        <h1 class="text-6xl font-bold text-black mb-4">500</h1>
+        <p class="text-xl text-gray-600 mb-8">{% trans "Erreur serveur" %}</p>
+        <p class="text-gray-500 mb-8">{% trans "Une erreur interne est survenue. Veuillez réessayer plus tard." %}</p>
+        <a href="{% url 'home' %}" class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Retour à l'accueil" %}</a>
+    </div>
+</div>
+{% endblock %}

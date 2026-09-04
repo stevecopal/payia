@@ -1,0 +1,61 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Statistiques{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold font-display">{% trans "Statistiques" %}</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <p class="text-sm text-gray-400 mb-1">{% trans "Utilisateurs (30j)" %}</p>
+            <p class="text-3xl font-bold font-mono">{{ stats.new_users }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <p class="text-sm text-gray-400 mb-1">{% trans "Dépôts (30j)" %}</p>
+            <p class="text-3xl font-bold font-mono text-green-400">{{ stats.total_deposits|floatformat:0 }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <p class="text-sm text-gray-400 mb-1">{% trans "Retraits (30j)" %}</p>
+            <p class="text-3xl font-bold font-mono text-yellow-400">{{ stats.total_withdrawals|floatformat:0 }}</p>
+        </div>
+        <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+            <p class="text-sm text-gray-400 mb-1">{% trans "Taux de conversion" %}</p>
+            <p class="text-3xl font-bold font-mono text-blue-400">{{ conversion_rate|floatformat:1 }}%</p>
+        </div>
+    </div>
+
+    {% if daily_deposits %}
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+        <h2 class="text-lg font-semibold mb-4">{% trans "Dépôts quotidiens (30j)" %}</h2>
+        <div class="space-y-2">
+            {% for day in daily_deposits %}
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-gray-500 w-20 shrink-0">{{ day.date|date:"d/m" }}</span>
+                <div class="flex-1 h-6 bg-white/5 rounded-lg overflow-hidden">
+                    <div class="h-full bg-green-600 rounded-lg" style="width: {% widthratio day.total stats.max_deposit 100 %}%"></div>
+                </div>
+                <span class="text-xs font-mono text-gray-400 w-20 text-right">{{ day.total|floatformat:0 }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if daily_registrations %}
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
+        <h2 class="text-lg font-semibold mb-4">{% trans "Inscriptions quotidiennes (30j)" %}</h2>
+        <div class="space-y-2">
+            {% for day in daily_registrations %}
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-gray-500 w-20 shrink-0">{{ day.date|date:"d/m" }}</span>
+                <div class="flex-1 h-6 bg-white/5 rounded-lg overflow-hidden">
+                    <div class="h-full bg-blue-600 rounded-lg" style="width: {% widthratio day.count stats.max_registration 100 %}%"></div>
+                </div>
+                <span class="text-xs font-mono text-gray-400 w-20 text-right">{{ day.count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

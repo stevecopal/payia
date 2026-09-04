@@ -1,0 +1,13 @@
+{% extends "base/public.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Accès interdit{% endblock %}
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+    <div class="text-center">
+        <h1 class="text-6xl font-bold text-black mb-4">403</h1>
+        <p class="text-xl text-gray-600 mb-8">{% trans "Accès interdit" %}</p>
+        <p class="text-gray-500 mb-8">{% trans "Vous n'avez pas la permission d'accéder à cette page." %}</p>
+        <a href="{% url 'home' %}" class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Retour à l'accueil" %}</a>
+    </div>
+</div>
+{% endblock %}

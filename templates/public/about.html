@@ -1,0 +1,18 @@
+{% extends "base/public.html" %}
+{% load i18n %}
+{% block title %}PAYIA - À propos{% endblock %}
+{% block content %}
+<section class="py-20 px-4">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8">{% trans "À propos de PAYIA" %}</h1>
+        <div class="prose prose-lg max-w-none text-gray-600 space-y-6">
+            <p>{% trans "PAYIA est une plateforme innovante combinant intelligence artificielle et finance pour offrir des opportunités de revenus uniques." %}</p>
+            <p>{% trans "Notre mission est de démocratiser l'accès aux technologies d'IA et de permettre à chacun de générer des revenus grâce à ces outils." %}</p>
+            <h2 class="text-2xl font-bold text-black mt-12">{% trans "Notre vision" %}</h2>
+            <p>{% trans "Nous croyons que l'intelligence artificielle doit être accessible à tous. PAYIA est né de cette conviction : créer une plateforme où chaque utilisateur peut investir dans des solutions IA et en tirer des revenus." %}</p>
+            <h2 class="text-2xl font-bold text-black mt-12">{% trans "Sécurité" %}</h2>
+            <p>{% trans "La sécurité de vos données et de vos fonds est notre priorité. Nous utilisons les dernières technologies de chiffrement et de protection pour garantir la sécurité de votre compte." %}</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

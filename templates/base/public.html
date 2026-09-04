@@ -1,0 +1,28 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PAYIA - Plateforme IA et Finance{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}PAYIA - Votre plateforme d'intelligence artificielle et de finance. Investissez, gagnez et croissez avec l'IA.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}PAYIA{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Plateforme IA et Finance{% endblock %}">
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Suez+One&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-black text-white antialiased min-h-screen flex flex-col">
+    {% include "base/nav.html" %}
+
+    <main class="pt-16 flex-1">
+        {% include "base/toasts.html" %}
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "base/footer.html" %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

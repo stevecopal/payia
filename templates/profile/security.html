@@ -1,0 +1,16 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Sécurité{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-lg mx-auto space-y-4">
+    <h1 class="text-xl font-display">{% trans "Sécurité" %}</h1>
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-0 divide-y divide-gray-800">
+        <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Téléphone" %}</span><span class="text-sm">{{ user.phone_number }}</span></div>
+        <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Dernière connexion" %}</span><span class="text-sm">{{ user.last_login|date:"d/m/Y H:i" }}</span></div>
+        <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "KYC" %}</span><span class="text-sm">{{ user.get_kyc_status_display }}</span></div>
+    </div>
+    <a href="{% url 'password_change' %}" class="block bg-gray-900 rounded-xl border border-gray-800 px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
+        <p class="text-sm font-medium">{% trans "Changer le mot de passe" %}</p>
+    </a>
+</div>
+{% endblock %}

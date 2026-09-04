@@ -1,0 +1,48 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Support{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold font-display">{% trans "Support" %}</h1>
+
+    <div class="flex flex-wrap gap-2">
+        <a href="{% url 'admin_support' %}" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if not current_status %}bg-green-600 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Tous" %}</a>
+        <a href="?status=OPEN" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'OPEN' %}bg-yellow-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Ouverts" %}</a>
+        <a href="?status=IN_PROGRESS" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'IN_PROGRESS' %}bg-blue-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "En cours" %}</a>
+        <a href="?status=RESOLVED" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'RESOLVED' %}bg-green-600 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Résolus" %}</a>
+    </div>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        {% for ticket in tickets %}
+        <a href="{% url 'admin_support_ticket_detail' pk=ticket.pk %}" class="flex items-center justify-between p-4 border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400 text-sm font-bold shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="font-medium text-sm">{{ ticket.subject }}</p>
+                    <p class="text-xs text-gray-500">{{ ticket.user.phone_number }} - {{ ticket.category }} - {{ ticket.created_at|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+            <span class="px-2.5 py-1 text-xs font-medium rounded-full {% if ticket.status == 'OPEN' %}bg-yellow-500/15 text-yellow-400{% elif ticket.status == 'IN_PROGRESS' %}bg-blue-500/15 text-blue-400{% else %}bg-green-500/15 text-green-400{% endif %}">
+                {{ ticket.get_status_display }}
+            </span>
+        </a>
+        {% empty %}
+        <p class="text-gray-500 text-center py-12">{% trans "Aucun ticket." %}</p>
+        {% endfor %}
+    </div>
+
+    {% if tickets.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if tickets.has_previous %}
+        <a href="?page={{ tickets.previous_page_number }}&status={{ current_status }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ tickets.number }} / {{ tickets.paginator.num_pages }}</span>
+        {% if tickets.has_next %}
+        <a href="?page={{ tickets.next_page_number }}&status={{ current_status }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

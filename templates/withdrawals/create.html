@@ -1,0 +1,54 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Nouveau retrait{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-lg mx-auto space-y-4">
+    <h1 class="text-xl font-display">{% trans "Effectuer un retrait" %}</h1>
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 flex items-center justify-between">
+        <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Solde disponible" %}</span>
+        <span class="text-lg font-bold">{{ wallet.available_balance|floatformat:2 }} {{ user.profile.preferred_currency|default:"XOF" }}</span>
+    </div>
+
+    <form method="post" class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Méthode de retrait" %}</label>
+            <select name="payment_method" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm">
+                <option value="">{% trans "Choisir une méthode" %}</option>
+                {% for pm in payment_methods %}
+                <option value="{{ pm.pk }}">{{ pm.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.payment_method.errors %}<p class="mt-1 text-xs text-red-400">{{ form.payment_method.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Montant" %}</label>
+            {{ form.amount }}
+            {% if form.amount.errors %}<p class="mt-1 text-xs text-red-400">{{ form.amount.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Numéro de retrait" %}</label>
+            {{ form.withdrawal_number }}
+            {% if form.withdrawal_number.errors %}<p class="mt-1 text-xs text-red-400">{{ form.withdrawal_number.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Nom du titulaire" %}</label>
+            {{ form.withdrawal_account_name }}
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Note" %}</label>
+            {{ form.note }}
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+            {% trans "Demander le retrait" %}
+        </button>
+    </form>
+</div>
+{% endblock %}

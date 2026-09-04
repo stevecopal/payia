@@ -1,0 +1,153 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Parrainage{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-4">
+    <h1 class="text-xl font-display">{% trans "Parrainage" %}</h1>
+
+    <!-- Referral Link -->
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">{% trans "Votre lien" %}</p>
+        <div class="flex items-center gap-2">
+            <div class="flex-1 min-w-0 bg-gray-800 rounded-lg px-3 py-2.5 overflow-hidden">
+                <p class="text-xs font-mono text-green-400 truncate" id="referralLink">{{ referral_link }}</p>
+            </div>
+            <button onclick="copyLink()" id="copyBtn" class="px-4 py-2.5 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-500 transition-colors shrink-0 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span id="copyText">{% trans "Copier" %}</span>
+            </button>
+        </div>
+        <p class="text-xs text-gray-600 mt-1.5">{% trans "Partagez pour parrainer de nouveaux utilisateurs." %}</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-2">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
+            <p class="text-xl font-bold font-mono">{{ stats.total }}</p>
+            <p class="text-[10px] text-gray-500 uppercase">{% trans "Total" %}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
+            <p class="text-xl font-bold font-mono">{{ stats.level_1 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase">{% trans "Niveau 1" %}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
+            <p class="text-xl font-bold font-mono text-green-400">{{ total_commissions|floatformat:0 }}</p>
+            <p class="text-[10px] text-green-400 uppercase">{% trans "Gagnés" %}</p>
+        </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
+            <p class="text-lg font-bold font-mono">{{ stats.level_2 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase">{% trans "Niveau 2" %}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
+            <p class="text-lg font-bold font-mono">{{ stats.level_3 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase">{% trans "Niveau 3" %}</p>
+        </div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
+            <p class="text-lg font-bold font-mono">{{ stats.level_4 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase">{% trans "Niveau 4" %}</p>
+        </div>
+    </div>
+
+    <!-- Referrals List -->
+    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800">
+            <h2 class="text-sm font-semibold">{% trans "Mes filleuls" %} <span class="text-gray-500 font-normal">({{ referrals_with_data|length }})</span></h2>
+        </div>
+        {% if referrals_with_data %}
+        <div class="divide-y divide-gray-800">
+            {% for item in referrals_with_data %}
+            <div class="px-4 py-3 hover:bg-gray-800/50 transition-colors">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">
+                            {{ item.referral.referred_user.first_name|first|upper }}{{ item.referral.referred_user.last_name|first|upper }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium truncate">{{ item.referral.referred_user.first_name }} {{ item.referral.referred_user.last_name }}</p>
+                            <p class="text-xs text-gray-500 font-mono">{{ item.referral.referred_user.phone_number }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        {% if item.total_revenue > 0 %}
+                        <p class="text-sm font-bold font-mono text-green-400">+{{ item.total_revenue|floatformat:2 }}</p>
+                        {% else %}
+                        <p class="text-sm text-gray-600">-</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 ml-[46px]">
+                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-blue-500/15 text-blue-400">{% trans "Niv." %}{{ item.referral.referral_level }}</span>
+                    {% if item.referral.referred_user.is_suspended %}
+                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-red-500/15 text-red-400">{% trans "Suspendu" %}</span>
+                    {% elif item.referral.referred_user.is_active %}
+                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400">{% trans "Actif" %}</span>
+                    {% else %}
+                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-gray-500/15 text-gray-400">{% trans "Inactif" %}</span>
+                    {% endif %}
+                    {% if item.has_deposit %}
+                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400">{% trans "Dépôt" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <p class="text-gray-500 text-sm">{% trans "Aucun filleul pour le moment." %}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Commissions -->
+    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800">
+            <h2 class="text-sm font-semibold">{% trans "Commissions récentes" %}</h2>
+        </div>
+        {% if commissions %}
+        <div class="divide-y divide-gray-800">
+            {% for c in commissions %}
+            <div class="px-4 py-3 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-9 h-9 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">
+                        {{ c.source_user.first_name|first|upper }}{{ c.source_user.last_name|first|upper }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm truncate">{% blocktrans with level=c.referral_level %}Commission niv. {{ level }}{% endblocktrans %}</p>
+                        <p class="text-xs text-gray-500">{{ c.source_user.phone_number }} · {{ c.created_at|date:"d/m" }}</p>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-3">
+                    <p class="text-sm font-bold font-mono text-green-400">+{{ c.amount|floatformat:2 }}</p>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded {% if c.status == 'approved' or c.status == 'available' %}bg-green-500/15 text-green-400{% elif c.status == 'pending' %}bg-yellow-500/15 text-yellow-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
+                        {{ c.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <p class="text-gray-500 text-sm">{% trans "Aucune commission." %}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function copyLink() {
+    var link = document.getElementById('referralLink').textContent;
+    navigator.clipboard.writeText(link).then(function() {
+        var txt = document.getElementById('copyText');
+        txt.textContent = '{% trans "Copié !" %}';
+        setTimeout(function() {
+            txt.textContent = '{% trans "Copier" %}';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

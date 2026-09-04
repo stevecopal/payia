@@ -1,0 +1,62 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - {{ ticket.subject }}{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-lg mx-auto space-y-4">
+    <div class="flex items-center justify-between">
+        <h1 class="text-xl font-display">{{ ticket.subject }}</h1>
+        {% if ticket.status != 'CLOSED' %}
+        <form method="post" action="{% url 'support_ticket_close' pk=ticket.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="text-xs text-red-400 hover:text-red-300">{% trans "Fermer" %}</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap">
+        <span class="px-2 py-0.5 text-xs font-medium rounded-full {% if ticket.status == 'OPEN' %}bg-green-600/20 text-green-400{% elif ticket.status == 'IN_PROGRESS' %}bg-blue-600/20 text-blue-400{% else %}bg-gray-700 text-gray-400{% endif %}">
+            {{ ticket.get_status_display }}
+        </span>
+        <span class="text-xs text-gray-500">{{ ticket.get_category_display }}</span>
+        <span class="text-xs text-gray-500">{% trans "Priorité:" %} {{ ticket.get_priority_display }}</span>
+    </div>
+
+    <div class="space-y-3">
+        {% for msg in ticket_messages %}
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 {% if msg.is_internal_note %}border-l-2 border-yellow-500{% endif %}">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-medium">{{ msg.sender.first_name|default:msg.sender.phone_number }}</span>
+                <span class="text-xs text-gray-600">{{ msg.created_at|date:"d/m H:i" }}</span>
+            </div>
+            <p class="text-sm text-gray-300">{{ msg.message }}</p>
+            {% if msg.attachment %}
+            <div class="mt-2">
+                {% if msg.attachment.url|slice:"-4:" == ".jpg" or msg.attachment.url|slice:"-5:" == ".jpeg" or msg.attachment.url|slice:"-4:" == ".png" or msg.attachment.url|slice:"-4:" == ".gif" or msg.attachment.url|slice:"-5:" == ".webp" %}
+                <a href="{{ msg.attachment.url }}" target="_blank">
+                    <img src="{{ msg.attachment.url }}" alt="{% trans 'Pièce jointe' %}" class="max-w-xs rounded-lg border border-gray-700 hover:border-green-500 transition-colors">
+                </a>
+                {% else %}
+                <a href="{{ msg.attachment.url }}" class="text-xs text-green-500 hover:text-green-400 inline-flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                    {{ msg.attachment.name|cut:"support_attachments/" }}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if ticket.status != 'CLOSED' %}
+    <form method="post" enctype="multipart/form-data" class="bg-gray-900 rounded-xl border border-gray-800 p-4 space-y-3">
+        {% csrf_token %}
+        <div>{{ form.message }}</div>
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Pièce jointe (optionnel)" %}</label>
+            <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx" class="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-green-600 file:text-white file:cursor-pointer">
+        </div>
+        <button type="submit" class="px-5 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-500">{% trans "Répondre" %}</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

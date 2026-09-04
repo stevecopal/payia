@@ -1,0 +1,25 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Paramètres{% endblock %}
+{% block dashboard_content %}
+<div class="max-w-lg mx-auto space-y-4">
+    <h1 class="text-xl font-display">{% trans "Paramètres" %}</h1>
+    <div class="bg-gray-900 rounded-xl border border-gray-800 divide-y divide-gray-800">
+        <a href="{% url 'profile' %}" class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
+            <div><p class="text-sm font-medium">{% trans "Profil" %}</p><p class="text-xs text-gray-500">{% trans "Informations personnelles" %}</p></div>
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <a href="{% url 'security_settings' %}" class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
+            <div><p class="text-sm font-medium">{% trans "Sécurité" %}</p><p class="text-xs text-gray-500">{% trans "Mot de passe et sécurité" %}</p></div>
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <a href="{% url 'notifications' %}" class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
+            <div><p class="text-sm font-medium">{% trans "Notifications" %}</p><p class="text-xs text-gray-500">{% trans "Préférences" %}</p></div>
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <div class="px-4 py-3.5">
+            <a href="{% url 'logout' %}" class="text-red-400 text-sm font-medium hover:text-red-300">{% trans "Se déconnecter" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Notifications{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold font-display">{% trans "Notifications" %}</h1>
+        <button onclick="openModal('createNotifModal')" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            {% trans "Créer une notification" %}
+        </button>
+    </div>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        {% for n in notifications_list %}
+        <div class="p-4 border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono shrink-0">
+                        {{ n.user.first_name|first|upper }}{{ n.user.last_name|first|upper }}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 text-[10px] font-medium rounded-full bg-white/5 text-gray-400 uppercase">{{ n.get_notification_type_display }}</span>
+                            <p class="text-sm font-medium truncate">{{ n.title }}</p>
+                        </div>
+                        <p class="text-xs text-gray-500 truncate">{{ n.message }}</p>
+                    </div>
+                </div>
+                <span class="text-xs text-gray-500 shrink-0">{{ n.created_at|date:"d/m H:i" }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-center py-12">{% trans "Aucune notification." %}</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="createNotifModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg p-6" onclick="event.stopPropagation()">
+        <h3 class="text-lg font-bold mb-4">{% trans "Créer une notification" %}</h3>
+        <form method="post" action="{% url 'admin_notification_create' %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">{% trans "Destinataire" %}</label>
+                <select name="recipient_type" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 outline-none text-sm" id="recipientType" onchange="toggleRecipientField()">
+                    <option value="all">{% trans "Tous les utilisateurs" %}</option>
+                    <option value="user">{% trans "Un utilisateur spécifique" %}</option>
+                </select>
+            </div>
+            <div id="recipientUserField" class="hidden">
+                <label class="block text-sm text-gray-400 mb-1">{% trans "Téléphone du destinataire" %}</label>
+                <input type="text" name="recipient_phone" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm font-mono" placeholder="+237 6XX XXX XXX">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">{% trans "Type" %}</label>
+                <select name="notification_type" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 outline-none text-sm">
+                    <option value="SYSTEM_MESSAGE">{% trans "Message système" %}</option>
+                    <option value="SECURITY_ALERT">{% trans "Alerte sécurité" %}</option>
+                    <option value="DEPOSIT_APPROVED">{% trans "Dépôt approuvé" %}</option>
+                    <option value="DEPOSIT_REJECTED">{% trans "Dépôt refusé" %}</option>
+                    <option value="WITHDRAWAL_APPROVED">{% trans "Retrait approuvé" %}</option>
+                    <option value="WITHDRAWAL_REJECTED">{% trans "Retrait refusé" %}</option>
+                    <option value="AI_ACTIVATED">{% trans "IA activée" %}</option>
+                    <option value="AI_EXPIRED">{% trans "IA expirée" %}</option>
+                    <option value="COMMISSION_RECEIVED">{% trans "Commission reçue" %}</option>
+                    <option value="NEW_REFERRAL">{% trans "Nouveau parrainé" %}</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">{% trans "Titre" %}</label>
+                <input type="text" name="title" required class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm" placeholder="{% trans 'Titre de la notification' %}">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">{% trans "Message" %}</label>
+                <textarea name="message" rows="4" required class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm" placeholder="{% trans 'Contenu du message...' %}"></textarea>
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button type="button" onclick="closeModal('createNotifModal')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Envoyer" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleRecipientField() {
+    const type = document.getElementById('recipientType').value;
+    const field = document.getElementById('recipientUserField');
+    if (type === 'user') {
+        field.classList.remove('hidden');
+    } else {
+        field.classList.add('hidden');
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base/public.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Politique de confidentialité{% endblock %}
+{% block content %}
+<section class="py-10 px-4">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold ">{% trans "Politique de confidentialité" %}</h1>
+        <div class="prose prose-lg max-w-none text-gray-600 space-y-6">
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "1. Données collectées" %}</h2>
+            <p>{% trans "Nous collectons les informations suivantes : nom, numéro de téléphone, adresse email, données de transaction et historique de navigation sur la plateforme." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "2. Utilisation des données" %}</h2>
+            <p>{% trans "Vos données sont utilisées pour : gérer votre compte, traiter les transactions, assurer la sécurité, améliorer nos services et vous envoyer des communications importantes." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "3. Protection des données" %}</h2>
+            <p>{% trans "Nous utilisons des technologies de chiffrement avancées pour protéger vos données. L'accès à vos informations est strictement limité aux personnes autorisées." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "4. Partage des données" %}</h2>
+            <p>{% trans "Nous ne vendons ni ne louons vos données personnelles à des tiers. Vos données peuvent être partagées uniquement avec les autorités compétentes dans le cadre d'une obligation légale." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "5. Cookies" %}</h2>
+            <p>{% trans "La plateforme utilise des cookies pour améliorer votre expérience de navigation et analyser le trafic. Vous pouvez configurer votre navigateur pour refuser les cookies." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "6. Vos droits" %}</h2>
+            <p>{% trans "Conformément à la réglementation en vigueur, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Contactez-nous pour exercer ces droits." %}</p>
+            <h2 class="text-2xl font-bold text-white mt-12">{% trans "7. Contact" %}</h2>
+            <p>{% trans "Pour toute question relative à la confidentialité, contactez-nous via la page Contact de la plateforme." %}</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

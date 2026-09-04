@@ -1,0 +1,79 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Mes dépôts{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-4">
+    <div class="flex items-center justify-between gap-3">
+        <h1 class="text-lg sm:text-xl font-display">{% trans "Mes dépôts" %}</h1>
+        <a href="{% url 'deposit_create' %}" class="px-3 py-2 sm:px-4 sm:py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-500 shrink-0">{% trans "Nouveau dépôt" %}</a>
+    </div>
+
+    <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" style="-ms-overflow-style:none;scrollbar-width:none;">
+        <a href="{% url 'deposit_list' %}" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if not current_status %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Tous" %}</a>
+        <a href="?status=pending_review" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'pending_review' %}bg-yellow-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "En attente" %}</a>
+        <a href="?status=approved" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'approved' %}bg-blue-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Approuvé" %}</a>
+        <a href="?status=completed" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'completed' %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Crédité" %}</a>
+        <a href="?status=rejected" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'rejected' %}bg-red-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Refusé" %}</a>
+    </div>
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+        {% if deposits %}
+            <div class="divide-y divide-gray-800">
+            {% for d in deposits %}
+            <a href="{% url 'deposit_detail' pk=d.pk %}" class="block px-4 py-4 hover:bg-gray-800/50 transition-colors">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 {% if d.status == 'completed' %}bg-green-600/20 text-green-400{% elif d.status == 'pending_review' %}bg-yellow-600/20 text-yellow-400{% elif d.status == 'rejected' %}bg-red-600/20 text-red-400{% elif d.status == 'approved' %}bg-blue-600/20 text-blue-400{% else %}bg-gray-700 text-gray-400{% endif %}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold truncate">{{ d.amount|floatformat:2 }} <span class="text-gray-500 font-normal">XAF</span></p>
+                                <p class="text-xs text-gray-500 truncate">{{ d.payment_method }} {% if d.transaction_id %}· {{ d.transaction_id }}{% endif %}</p>
+                            </div>
+                            <span class="px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full whitespace-nowrap shrink-0 {% if d.status == 'completed' %}bg-green-600/20 text-green-400{% elif d.status == 'pending_review' %}bg-yellow-600/20 text-yellow-400{% elif d.status == 'rejected' %}bg-red-600/20 text-red-400{% elif d.status == 'approved' %}bg-blue-600/20 text-blue-400{% else %}bg-gray-700 text-gray-400{% endif %}">
+                                {{ d.get_status_display }}
+                            </span>
+                        </div>
+                        <p class="text-[10px] sm:text-xs text-gray-600 mt-1">{{ d.created_at|date:"d/m/Y" }} {{ d.created_at|date:"H:i" }}</p>
+                        {% if d.status == 'pending_review' %}
+                        <div class="flex items-center gap-1.5 mt-1.5">
+                            <div class="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></div>
+                            <span class="text-[10px] sm:text-xs text-yellow-400">{% trans "En attente de vérification" %}</span>
+                        </div>
+                        {% elif d.status == 'approved' %}
+                        <div class="flex items-center gap-1.5 mt-1.5">
+                            <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                            <span class="text-[10px] sm:text-xs text-blue-400">{% trans "Approuvé — crédit en cours" %}</span>
+                        </div>
+                        {% elif d.status == 'rejected' and d.rejection_reason %}
+                        <p class="text-[10px] sm:text-xs text-red-400 mt-1.5 truncate">{% trans "Refusé :" %} {{ d.rejection_reason|truncatewords:10 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+            </div>
+
+            {% if deposits.has_other_pages %}
+            <div class="px-4 py-3 border-t border-gray-800 flex justify-center items-center gap-2">
+                {% if deposits.has_previous %}<a href="?page={{ deposits.previous_page_number }}&status={{ current_status }}" class="px-3 py-1.5 text-xs bg-gray-800 text-gray-400 rounded hover:text-white">{% trans "Préc" %}</a>{% endif %}
+                <span class="text-xs text-gray-500">{{ deposits.number }}/{{ deposits.paginator.num_pages }}</span>
+                {% if deposits.has_next %}<a href="?page={{ deposits.next_page_number }}&status={{ current_status }}" class="px-3 py-1.5 text-xs bg-gray-800 text-gray-400 rounded hover:text-white">{% trans "Suiv" %}</a>{% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-12 sm:py-16 px-4">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 sm:w-8 sm:h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">{% trans "Aucun dépôt trouvé" %}</p>
+                <a href="{% url 'deposit_create' %}" class="text-sm text-green-500 hover:text-green-400">{% trans "Effectuer un dépôt →" %}</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<style>.flex::-webkit-scrollbar{display:none;}</style>
+{% endblock %}

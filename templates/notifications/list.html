@@ -1,0 +1,41 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Notifications{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <h1 class="text-xl font-display">{% trans "Notifications" %}</h1>
+        <form method="post" action="{% url 'notification_mark_all_read' %}">
+            {% csrf_token %}
+            <button type="submit" class="text-xs text-green-500 hover:text-green-400">{% trans "Tout marquer comme lu" %}</button>
+        </form>
+    </div>
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800">
+        {% if notifications %}
+            <div class="divide-y divide-gray-800">
+            {% for n in notifications %}
+            <div class="px-4 py-3 flex items-start gap-3 {% if not n.is_read %}bg-green-600/5{% endif %}">
+                <div class="flex-shrink-0 mt-1.5">
+                    {% if not n.is_read %}<div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>{% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm {% if not n.is_read %}font-semibold{% endif %}">{{ n.title }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ n.message }}</p>
+                    <p class="text-xs text-gray-600 mt-1">{{ n.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+                {% if not n.is_read %}
+                <form method="post" action="{% url 'notification_mark_read' pk=n.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="text-xs text-gray-500 hover:text-green-400">{% trans "Lu" %}</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500 text-sm text-center py-12">{% trans "Aucune notification" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

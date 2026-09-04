@@ -1,0 +1,27 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Messages{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-4">
+    <h1 class="text-xl font-display">{% trans "Messages" %}</h1>
+    <div class="bg-gray-900 rounded-xl border border-gray-800">
+        {% if messages %}
+            <div class="divide-y divide-gray-800">
+            {% for msg in messages %}
+            <a href="{% url 'message_detail' pk=msg.pk %}" class="block px-4 py-3 hover:bg-gray-800/50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="min-w-0">
+                        <p class="text-sm truncate {% if not msg.is_read %}font-semibold{% endif %}">{{ msg.subject }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ msg.body|truncatewords:15 }}</p>
+                    </div>
+                    <span class="text-xs text-gray-600 ml-3 shrink-0">{{ msg.created_at|date:"d/m" }}</span>
+                </div>
+            </a>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500 text-sm text-center py-12">{% trans "Aucun message" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

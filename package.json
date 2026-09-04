@@ -1,0 +1,15 @@
+{
+  "name": "payia",
+  "version": "1.0.0",
+  "description": "PAYIA - Mobile Payment & AI Platform",
+  "private": true,
+  "scripts": {
+    "build:css": "npx tailwindcss -i static/src/input.css -o static/css/output.css --minify",
+    "watch:css": "npx tailwindcss -i static/src/input.css -o static/css/output.css --watch",
+    "build:js": "npx terser static/js/main.js -o static/js/main.min.js --compress --mangle",
+    "dev": "npm run watch:css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

@@ -1,0 +1,100 @@
+{% extends "admin/base_admin.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Dépôts{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 class="text-2xl font-bold font-display">{% trans "Dépôts" %}</h1>
+        <a href="{% url 'admin_export_deposits' %}" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Exporter CSV" %}</a>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+        <a href="{% url 'admin_deposits' %}" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if not current_status %}bg-green-600 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Tous" %}</a>
+        <a href="?status=pending_review" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'pending_review' %}bg-yellow-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "En attente" %}</a>
+        <a href="?status=approved" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'approved' %}bg-blue-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Approuvé" %}</a>
+        <a href="?status=completed" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'completed' %}bg-green-600 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Terminé" %}</a>
+        <a href="?status=rejected" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'rejected' %}bg-red-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Refusé" %}</a>
+    </div>
+
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        {% for deposit in deposits %}
+        <div class="p-4 border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono shrink-0">
+                        {{ deposit.user.first_name|first|upper }}{{ deposit.user.last_name|first|upper }}
+                    </div>
+                    <div>
+                        <p class="font-medium text-sm">{{ deposit.user.first_name }} {{ deposit.user.last_name }}</p>
+                        <p class="text-xs text-gray-400 font-mono">{{ deposit.user.phone_number }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 ml-13 sm:ml-0">
+                    <div class="text-right">
+                        <p class="font-bold font-mono text-green-400">{{ deposit.amount|floatformat:2 }}</p>
+                        <p class="text-xs text-gray-500">{{ deposit.payment_method }}{% if deposit.phone_number %} · {{ deposit.phone_number }}{% endif %}</p>
+                        <p class="text-xs text-gray-500">{{ deposit.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    <span class="px-2.5 py-1 text-xs font-medium rounded-full {% if deposit.status == 'completed' %}bg-green-500/15 text-green-400{% elif deposit.status == 'pending_review' %}bg-yellow-500/15 text-yellow-400{% elif deposit.status == 'rejected' %}bg-red-500/15 text-red-400{% elif deposit.status == 'approved' %}bg-blue-500/15 text-blue-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
+                        {{ deposit.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            {% if deposit.status == 'pending_review' %}
+            <div class="flex gap-2 mt-3 ml-13 sm:ml-13">
+                <button onclick="openModal('approveModal{{ deposit.pk }}')" class="px-3 py-1.5 bg-green-600/15 text-green-400 text-xs rounded-lg hover:bg-green-600/25 transition-colors border border-green-500/20 font-medium">{% trans "Approuver" %}</button>
+                <button onclick="openModal('rejectModal{{ deposit.pk }}')" class="px-3 py-1.5 bg-red-500/15 text-red-400 text-xs rounded-lg hover:bg-red-500/25 transition-colors border border-red-500/20 font-medium">{% trans "Rejeter" %}</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div id="approveModal{{ deposit.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+                <h3 class="text-lg font-bold mb-2">{% trans "Approuver le dépôt" %}</h3>
+                <p class="text-sm text-gray-400 mb-4">{% trans "Le montant sera crédité au portefeuille de l'utilisateur." %}</p>
+                <div class="bg-white/5 rounded-lg p-4 mb-4 border border-gray-800/50">
+                    <p class="text-sm text-gray-400">{% trans "Montant" %} <span class="font-bold text-green-400 font-mono">{{ deposit.amount|floatformat:2 }} XAF</span></p>
+                    <p class="text-sm text-gray-400">{% trans "Utilisateur" %} <span class="font-medium">{{ deposit.user.phone_number }}</span></p>
+                </div>
+                <form method="post" action="{% url 'admin_deposit_approve' pk=deposit.pk %}" class="flex gap-3 justify-end">
+                    {% csrf_token %}
+                    <button type="button" onclick="closeModal('approveModal{{ deposit.pk }}')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Confirmer" %}</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="rejectModal{{ deposit.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+                <h3 class="text-lg font-bold mb-4">{% trans "Rejeter le dépôt" %}</h3>
+                <form method="post" action="{% url 'admin_deposit_reject' pk=deposit.pk %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">{% trans "Raison du rejet" %}</label>
+                        <textarea name="reason" rows="3" required class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none text-sm" placeholder="{% trans 'Indiquez la raison...' %}"></textarea>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" onclick="closeModal('rejectModal{{ deposit.pk }}')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors font-medium">{% trans "Confirmer le rejet" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-center py-12">{% trans "Aucun dépôt trouvé." %}</p>
+        {% endfor %}
+    </div>
+
+    {% if deposits.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if deposits.has_previous %}
+        <a href="?page={{ deposits.previous_page_number }}&status={{ current_status }}&q={{ q }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ deposits.number }} / {{ deposits.paginator.num_pages }}</span>
+        {% if deposits.has_next %}
+        <a href="?page={{ deposits.next_page_number }}&status={{ current_status }}&q={{ q }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

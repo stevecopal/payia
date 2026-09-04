@@ -1,0 +1,42 @@
+{% extends "base/dashboard.html" %}
+{% load i18n %}
+{% block title %}PAYIA - Journal financier{% endblock %}
+{% block dashboard_content %}
+<div class="space-y-4">
+    <h1 class="text-xl font-display">{% trans "Journal financier" %}</h1>
+
+  
+
+    <div class="bg-gray-900 rounded-xl border border-gray-800">
+        {% if entries %}
+        <div class="divide-y divide-gray-800">
+            {% for entry in entries %}
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div>
+                    <p class="text-sm">{{ entry.get_entry_type_display }}</p>
+                    <p class="text-xs text-gray-500">{{ entry.description|truncatewords:10 }}</p>
+                    <p class="text-xs text-gray-600">{{ entry.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-semibold {% if entry.amount > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+                        {% if entry.amount > 0 %}+{% endif %}{{ entry.amount|floatformat:2 }}
+                    </p>
+                    <p class="text-xs text-gray-600">{% trans "Solde:" %} {{ entry.balance_after|floatformat:2 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if entries.has_other_pages %}
+        <div class="px-4 py-3 border-t border-gray-800 flex justify-center gap-2">
+            {% if entries.has_previous %}<a href="?page={{ entries.previous_page_number }}&type={{ request.GET.type }}" class="px-3 py-1 text-xs bg-gray-800 text-gray-400 rounded hover:text-white">{% trans "Précédent" %}</a>{% endif %}
+            <span class="px-3 py-1 text-xs text-gray-500">{{ entries.number }}/{{ entries.paginator.num_pages }}</span>
+            {% if entries.has_next %}<a href="?page={{ entries.next_page_number }}&type={{ request.GET.type }}" class="px-3 py-1 text-xs bg-gray-800 text-gray-400 rounded hover:text-white">{% trans "Suivant" %}</a>{% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <p class="text-gray-500 text-sm text-center py-12">{% trans "Aucune écriture" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
