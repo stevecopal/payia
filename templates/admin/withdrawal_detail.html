@@ -20,7 +20,7 @@
             <div class="space-y-3">
                 <h3 class="text-sm font-medium text-gray-400">{% trans "Utilisateur" %}</h3>
                 <div class="bg-white/5 rounded-lg p-4 border border-gray-800/50 space-y-2">
-                    <p class="text-sm"><span class="text-gray-500">{% trans "Nom" %}:</span> {{ withdrawal.user.first_name }} {{ withdrawal.user.last_name }}</p>
+                    <p class="text-sm"><span class="text-gray-500">{% trans "Nom" %}:</span> {{ withdrawal.user.profile.first_name|default:withdrawal.user.username }} {{ withdrawal.user.profile.last_name }}</p>
                     <p class="text-sm"><span class="text-gray-500">{% trans "Téléphone" %}:</span> <span class="font-mono">{{ withdrawal.user.phone_number }}</span></p>
                     {% if withdrawal.user.email %}<p class="text-sm"><span class="text-gray-500">{% trans "Email" %}:</span> {{ withdrawal.user.email }}</p>{% endif %}
                 </div>

@@ -21,10 +21,10 @@
         <a href="{% url 'admin_user_detail' pk=u.pk %}" class="flex items-center justify-between p-4 border-b border-gray-800/50 hover:bg-white/5 transition-colors">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono">
-                    {{ u.first_name|first|upper }}{{ u.last_name|first|upper }}
+                    {{ u.profile.first_name|first|upper }}{{ u.profile.last_name|first|upper }}
                 </div>
                 <div>
-                    <p class="font-medium text-sm">{{ u.first_name }} {{ u.last_name }}</p>
+                    <p class="font-medium text-sm">{{ u.profile.first_name|default:u.username }} {{ u.profile.last_name }}</p>
                     <p class="text-xs text-gray-400 font-mono">{{ u.phone_number }}</p>
                 </div>
             </div>

@@ -13,7 +13,7 @@ class WithdrawalServiceTestCase(TestCase):
             phone_number='+2250700000008',
         )
         UserProfile.objects.get_or_create(user=self.user)
-        self.wallet = Wallet.objects.create(user=self.user)
+        self.wallet, _ = Wallet.objects.get_or_create(user=self.user)
         self.payment_method = PaymentMethod.objects.create(
             name='Mobile Money',
             slug='mobile-money',
@@ -30,7 +30,7 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
         self.assertIsNotNone(withdrawal)
         self.assertEqual(withdrawal.status, Withdrawal.Status.PENDING)
@@ -45,7 +45,7 @@ class WithdrawalServiceTestCase(TestCase):
                 user=self.user,
                 amount=Decimal('5000'),
                 payment_method_id=self.payment_method.pk,
-                withdrawal_number='+2250700000008',
+                withdrawal_number='+237670000005',
             )
 
     def test_approve_withdrawal(self):
@@ -58,9 +58,9 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
-        admin = User.objects.create(phone_number='+2250700000096')
+        admin = User.objects.create(username='admin_approve_1', phone_number='+237670000096')
         WithdrawalService.approve_withdrawal(withdrawal, admin)
 
         self.wallet.refresh_from_db()
@@ -77,9 +77,9 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
-        admin = User.objects.create(phone_number='+2250700000095')
+        admin = User.objects.create(username='admin_reject_1', phone_number='+237670000095')
         WithdrawalService.reject_withdrawal(withdrawal, admin, 'Test')
 
         self.wallet.refresh_from_db()
@@ -96,9 +96,9 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
-        admin = User.objects.create(phone_number='+2250700000094')
+        admin = User.objects.create(username='admin_approve_2', phone_number='+237670000094')
         WithdrawalService.approve_withdrawal(withdrawal, admin)
         with self.assertRaises(ValueError):
             WithdrawalService.approve_withdrawal(withdrawal, admin)
@@ -113,9 +113,9 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
-        admin = User.objects.create(phone_number='+2250700000093')
+        admin = User.objects.create(username='admin_reject_2', phone_number='+237670000093')
         with self.assertRaises(ValueError):
             WithdrawalService.reject_withdrawal(withdrawal, admin, '')
 
@@ -130,7 +130,7 @@ class WithdrawalServiceTestCase(TestCase):
                 user=self.user,
                 amount=Decimal('1000'),
                 payment_method_id=self.payment_method.pk,
-                withdrawal_number='+2250700000008',
+                withdrawal_number='+237670000005',
             )
 
     def test_fee_calculated(self):
@@ -145,7 +145,7 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
         self.assertGreater(withdrawal.fee, Decimal('0'))
         self.assertEqual(withdrawal.net_amount, withdrawal.amount - withdrawal.fee)
@@ -160,7 +160,7 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('2000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
         withdrawals = WithdrawalService.get_user_withdrawals(self.user)
         self.assertEqual(withdrawals.count(), 1)
@@ -174,7 +174,7 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('5000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
         self.assertIsNotNone(withdrawal.created_at)
 
@@ -188,13 +188,13 @@ class WithdrawalServiceTestCase(TestCase):
             user=self.user,
             amount=Decimal('3000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
         WithdrawalService.create_withdrawal(
             user=self.user,
             amount=Decimal('4000'),
             payment_method_id=self.payment_method.pk,
-            withdrawal_number='+2250700000008',
+            withdrawal_number='+237670000005',
         )
         self.wallet.refresh_from_db()
         self.assertEqual(self.wallet.pending_balance, Decimal('7000'))

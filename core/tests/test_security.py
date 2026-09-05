@@ -2,12 +2,14 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from core.models import User, UserProfile, Role
 from core.middleware import RateLimitStore
+from core.services.registration_security import RegistrationSecurityService
 
 
 class SecurityTestCase(TestCase):
     def setUp(self):
         self.client = Client(enforce_csrf_checks=True)
         RateLimitStore.clear()
+        RegistrationSecurityService.clear_all()
 
     def test_csrf_protection_register(self):
         response = self.client.post(reverse('register'), {
@@ -115,3 +117,44 @@ class SecurityTestCase(TestCase):
         })
         user.refresh_from_db()
         self.assertTrue(user.check_password('NewPass456!'))
+
+
+class RegistrationSecurityMiddlewareTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        RateLimitStore.clear()
+        RegistrationSecurityService.clear_all()
+
+    def test_middleware_blocks_registration_when_blocked(self):
+        ip = '127.0.0.1'
+        RegistrationSecurityService._apply_block(
+            RegistrationSecurityService._get_ip_key(ip), ip
+        )
+
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertEqual(response.status_code, 403)
+
+    def test_middleware_allows_registration_when_not_blocked(self):
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertEqual(response.status_code, 302)
+
+    def test_registration_integrity_error_handled(self):
+        User.objects.create_user('testuser', '+237690123456', password='TestPass123!')
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.filter(username='testuser').count(), 1)

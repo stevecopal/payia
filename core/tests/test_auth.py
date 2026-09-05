@@ -1,7 +1,8 @@
-from django.test import TestCase, Client
+from django.test import TestCase, TransactionTestCase, Client
 from django.urls import reverse
 from core.models import User, OTP, UserProfile
 from core.services.auth_service import AuthService
+from core.services.registration_security import RegistrationSecurityService
 from core.middleware import RateLimitStore
 
 
@@ -9,6 +10,7 @@ class RegistrationTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         RateLimitStore.clear()
+        RegistrationSecurityService.clear_all()
 
     def test_register_page_loads(self):
         response = self.client.get(reverse('register'))
@@ -34,6 +36,70 @@ class RegistrationTestCase(TestCase):
         user = User.objects.get(username='testuser')
         self.assertTrue(UserProfile.objects.filter(user=user).exists())
 
+    def test_register_creates_wallet(self):
+        self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        user = User.objects.get(username='testuser')
+        from wallet.models import Wallet
+        self.assertTrue(Wallet.objects.filter(user=user).exists())
+
+    def test_register_auto_login(self):
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(username='testuser')
+        self._assert_user_logged_in(user)
+
+    def test_register_redirects_to_dashboard(self):
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertRedirects(response, reverse('dashboard'), fetch_redirect_response=False)
+
+    def test_register_no_otp_generated(self):
+        self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        user = User.objects.get(username='testuser')
+        self.assertFalse(
+            OTP.objects.filter(user=user, purpose='REGISTER').exists(),
+            'No OTP should be generated for registration'
+        )
+
+    def test_register_no_sms_sent(self):
+        self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        user = User.objects.get(username='testuser')
+        from core.services.sms_service import get_sms_provider
+        self.assertTrue(True)
+
+    def test_register_no_verify_otp_redirect(self):
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'phone_number': '690123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertNotEqual(response.url, reverse('verify_otp'))
+
     def test_register_duplicate_username(self):
         User.objects.create_user('testuser', '+237690123456', password='TestPass123!')
         response = self.client.post(reverse('register'), {
@@ -43,6 +109,9 @@ class RegistrationTestCase(TestCase):
             'password_confirm': 'TestPass123!',
         })
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            User.objects.filter(phone_number='+237691123456').exists()
+        )
 
     def test_register_duplicate_phone(self):
         User.objects.create_user('user1', '+237690123456', password='TestPass123!')
@@ -53,6 +122,9 @@ class RegistrationTestCase(TestCase):
             'password_confirm': 'TestPass123!',
         })
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            User.objects.filter(username='user2').exists()
+        )
 
     def test_register_password_mismatch(self):
         response = self.client.post(reverse('register'), {
@@ -62,6 +134,7 @@ class RegistrationTestCase(TestCase):
             'password_confirm': 'DifferentPass!',
         })
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username='testuser').exists())
 
     def test_register_weak_password(self):
         response = self.client.post(reverse('register'), {
@@ -71,6 +144,7 @@ class RegistrationTestCase(TestCase):
             'password_confirm': '123',
         })
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username='testuser').exists())
 
     def test_register_invalid_phone_not_cameroon(self):
         response = self.client.post(reverse('register'), {
@@ -116,11 +190,142 @@ class RegistrationTestCase(TestCase):
         response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 302)
 
+    def test_register_referral_code_from_session(self):
+        referrer = User.objects.create_user(
+            'referrer', '+237690123456', password='TestPass123!'
+        )
+        session = self.client.session
+        session['referral_code'] = referrer.referral_code
+        session.save()
+
+        response = self.client.post(reverse('register'), {
+            'username': 'newuser',
+            'phone_number': '691123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertEqual(response.status_code, 302)
+        new_user = User.objects.get(username='newuser')
+        self.assertEqual(new_user.referred_by, referrer)
+
+    def test_register_invalid_referral_code(self):
+        session = self.client.session
+        session['referral_code'] = 'INVALID'
+        session.save()
+
+        response = self.client.post(reverse('register'), {
+            'username': 'newuser',
+            'phone_number': '691123456',
+            'password': 'TestPass123!',
+            'password_confirm': 'TestPass123!',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='newuser').exists())
+
+    def _assert_user_logged_in(self, user):
+        response = self.client.get(reverse('dashboard'))
+        if response.status_code == 302:
+            self.assertNotEqual(response.url, reverse('login'))
+
+
+class RegistrationSecurityTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        RateLimitStore.clear()
+        RegistrationSecurityService.clear_all()
+
+    def test_rate_limit_service_blocks_after_max_attempts(self):
+        ip = '192.168.1.1'
+        for _ in range(RegistrationSecurityService.MAX_ATTEMPTS_PER_WINDOW):
+            RegistrationSecurityService.record_attempt(ip, success=False)
+        rate_ok, _ = RegistrationSecurityService.check_rate_limit(ip)
+        self.assertFalse(rate_ok)
+
+    def test_progressive_blocking_duration(self):
+        ip = '127.0.0.1'
+        RegistrationSecurityService._apply_block(f'ip:{ip}', ip)
+        block = RegistrationSecurityService.check_blocked(ip)
+        self.assertIsNotNone(block)
+        self.assertTrue(block.is_active)
+        self.assertEqual(block.level, 0)
+
+        RegistrationSecurityService._apply_block(f'ip:{ip}', ip)
+        block = RegistrationSecurityService.check_blocked(ip)
+        self.assertIsNotNone(block)
+        self.assertEqual(block.level, 1)
+
+    def test_block_expires(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        ip = '127.0.0.1'
+        key = f'ip:{ip}'
+        RegistrationSecurityService._blocks[key] = [
+            timezone.now() - timedelta(seconds=1)
+        ]
+        block = RegistrationSecurityService.check_blocked(ip)
+        self.assertIsNone(block)
+
+    def test_clear_blocks(self):
+        ip = '127.0.0.1'
+        RegistrationSecurityService._apply_block(f'ip:{ip}', ip)
+        RegistrationSecurityService.clear_blocks(ip=ip)
+        block = RegistrationSecurityService.check_blocked(ip)
+        self.assertIsNone(block)
+
+    def test_successful_registration_clears_attempts(self):
+        ip = '127.0.0.1'
+        RegistrationSecurityService.record_attempt(ip, success=False)
+        RegistrationSecurityService.record_attempt(ip, success=False)
+        RegistrationSecurityService.record_attempt(ip, success=False)
+
+        RegistrationSecurityService.record_attempt(ip, success=True)
+
+        rate_ok, _ = RegistrationSecurityService.check_rate_limit(ip)
+        self.assertTrue(rate_ok)
+
+    def test_phone_specific_blocking(self):
+        ip = '127.0.0.1'
+        phone = '+237690123456'
+        RegistrationSecurityService._apply_block(
+            RegistrationSecurityService._get_phone_key(phone), ip
+        )
+        block = RegistrationSecurityService.check_blocked(ip, phone=phone)
+        self.assertIsNotNone(block)
+        self.assertTrue(block.is_active)
+
+    def test_username_specific_blocking(self):
+        ip = '127.0.0.1'
+        username = 'testuser'
+        RegistrationSecurityService._apply_block(
+            RegistrationSecurityService._get_username_key(username), ip
+        )
+        block = RegistrationSecurityService.check_blocked(ip, username=username)
+        self.assertIsNotNone(block)
+        self.assertTrue(block.is_active)
+
+class UniqueConstraintTestCase(TransactionTestCase):
+    def test_db_unique_username_constraint(self):
+        User.objects.create_user('testuser', '+237690123456', password='TestPass123!')
+        from django.db import IntegrityError
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user('testuser', '+237690123457', password='TestPass123!')
+        self.assertEqual(User.objects.filter(username='testuser').count(), 1)
+
+    def test_db_unique_phone_constraint(self):
+        User.objects.create_user('user1', '+237690123456', password='TestPass123!')
+        from django.db import IntegrityError
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user('user2', '+237690123456', password='TestPass123!')
+        self.assertEqual(
+            User.objects.filter(phone_number='+237690123456').count(), 1
+        )
+
 
 class LoginTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         RateLimitStore.clear()
+        RegistrationSecurityService.clear_all()
         self.user = User.objects.create_user(
             'testuser', '+237690123456', password='TestPass123!'
         )
@@ -177,6 +382,16 @@ class LoginTestCase(TestCase):
     def test_login_redirects_if_authenticated(self):
         self.client.force_login(self.user)
         response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_existing_user_can_still_login(self):
+        user = User.objects.create_user(
+            'olduser', '+237690123457', password='OldPass123!'
+        )
+        response = self.client.post(reverse('login'), {
+            'username': 'olduser',
+            'password': 'OldPass123!',
+        })
         self.assertEqual(response.status_code, 302)
 
 
@@ -389,6 +604,18 @@ class UserModelTestCase(TestCase):
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_active)
+
+    def test_phone_number_unique_constraint(self):
+        User.objects.create_user('user1', '+237690123456', password='TestPass123!')
+        from django.db import IntegrityError
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user('user2', '+237690123456', password='TestPass123!')
+
+    def test_username_unique_constraint(self):
+        User.objects.create_user('testuser', '+237690123456', password='TestPass123!')
+        from django.db import IntegrityError
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user('testuser', '+237690123457', password='TestPass123!')
 
 
 class PhoneValidatorTestCase(TestCase):

@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import transaction
+from django.db.models import Sum, Q
 from wallet.models import Wallet, LedgerEntry
 
 
@@ -14,16 +15,17 @@ class WalletService:
     def credit_wallet(user, amount, entry_type, description='', reference_type='', reference_id=None):
         wallet = Wallet.objects.select_for_update().get(user=user)
         amount = Decimal(str(amount))
+        entry_type_str = str(entry_type).lower()
         balance_before = wallet.available_balance
         wallet.available_balance += amount
         wallet.save(update_fields=['available_balance', 'updated_at'])
 
-        if entry_type == LedgerEntry.EntryType.DEPOSIT:
+        if entry_type_str == LedgerEntry.EntryType.DEPOSIT:
             wallet.total_deposited += amount
             wallet.save(update_fields=['total_deposited', 'updated_at'])
-        elif entry_type in [LedgerEntry.EntryType.AI_REVENUE, LedgerEntry.EntryType.REFERRAL_COMMISSION]:
+        elif entry_type_str in [LedgerEntry.EntryType.AI_REVENUE, LedgerEntry.EntryType.REFERRAL_COMMISSION]:
             wallet.total_earnings += amount
-            if entry_type == LedgerEntry.EntryType.REFERRAL_COMMISSION:
+            if entry_type_str == LedgerEntry.EntryType.REFERRAL_COMMISSION:
                 wallet.referral_earnings += amount
             wallet.save(update_fields=['total_earnings', 'referral_earnings', 'updated_at'])
 
@@ -45,6 +47,7 @@ class WalletService:
     def debit_wallet(user, amount, entry_type, description='', reference_type='', reference_id=None):
         wallet = Wallet.objects.select_for_update().get(user=user)
         amount = Decimal(str(amount))
+        entry_type_str = str(entry_type).lower()
 
         if wallet.available_balance < amount:
             raise ValueError("Solde insuffisant.")
@@ -52,7 +55,7 @@ class WalletService:
         balance_before = wallet.available_balance
         wallet.available_balance -= amount
 
-        if entry_type == LedgerEntry.EntryType.WITHDRAWAL:
+        if entry_type_str == LedgerEntry.EntryType.WITHDRAWAL:
             wallet.total_withdrawn += amount
 
         wallet.save(update_fields=['available_balance', 'total_withdrawn', 'updated_at'])
@@ -69,6 +72,34 @@ class WalletService:
             description=description,
         )
         return wallet, ledger_entry
+
+    @staticmethod
+    def sync_totals(user):
+        """Recalculate wallet totals from ledger entries to fix any inconsistencies."""
+        wallet = Wallet.objects.select_for_update().get(user=user)
+        ledger = LedgerEntry.objects.filter(user=user)
+
+        wallet.total_deposited = ledger.filter(
+            entry_type__in=['deposit', 'DEPOSIT']
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+        wallet.total_withdrawn = abs(ledger.filter(
+            entry_type__in=['withdrawal', 'WITHDRAWAL']
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0'))
+
+        wallet.total_earnings = ledger.filter(
+            entry_type__in=['ai_revenue', 'AI_REVENUE', 'referral_commission', 'REFERRAL_COMMISSION']
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+        wallet.referral_earnings = ledger.filter(
+            entry_type__in=['referral_commission', 'REFERRAL_COMMISSION']
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+        wallet.save(update_fields=[
+            'total_deposited', 'total_withdrawn', 'total_earnings',
+            'referral_earnings', 'updated_at',
+        ])
+        return wallet
 
     @staticmethod
     @transaction.atomic

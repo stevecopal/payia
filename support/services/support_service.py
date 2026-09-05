@@ -29,6 +29,9 @@ class SupportService:
         except SupportTicket.DoesNotExist:
             return None, "Ticket introuvable."
 
+        if ticket.status == 'CLOSED':
+            return None, "Ce ticket est fermé."
+
         if not is_internal_note:
             if ticket.user != sender and not (sender.is_staff or
                 (ticket.assigned_to and ticket.assigned_to == sender)):

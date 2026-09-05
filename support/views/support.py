@@ -39,6 +39,9 @@ def support_ticket_detail(request, pk):
     ticket_messages = ticket.messages.all().select_related('sender')
     
     if request.method == 'POST':
+        if ticket.status == 'CLOSED':
+            messages.error(request, _('Ce ticket est fermé.'))
+            return redirect('support_ticket_detail', pk=pk)
         form = SupportReplyForm(request.POST, request.FILES)
         if form.is_valid():
             SupportService.reply_to_ticket(
@@ -65,4 +68,4 @@ def support_ticket_close(request, pk):
     if request.method == 'POST':
         SupportService.close_ticket(pk, request.user)
         messages.success(request, _('Ticket fermé.'))
-    return redirect('support_ticket_list')
+    return redirect('support_list')

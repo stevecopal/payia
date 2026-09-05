@@ -2,6 +2,8 @@ import logging
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import login
+from django.db import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
 from core.forms.auth import (
@@ -13,10 +15,11 @@ from core.forms.auth import (
     OTPForm,
 )
 from core.services.auth_service import AuthService
-from core.services.sms_service import get_sms_provider
+from core.services.registration_security import RegistrationSecurityService
 from core.permissions import login_required_custom
 
 logger = logging.getLogger('core')
+security_logger = logging.getLogger('security')
 
 
 def register_view(request):
@@ -29,30 +32,73 @@ def register_view(request):
         return redirect('dashboard')
 
     if request.method == 'POST':
+        ip = AuthService._get_client_ip(request)
+        block = RegistrationSecurityService.check_blocked(ip)
+        if block and block.is_active:
+            messages.error(
+                request,
+                _('Trop de tentatives. Veuillez réessayer dans %(time)s.') % {
+                    'time': block.remaining_display,
+                },
+            )
+            return render(request, 'auth/register.html', {'form': RegisterForm()})
+
         form = RegisterForm(request.POST)
         if form.is_valid():
-            referral_code = request.session.pop('referral_code', None)
-            user = AuthService.register_user(
-                username=form.cleaned_data['username'],
-                phone_number=form.cleaned_data['phone_number'],
-                password=form.cleaned_data['password'],
-                referral_code=referral_code,
+            phone = form.cleaned_data['phone_number']
+            username = form.cleaned_data['username']
+
+            rate_ok, blocked_key = RegistrationSecurityService.check_rate_limit(
+                ip, phone=phone, username=username,
             )
-            otp, error = AuthService.generate_otp(
-                user, 'REGISTER', AuthService._get_client_ip(request)
-            )
-            if otp:
-                sms = get_sms_provider()
-                sms.send_otp(user.phone_number, otp.code)
-                request.session['otp_user_id'] = user.pk
-                request.session['otp_purpose'] = 'REGISTER'
-                messages.success(
-                    request,
-                    _('Compte créé. Un code de vérification a été envoyé.'),
+            if not rate_ok:
+                RegistrationSecurityService._apply_block(blocked_key, ip)
+                security_logger.warning(
+                    f'Registration rate limit exceeded: ip={ip}, '
+                    f'phone={phone}, username={username}'
                 )
-                return redirect('verify_otp')
-            else:
-                messages.error(request, error)
+                messages.error(
+                    request,
+                    _('Trop de tentatives. Veuillez réessayer dans 15 minutes.'),
+                )
+                return render(request, 'auth/register.html', {'form': RegisterForm()})
+
+            referral_code = request.session.pop('referral_code', None)
+            try:
+                user = AuthService.register_user(
+                    username=username,
+                    phone_number=phone,
+                    password=form.cleaned_data['password'],
+                    referral_code=referral_code,
+                )
+            except IntegrityError:
+                RegistrationSecurityService.record_attempt(
+                    ip, phone=phone, username=username, success=False,
+                )
+                messages.error(
+                    request,
+                    _('Une erreur est survenue lors de la création du compte. '
+                      'Ce nom d\'utilisateur ou ce numéro est peut-être déjà utilisé.'),
+                )
+                return render(request, 'auth/register.html', {'form': form})
+
+            RegistrationSecurityService.record_attempt(
+                ip, phone=phone, username=username, success=True,
+            )
+
+            login(request, user)
+
+            security_logger.info(
+                f'New registration: user={user.username}, ip={ip}'
+            )
+
+            messages.success(request, _('Votre compte a été créé avec succès.'))
+            if user.is_superuser or (
+                hasattr(user, 'role') and user.role
+                and user.role.slug in ('admin', 'super-admin')
+            ):
+                return redirect('admin_dashboard')
+            return redirect('dashboard')
     else:
         form = RegisterForm()
     return render(request, 'auth/register.html', {'form': form})

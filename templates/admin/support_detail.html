@@ -12,7 +12,7 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
                 <h1 class="text-xl font-bold">{{ ticket.subject }}</h1>
-                <p class="text-sm text-gray-400 mt-1">{{ ticket.user.first_name }} {{ ticket.user.last_name }} ({{ ticket.user.phone_number }}) - {{ ticket.created_at|date:"d/m/Y H:i" }}</p>
+                <p class="text-sm text-gray-400 mt-1">{{ ticket.user.profile.first_name|default:ticket.user.username }} {{ ticket.user.profile.last_name }} ({{ ticket.user.phone_number }}) - {{ ticket.created_at|date:"d/m/Y H:i" }}</p>
             </div>
             <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 text-xs font-medium rounded-full {% if ticket.status == 'OPEN' %}bg-yellow-500/15 text-yellow-400{% elif ticket.status == 'IN_PROGRESS' %}bg-blue-500/15 text-blue-400{% else %}bg-green-500/15 text-green-400{% endif %}">
@@ -23,6 +23,7 @@
         </div>
 
         <div class="flex flex-wrap gap-2 mb-6">
+            {% if ticket.status != 'CLOSED' %}
             <form method="post" class="inline">
                 {% csrf_token %}
                 <input type="hidden" name="form_type" value="status">
@@ -30,8 +31,10 @@
                     <option value="OPEN" {% if ticket.status == 'OPEN' %}selected{% endif %}>{% trans "Ouvert" %}</option>
                     <option value="IN_PROGRESS" {% if ticket.status == 'IN_PROGRESS' %}selected{% endif %}>{% trans "En cours" %}</option>
                     <option value="RESOLVED" {% if ticket.status == 'RESOLVED' %}selected{% endif %}>{% trans "Résolu" %}</option>
+                    <option value="CLOSED" {% if ticket.status == 'CLOSED' %}selected{% endif %}>{% trans "Fermé" %}</option>
                 </select>
             </form>
+            {% endif %}
         </div>
     </div>
 
@@ -40,7 +43,7 @@
         <div class="bg-white/5 backdrop-blur rounded-xl border {% if msg.is_internal_note %}border-yellow-500/20 bg-yellow-500/5{% else %}border-gray-800{% endif %} p-4">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-medium {% if msg.sender.is_staff %}text-green-400{% endif %}">
-                    {% if msg.sender.is_staff %}{% trans "Admin" %}{% else %}{{ msg.sender.first_name }} {{ msg.sender.last_name }}{% endif %}
+                    {% if msg.sender.is_staff %}{% trans "Admin" %}{% else %}{{ msg.sender.profile.first_name|default:msg.sender.username }} {{ msg.sender.profile.last_name }}{% endif %}
                     {% if msg.is_internal_note %}<span class="ml-2 px-2 py-0.5 text-[10px] bg-yellow-500/20 text-yellow-400 rounded-full">{% trans "Note interne" %}</span>{% endif %}
                 </span>
                 <span class="text-xs text-gray-500">{{ msg.created_at|date:"d/m/Y H:i" }}</span>
@@ -64,6 +67,7 @@
         {% endfor %}
     </div>
 
+    {% if ticket.status != 'CLOSED' %}
     <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
         <h3 class="font-semibold mb-4">{% trans "Répondre" %}</h3>
         <form method="post" class="space-y-4">
@@ -79,5 +83,10 @@
             </div>
         </form>
     </div>
+    {% else %}
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6 text-center">
+        <p class="text-gray-400 text-sm">{% trans "Ce ticket est fermé. Aucune réponse possible." %}</p>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

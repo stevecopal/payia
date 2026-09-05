@@ -16,7 +16,7 @@ def dashboard_view(request):
     ):
         return redirect('admin_dashboard')
 
-    wallet = WalletService.get_wallet(request.user)
+    wallet = WalletService.sync_totals(request.user)
     active_rentals = AiService.get_active_rentals(request.user)
     referral_stats = ReferralService.get_referral_stats(request.user)
     unread_notifications = NotificationService.get_unread_count(request.user)

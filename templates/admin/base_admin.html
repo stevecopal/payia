@@ -114,10 +114,10 @@
                     </a>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-medium font-mono">
-                            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                            {{ user.profile.first_name|first|upper }}{{ user.profile.last_name|first|upper }}
                         </div>
                         <div class="hidden sm:block">
-                            <p class="text-sm font-medium">{{ user.first_name }} {{ user.last_name }}</p>
+                            <p class="text-sm font-medium">{{ user.profile.first_name|default:user.username }} {{ user.profile.last_name }}</p>
                             <p class="text-xs text-gray-500">{% trans "Administrateur" %}</p>
                         </div>
                     </div>

@@ -22,10 +22,10 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono shrink-0">
-                        {{ w.user.first_name|first|upper }}{{ w.user.last_name|first|upper }}
+                        {{ w.user.profile.first_name|first|upper }}{{ w.user.profile.last_name|first|upper }}
                     </div>
                     <div>
-                        <p class="font-medium text-sm">{{ w.user.first_name }} {{ w.user.last_name }}</p>
+                        <p class="font-medium text-sm">{{ w.user.profile.first_name|default:w.user.username }} {{ w.user.profile.last_name }}</p>
                         <p class="text-xs text-gray-400 font-mono">{{ w.user.phone_number }}</p>
                     </div>
                 </div>

@@ -47,11 +47,11 @@
                     {% for ref in referrals %}
                     <tr class="border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
                         <td class="p-4">
-                            <p class="font-medium">{{ ref.referrer.first_name }} {{ ref.referrer.last_name }}</p>
+                            <p class="font-medium">{{ ref.referrer.profile.first_name|default:ref.referrer.username }} {{ ref.referrer.profile.last_name }}</p>
                             <p class="text-xs text-gray-500 font-mono">{{ ref.referrer.phone_number }}</p>
                         </td>
                         <td class="p-4">
-                            <p class="font-medium">{{ ref.referred_user.first_name }} {{ ref.referred_user.last_name }}</p>
+                            <p class="font-medium">{{ ref.referred_user.profile.first_name|default:ref.referred_user.username }} {{ ref.referred_user.profile.last_name }}</p>
                             <p class="text-xs text-gray-500 font-mono">{{ ref.referred_user.phone_number }}</p>
                         </td>
                         <td class="p-4"><span class="px-2 py-1 text-xs rounded-full bg-blue-500/15 text-blue-400">{{ ref.referral_level }}</span></td>

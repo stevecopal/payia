@@ -11,7 +11,7 @@ class WalletServiceTestCase(TestCase):
             phone_number='+2250700000005',
         )
         UserProfile.objects.get_or_create(user=self.user)
-        self.wallet = Wallet.objects.create(user=self.user)
+        self.wallet, _ = Wallet.objects.get_or_create(user=self.user)
 
     def test_get_wallet(self):
         wallet = WalletService.get_wallet(self.user)
@@ -102,7 +102,7 @@ class LedgerEntryTestCase(TestCase):
         self.user = User.objects.create(
             phone_number='+2250700000006',
         )
-        self.wallet = Wallet.objects.create(user=self.user)
+        self.wallet, _ = Wallet.objects.get_or_create(user=self.user)
 
     def test_ledger_entries_created(self):
         WalletService.credit_wallet(self.user, Decimal('1000'), 'deposit', 'Test')

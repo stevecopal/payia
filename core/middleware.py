@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from django.http import HttpResponseForbidden
 from django.utils.deprecation import MiddlewareMixin
+from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger('security')
 
@@ -34,7 +35,7 @@ class RateLimitStore:
 class AuthRateLimitMiddleware(MiddlewareMixin):
     LOGIN_MAX = 5
     LOGIN_WINDOW = 900
-    REGISTER_MAX = 3
+    REGISTER_MAX = 5
     REGISTER_WINDOW = 3600
     OTP_MAX = 5
     OTP_WINDOW = 300
@@ -66,6 +67,14 @@ class AuthRateLimitMiddleware(MiddlewareMixin):
     def _record_request(self, key):
         RateLimitStore.add_request(key)
 
+    def _json_response(self, request, message, status=403):
+        if request.headers.get('Accept') == 'application/json':
+            from django.http import JsonResponse
+            return JsonResponse({'error': str(message)}, status=status)
+        from django.contrib import messages
+        messages.error(request, message)
+        return HttpResponseForbidden('Rate limit exceeded')
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         if request.method != 'POST':
             return None
@@ -76,27 +85,26 @@ class AuthRateLimitMiddleware(MiddlewareMixin):
             key = f'login:{ip}'
             if not self._check_rate(key, self.LOGIN_MAX, self.LOGIN_WINDOW):
                 logger.warning(f'Rate limit exceeded for login from IP: {ip}')
-                from django.contrib import messages
-                from django.utils.translation import gettext_lazy as _
-                messages.error(
+                return self._json_response(
                     request,
                     _('Trop de tentatives. Réessayez dans 15 minutes.'),
                 )
-                return HttpResponseForbidden('Rate limit exceeded')
             RateLimitStore.add_request(key)
 
         elif self._is_auth_path(request, 'register'):
-            key = f'register:{ip}'
-            if not self._check_rate(key, self.REGISTER_MAX, self.REGISTER_WINDOW):
-                logger.warning(f'Rate limit exceeded for register from IP: {ip}')
-                from django.contrib import messages
-                from django.utils.translation import gettext_lazy as _
-                messages.error(
-                    request,
-                    _('Trop de comptes créés. Réessayez plus tard.'),
+            from core.services.registration_security import RegistrationSecurityService
+            block = RegistrationSecurityService.check_blocked(ip)
+            if block and block.is_active:
+                logger.warning(
+                    f'Registration blocked from IP: {ip}, '
+                    f'level={block.level}, remaining={block.remaining_seconds}s'
                 )
-                return HttpResponseForbidden('Rate limit exceeded')
-            RateLimitStore.add_request(key)
+                return self._json_response(
+                    request,
+                    _('Trop de tentatives. Veuillez réessayer dans %(time)s.') % {
+                        'time': block.remaining_display,
+                    },
+                )
 
         elif self._is_auth_path(request, 'verify_otp'):
             username = request.POST.get('username', '')
@@ -105,13 +113,10 @@ class AuthRateLimitMiddleware(MiddlewareMixin):
                 logger.warning(
                     f'Rate limit exceeded for OTP from IP: {ip}, user: {username}'
                 )
-                from django.contrib import messages
-                from django.utils.translation import gettext_lazy as _
-                messages.error(
+                return self._json_response(
                     request,
                     _('Trop de tentatives de vérification. Réessayez plus tard.'),
                 )
-                return HttpResponseForbidden('Rate limit exceeded')
             RateLimitStore.add_request(key)
 
         elif self._is_auth_path(request, 'password_reset'):
@@ -122,13 +127,10 @@ class AuthRateLimitMiddleware(MiddlewareMixin):
                 logger.warning(
                     f'Rate limit exceeded for password reset from IP: {ip}'
                 )
-                from django.contrib import messages
-                from django.utils.translation import gettext_lazy as _
-                messages.error(
+                return self._json_response(
                     request,
                     _('Trop de demandes de réinitialisation. Réessayez plus tard.'),
                 )
-                return HttpResponseForbidden('Rate limit exceeded')
             RateLimitStore.add_request(key)
 
         return None

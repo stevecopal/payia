@@ -6,7 +6,7 @@ from wallet.models import LedgerEntry
 
 @login_required_custom
 def wallet_view(request):
-    wallet = WalletService.get_wallet(request.user)
+    wallet = WalletService.sync_totals(request.user)
     ledger_entries = LedgerEntry.objects.filter(
         user=request.user
     ).select_related('wallet').order_by('-created_at')[:20]
@@ -15,7 +15,7 @@ def wallet_view(request):
 
 @login_required_custom
 def ledger_view(request):
-    wallet = WalletService.get_wallet(request.user)
+    wallet = WalletService.sync_totals(request.user)
     entries = LedgerEntry.objects.filter(
         user=request.user
     ).select_related('wallet').order_by('-created_at')

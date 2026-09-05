@@ -563,6 +563,9 @@ def admin_support_ticket_detail(request, pk):
     if request.method == 'POST':
         form_type = request.POST.get('form_type', '')
         if form_type == 'reply':
+            if ticket.status == 'CLOSED':
+                messages.error(request, _('Ce ticket est fermé.'))
+                return redirect('admin_support_ticket_detail', pk=pk)
             SupportService.reply_to_ticket(
                 ticket_id=ticket.pk,
                 sender=request.user,

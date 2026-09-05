@@ -9,7 +9,7 @@
             <p class="text-gray-400 text-sm mt-1 font-mono">{% trans "Commencez votre aventure avec PAYIA" %}</p>
         </div>
 
-        <form method="post" class="space-y-4" novalidate>
+        <form method="post" class="space-y-4" novalidate id="register-form">
             {% csrf_token %}
 
             <div>
@@ -48,8 +48,9 @@
             </div>
             {% endif %}
 
-            <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
-                {% trans "S'inscrire" %}
+            <button type="submit" id="submit-btn" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                <span id="btn-text">{% trans "Créer mon compte" %}</span>
+                <span id="btn-loading" class="hidden">{% trans "Création du compte..." %}</span>
             </button>
         </form>
 
@@ -58,4 +59,14 @@
         </p>
     </div>
 </div>
+<script>
+document.getElementById('register-form').addEventListener('submit', function() {
+    var btn = document.getElementById('submit-btn');
+    var btnText = document.getElementById('btn-text');
+    var btnLoading = document.getElementById('btn-loading');
+    btn.disabled = true;
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+});
+</script>
 {% endblock %}
