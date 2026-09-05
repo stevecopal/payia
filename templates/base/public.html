@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Suez+One&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
 </head>
 <body class="font-sans bg-black text-white antialiased min-h-screen flex flex-col">
     {% include "base/nav.html" %}
