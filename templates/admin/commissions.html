@@ -13,6 +13,8 @@
                         <th class="p-4 font-medium">{% trans "Bénéficiaire" %}</th>
                         <th class="p-4 font-medium">{% trans "Source" %}</th>
                         <th class="p-4 font-medium">{% trans "Niveau" %}</th>
+                        <th class="p-4 font-medium">{% trans "Taux" %}</th>
+                        <th class="p-4 font-medium">{% trans "Base" %}</th>
                         <th class="p-4 font-medium">{% trans "Montant" %}</th>
                         <th class="p-4 font-medium">{% trans "Statut" %}</th>
                         <th class="p-4 font-medium">{% trans "Date" %}</th>
@@ -30,16 +32,18 @@
                             <p class="text-xs text-gray-500 font-mono">{{ c.source_user.phone_number }}</p>
                         </td>
                         <td class="p-4"><span class="px-2 py-1 text-xs rounded-full bg-blue-500/15 text-blue-400">{{ c.referral_level }}</span></td>
+                        <td class="p-4 font-mono text-xs text-gray-400">{{ c.percentage }}%</td>
+                        <td class="p-4 font-mono text-xs text-gray-400">{% trans "Dépôt" %} #{{ c.source_transaction_id }}</td>
                         <td class="p-4 font-bold font-mono text-green-400">{{ c.amount|floatformat:2 }}</td>
                         <td class="p-4">
-                            <span class="px-2 py-1 text-xs rounded-full {% if c.status == 'available' %}bg-green-500/15 text-green-400{% elif c.status == 'pending' %}bg-yellow-500/15 text-yellow-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
+                            <span class="px-2 py-1 text-xs rounded-full {% if c.status == 'approved' or c.status == 'available' %}bg-green-500/15 text-green-400{% elif c.status == 'pending' %}bg-yellow-500/15 text-yellow-400{% elif c.status == 'cancelled' %}bg-gray-500/15 text-gray-400{% elif c.status == 'revoked' %}bg-red-500/15 text-red-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
                                 {{ c.get_status_display }}
                             </span>
                         </td>
                         <td class="p-4 text-gray-400">{{ c.created_at|date:"d/m/Y" }}</td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="6" class="p-12 text-center text-gray-500">{% trans "Aucune commission." %}</td></tr>
+                    <tr><td colspan="8" class="p-12 text-center text-gray-500">{% trans "Aucune commission." %}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

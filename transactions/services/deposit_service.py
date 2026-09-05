@@ -87,6 +87,8 @@ class DepositService:
         if deposit.status != Deposit.Status.PENDING_REVIEW:
             return deposit
 
+        from referrals.services.referral_service import ReferralService
+
         with transaction.atomic():
             deposit.approve(admin_user)
 
@@ -98,6 +100,8 @@ class DepositService:
                 reference_type='Deposit',
                 reference_id=deposit.pk,
             )
+
+            referral_result = ReferralService.calculate_and_allocate_commissions(deposit)
 
             deposit.complete()
 
@@ -113,7 +117,11 @@ class DepositService:
                 action='deposit.approved',
                 target_type='Deposit',
                 target_id=str(deposit.pk),
-                description=f'Dépôt de {deposit.amount} XAF approuvé pour {deposit.user.phone_number}',
+                description=(
+                    f'Dépôt de {deposit.amount} XAF approuvé pour {deposit.user.phone_number}. '
+                    f'Commission parrainage: {referral_result["total_commission"]} XAF. '
+                    f'Montant productif: {referral_result["productive_amount"]} XAF.'
+                ),
             )
 
         return deposit

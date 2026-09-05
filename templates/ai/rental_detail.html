@@ -48,26 +48,23 @@
 
     <div class="grid grid-cols-2 gap-3">
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Revenu / période" %}</p>
-            <p class="text-lg font-bold font-mono text-green-400">{{ revenue_per_period|floatformat:2 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Montant investi" %}</p>
+            <p class="text-lg font-bold font-mono">{{ rental.amount_paid|floatformat:2 }} XAF</p>
         </div>
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Fréquence" %}</p>
-            <p class="text-lg font-bold font-mono">{{ frequency_label }}</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Revenu / période" %}</p>
+            <p class="text-lg font-bold font-mono text-green-400">+{{ revenue_per_period|floatformat:2 }} XAF</p>
         </div>
     </div>
 
     <div class="grid grid-cols-2 gap-3">
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Type de revenu" %}</p>
-            <p class="text-sm font-semibold">{{ revenue_type_label }}</p>
-            {% if offer.revenue_type == 'percentage' %}
-            <p class="text-xs text-gray-500">{{ offer.revenue_value }}% de {{ offer.price }}</p>
-            {% endif %}
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Fréquence" %}</p>
+            <p class="text-lg font-bold font-mono">{{ frequency_label }}</p>
         </div>
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
             <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Total gagné" %}</p>
-            <p class="text-lg font-bold font-mono text-green-400">{{ rental.total_revenue_earned|floatformat:2 }}</p>
+            <p class="text-lg font-bold font-mono text-green-400">{{ rental.total_revenue_earned|floatformat:2 }} XAF</p>
         </div>
     </div>
 
@@ -91,7 +88,7 @@
         <div class="space-y-2.5">
             <div class="flex justify-between items-center">
                 <span class="text-xs text-gray-400">{% trans "Montant payé" %}</span>
-                <span class="text-sm font-mono font-semibold">{{ rental.amount_paid|floatformat:2 }}</span>
+                <span class="text-sm font-mono font-semibold">{{ rental.amount_paid|floatformat:2 }} XAF</span>
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-xs text-gray-400">{% trans "Durée" %}</span>
@@ -104,6 +101,16 @@
             <div class="flex justify-between items-center">
                 <span class="text-xs text-gray-400">{% trans "Fin" %}</span>
                 <span class="text-sm font-mono">{{ rental.end_date|date:"d/m/Y H:i" }}</span>
+            </div>
+            {% if rental.last_payment_at %}
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Dernier paiement" %}</span>
+                <span class="text-sm font-mono text-green-400">{{ rental.last_payment_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            {% endif %}
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">{% trans "Nombre de paiements" %}</span>
+                <span class="text-sm font-mono">{{ rental.payment_count }}</span>
             </div>
             {% if rental.status == 'active' %}
             <div class="flex justify-between items-center">
@@ -121,9 +128,33 @@
 (function() {
     var nextPaymentTs = {{ next_payment_timestamp }};
     var endTs = {{ end_timestamp }};
-    var reloadTimer = null;
+    var syncUrl = "{% url 'ai_rental_sync' pk=rental.pk %}";
+    var syncTimer = null;
+    var countdownTimer = null;
 
     function pad(n) { return n < 10 ? '0' + n : n; }
+
+    function formatCountdown(diff) {
+        if (diff <= 0) return { hours: '00', minutes: '00', seconds: '00', label: '{% trans "Paiement en cours..." %}', date: '' };
+        var hours = Math.floor(diff / 3600000);
+        var minutes = Math.floor((diff % 3600000) / 60000);
+        var seconds = Math.floor((diff % 60000) / 1000);
+        var parts = [];
+        if (hours > 0) parts.push(hours + 'h');
+        parts.push(pad(minutes) + 'min');
+        parts.push(pad(seconds) + 's');
+
+        var d = new Date(nextPaymentTs);
+        var dateStr = '{% trans "Le" %} ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+
+        return {
+            hours: pad(hours),
+            minutes: pad(minutes),
+            seconds: pad(seconds),
+            label: '{% trans "Prochain paiement dans" %} ' + parts.join(' '),
+            date: dateStr
+        };
+    }
 
     function updateCountdown() {
         var now = Date.now();
@@ -135,42 +166,32 @@
         var labelEl = document.getElementById('countdown-label');
         var dateEl = document.getElementById('countdown-date');
 
-        if (diff <= 0) {
-            if (hEl) hEl.textContent = '00';
-            if (mEl) mEl.textContent = '00';
-            if (sEl) sEl.textContent = '00';
-            if (labelEl) labelEl.textContent = '{% trans "Paiement en cours..." %}';
-            if (dateEl) dateEl.textContent = '';
-            if (!reloadTimer) {
-                reloadTimer = setTimeout(function() { location.reload(); }, 8000);
-            }
-            return;
-        }
+        if (!hEl) return;
 
-        var hours = Math.floor(diff / 3600000);
-        var minutes = Math.floor((diff % 3600000) / 60000);
-        var seconds = Math.floor((diff % 60000) / 1000);
+        var cd = formatCountdown(diff);
+        hEl.textContent = cd.hours;
+        mEl.textContent = cd.minutes;
+        sEl.textContent = cd.seconds;
+        if (labelEl) labelEl.textContent = cd.label;
+        if (dateEl) dateEl.textContent = cd.date;
+    }
 
-        if (hEl) hEl.textContent = pad(hours);
-        if (mEl) mEl.textContent = pad(minutes);
-        if (sEl) sEl.textContent = pad(seconds);
-
-        if (labelEl) {
-            var parts = [];
-            if (hours > 0) parts.push(hours + 'h');
-            parts.push(pad(minutes) + 'min');
-            parts.push(pad(seconds) + 's');
-            labelEl.textContent = '{% trans "Prochain paiement dans" %} ' + parts.join(' ');
-        }
-
-        if (dateEl) {
-            var d = new Date(nextPaymentTs);
-            dateEl.textContent = '{% trans "Le" %} ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-        }
+    function syncWithBackend() {
+        fetch(syncUrl)
+            .then(function(resp) { return resp.json(); })
+            .then(function(data) {
+                if (data.next_payment_ts && data.next_payment_ts > 0) {
+                    nextPaymentTs = data.next_payment_ts;
+                } else if (data.status !== 'active') {
+                    location.reload();
+                }
+            })
+            .catch(function() {});
     }
 
     updateCountdown();
-    setInterval(updateCountdown, 1000);
+    countdownTimer = setInterval(updateCountdown, 1000);
+    setInterval(syncWithBackend, 30000);
 })();
 </script>
 {% endblock %}

@@ -10,6 +10,7 @@ from core.permissions import login_required_custom
 @login_required_custom
 def referral_dashboard(request):
     stats = ReferralService.get_referral_stats(request.user)
+    commission_stats = ReferralService.get_commission_stats(request.user)
     referral_code = ReferralService.get_referral_code(request.user)
     referral_link = ReferralService.get_referral_link(request.user, request)
 
@@ -36,17 +37,14 @@ def referral_dashboard(request):
         user=request.user
     ).select_related('source_user').order_by('-created_at')[:20]
 
-    total_commissions = Commission.objects.filter(
-        user=request.user, status__in=['approved', 'available']
-    ).aggregate(total=Sum('amount'))['total'] or 0
-
     return render(request, 'referrals/dashboard.html', {
         'stats': stats,
+        'commission_stats': commission_stats,
         'referral_code': referral_code,
         'referral_link': referral_link,
         'referrals_with_data': referrals_with_data,
         'commissions': commissions,
-        'total_commissions': total_commissions,
+        'total_commissions': commission_stats['total'],
     })
 
 

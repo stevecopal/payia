@@ -38,7 +38,11 @@ def withdrawal_create(request):
             except ValueError as e:
                 messages.error(request, str(e))
     else:
-        form = WithdrawalForm()
+        initial_data = {
+            'withdrawal_number': profile.withdrawal_phone_number,
+            'withdrawal_account_name': profile.withdrawal_account_name,
+        }
+        form = WithdrawalForm(initial=initial_data)
     
     from transactions.models import PaymentMethod
     from wallet.services.wallet_service import WalletService

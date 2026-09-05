@@ -32,7 +32,7 @@ class RateLimitStore:
 
 
 class AuthRateLimitMiddleware(MiddlewareMixin):
-    LOGIN_MAX = 10
+    LOGIN_MAX = 5
     LOGIN_WINDOW = 900
     REGISTER_MAX = 3
     REGISTER_WINDOW = 3600

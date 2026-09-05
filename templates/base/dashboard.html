@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,10 +15,7 @@
         <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-black text-white border-r border-gray-800 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto z-40 transition-transform flex flex-col shrink-0">
             <div class="flex items-center justify-between h-16 px-6 border-b border-gray-800 shrink-0">
                 <a href="{% url 'dashboard' %}" class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm font-mono">P</span>
-                    </div>
-                    <span class="text-lg font-bold font-display">PAYIA</span>
+                    <img src="{% static 'images/logo.png' %}" alt="PAYIA Logo" class="h-16 w-auto">
                 </a>
                 <button id="close-sidebar" class="lg:hidden text-gray-400 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>

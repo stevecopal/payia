@@ -1,9 +1,12 @@
+import json
 from datetime import timedelta
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_GET
 from ai_services.models import AiOffer, AiCategory, AiModel, AiRental, AiRevenue
 from ai_services.services.ai_service import AiService
 from core.permissions import login_required_custom
@@ -12,23 +15,23 @@ from analytics.services.analytics_service import AnalyticsService
 
 def ai_catalog(request):
     offers = AiOffer.objects.filter(is_active=True).select_related('ai_model', 'category')
-    
+
     category_slug = request.GET.get('category')
     if category_slug:
         offers = offers.filter(category__slug=category_slug)
-    
+
     model_slug = request.GET.get('model')
     if model_slug:
         offers = offers.filter(ai_model__slug=model_slug)
-    
+
     min_price = request.GET.get('min_price')
     if min_price:
         offers = offers.filter(price__gte=min_price)
-    
+
     max_price = request.GET.get('max_price')
     if max_price:
         offers = offers.filter(price__lte=max_price)
-    
+
     sort = request.GET.get('sort', '')
     if sort == 'price_asc':
         offers = offers.order_by('price')
@@ -40,10 +43,10 @@ def ai_catalog(request):
         offers = offers.order_by('duration_days')
     else:
         offers = offers.order_by('-is_featured', '-total_rentals')
-    
+
     categories = AiCategory.objects.filter(is_active=True)
     models = AiModel.objects.filter(is_active=True)
-    
+
     return render(request, 'ai/catalog.html', {
         'offers': offers,
         'categories': categories,
@@ -57,7 +60,7 @@ def ai_offer_detail(request, slug):
         slug=slug, is_active=True
     )
     AnalyticsService.track_event('AI_VIEWED', request.user if request.user.is_authenticated else None, request)
-    
+
     can_rent = False
     has_active_rental = False
     if request.user.is_authenticated:
@@ -65,7 +68,7 @@ def ai_offer_detail(request, slug):
         wallet = WalletService.get_wallet(request.user)
         can_rent = wallet.available_balance >= offer.price
         has_active_rental = AiService.get_active_rentals(request.user).filter(offer=offer).exists()
-    
+
     return render(request, 'ai/detail.html', {
         'offer': offer,
         'can_rent': can_rent,
@@ -76,7 +79,7 @@ def ai_offer_detail(request, slug):
 @login_required_custom
 def ai_rent(request, slug):
     offer = get_object_or_404(AiOffer, slug=slug, is_active=True)
-    
+
     if request.method == 'POST':
         try:
             rental = AiService.rent_offer(request.user, offer.pk)
@@ -85,44 +88,27 @@ def ai_rent(request, slug):
             return redirect('ai_my_rentals')
         except ValueError as e:
             messages.error(request, str(e))
-    
+
     return redirect('ai_offer_detail', slug=slug)
 
 
 @login_required_custom
 def ai_my_rentals(request):
-    from ai_services.models import AiRevenue
-
-    frequency_intervals = {
-        'daily': timedelta(days=1),
-        'weekly': timedelta(weeks=1),
-        'monthly': timedelta(days=30),
-    }
-
     rentals = AiService.get_user_rentals(request.user)
-    active = rentals.filter(status='ACTIVE').select_related('offer')
-    expired = rentals.filter(status='EXPIRED')
+    active = rentals.filter(status=AiRental.Status.ACTIVE).select_related('offer')
+    expired = rentals.filter(status=AiRental.Status.EXPIRED)
 
     now = timezone.now()
     active_data = []
     for rental in active:
-        interval = frequency_intervals.get(rental.offer.revenue_frequency, timedelta(days=1))
-        last_revenue = AiRevenue.objects.filter(
-            rental=rental, status='CREDITED'
-        ).order_by('-credited_at').first()
-
-        if last_revenue and last_revenue.credited_at:
-            last_credit_date = last_revenue.credited_at
-        else:
-            last_credit_date = rental.start_date
-
-        next_payment = last_credit_date + interval
-        if next_payment <= now and next_payment <= rental.end_date:
-            next_payment = now + timedelta(seconds=5)
+        next_payment_at = rental.next_payment_at
+        if next_payment_at and next_payment_at <= now:
+            next_payment_at = None
 
         active_data.append({
             'rental': rental,
-            'next_payment_ts': int(next_payment.timestamp() * 1000),
+            'next_payment_at': next_payment_at,
+            'next_payment_ts': int(next_payment_at.timestamp() * 1000) if next_payment_at else 0,
             'end_ts': int(rental.end_date.timestamp() * 1000),
         })
 
@@ -140,11 +126,6 @@ def ai_rental_detail(request, pk):
     )
     offer = rental.offer
 
-    frequency_intervals = {
-        'daily': timedelta(days=1),
-        'weekly': timedelta(weeks=1),
-        'monthly': timedelta(days=30),
-    }
     frequency_labels = {
         'daily': _('Quotidien'),
         'weekly': _('Hebdomadaire'),
@@ -156,30 +137,23 @@ def ai_rental_detail(request, pk):
         'variable': _('Variable'),
     }
 
-    interval = frequency_intervals.get(offer.revenue_frequency, timedelta(days=1))
-
-    last_revenue = AiRevenue.objects.filter(
-        rental=rental, status='CREDITED'
-    ).order_by('-credited_at').first()
-
-    if last_revenue and last_revenue.credited_at:
-        last_credit_date = last_revenue.credited_at
-    else:
-        last_credit_date = rental.start_date
-
-    next_payment = last_credit_date + interval
-
     now = timezone.now()
-    if next_payment <= now and next_payment <= rental.end_date:
-        next_payment = now + timedelta(seconds=5)
+    next_payment_at = rental.next_payment_at
+    if next_payment_at and next_payment_at <= now:
+        next_payment_at = None
+
+    interval = AiService.FREQUENCY_INTERVALS.get(
+        offer.revenue_frequency, timedelta(days=1)
+    ) if hasattr(AiService, 'FREQUENCY_INTERVALS') else timedelta(days=1)
+
+    from ai_services.services.ai_service import FREQUENCY_INTERVALS
+    interval = FREQUENCY_INTERVALS.get(offer.revenue_frequency, timedelta(days=1))
 
     total_periods = int((rental.end_date - rental.start_date) / interval) if interval.total_seconds() > 0 else 0
-    payments_received = AiRevenue.objects.filter(
-        rental=rental, status='CREDITED'
-    ).count()
+    payments_received = rental.payment_count
     payments_remaining = max(0, total_periods - payments_received)
 
-    revenue_per_period = offer.get_expected_revenue()
+    revenue_per_period = rental.earning_amount if rental.earning_amount else offer.get_expected_revenue()
 
     remaining_total = (rental.end_date - now).total_seconds()
     remaining_days = int(remaining_total // 86400)
@@ -196,8 +170,8 @@ def ai_rental_detail(request, pk):
         'frequency_label': frequency_labels.get(offer.revenue_frequency, offer.revenue_frequency),
         'revenue_type_label': revenue_type_labels.get(offer.revenue_type, offer.revenue_type),
         'revenue_per_period': revenue_per_period,
-        'next_payment': next_payment,
-        'next_payment_timestamp': int(next_payment.timestamp() * 1000),
+        'next_payment': next_payment_at,
+        'next_payment_timestamp': int(next_payment_at.timestamp() * 1000) if next_payment_at else 0,
         'now_timestamp': int(now.timestamp() * 1000),
         'end_timestamp': int(rental.end_date.timestamp() * 1000),
         'start_timestamp': int(rental.start_date.timestamp() * 1000),
@@ -210,3 +184,27 @@ def ai_rental_detail(request, pk):
         'remaining_minutes': remaining_minutes,
     }
     return render(request, 'ai/rental_detail.html', context)
+
+
+@login_required_custom
+@require_GET
+def ai_rental_sync(request, pk):
+    rental = get_object_or_404(
+        AiRental.objects.select_related('offer'),
+        pk=pk, user=request.user
+    )
+    now = timezone.now()
+
+    return JsonResponse({
+        'rental_id': rental.pk,
+        'status': rental.status,
+        'next_payment_at': rental.next_payment_at.isoformat() if rental.next_payment_at else None,
+        'next_payment_ts': int(rental.next_payment_at.timestamp() * 1000) if rental.next_payment_at else 0,
+        'last_payment_at': rental.last_payment_at.isoformat() if rental.last_payment_at else None,
+        'payment_count': rental.payment_count,
+        'total_revenue_earned': str(rental.total_revenue_earned),
+        'earning_amount': str(rental.earning_amount),
+        'end_date': rental.end_date.isoformat(),
+        'now': now.isoformat(),
+        'now_ts': int(now.timestamp() * 1000),
+    })

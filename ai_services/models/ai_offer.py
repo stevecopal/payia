@@ -133,3 +133,16 @@ class AiOffer(models.Model):
         if self.revenue_type == self.RevenueType.PERCENTAGE:
             return self.price * self.revenue_value / Decimal('100')
         return self.revenue_value
+
+    def get_expected_revenue_for_amount(self, amount):
+        """Calculate expected revenue based on a given capital amount.
+
+        This allows using the productive_amount (after referral commissions)
+        instead of the full offer price for revenue calculations.
+        """
+        amount = Decimal(str(amount))
+        if self.revenue_type == self.RevenueType.FIXED:
+            return self.revenue_value
+        if self.revenue_type == self.RevenueType.PERCENTAGE:
+            return amount * self.revenue_value / Decimal('100')
+        return self.revenue_value

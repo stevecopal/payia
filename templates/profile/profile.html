@@ -7,15 +7,10 @@
 
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
         <div class="flex items-center gap-4 mb-5">
-            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">
-                {% if profile.profile_picture %}
-                    <img src="{{ profile.profile_picture.url }}" alt="" class="w-full h-full rounded-full object-cover">
-                {% else %}
-                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
-                {% endif %}
-            </div>
+            
             <div class="min-w-0">
-                <h2 class="font-semibold">{{ user.first_name }} {{ user.last_name }}</h2>
+                <h2 class="font-semibold">{{ profile.first_name }} {{ profile.last_name }}</h2>
+
                 <p class="text-sm text-gray-400">{{ user.phone_number }}</p>
                 {% if profile.email %}<p class="text-xs text-gray-500">{{ profile.email }}</p>{% endif %}
             </div>

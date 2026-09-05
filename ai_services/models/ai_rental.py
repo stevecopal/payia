@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -37,6 +39,33 @@ class AiRental(models.Model):
         decimal_places=2,
         verbose_name=_('amount paid'),
     )
+    productive_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal('0'),
+        verbose_name=_('productive amount'),
+        help_text=_('The capital base used for revenue calculations, after referral commissions.'),
+    )
+    earning_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        verbose_name=_('earning amount per period'),
+    )
+    next_payment_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('next payment at'),
+    )
+    last_payment_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('last payment at'),
+    )
+    payment_count = models.IntegerField(
+        default=0,
+        verbose_name=_('payment count'),
+    )
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
@@ -68,6 +97,10 @@ class AiRental(models.Model):
                 name='unique_user_offer_start',
             ),
         ]
+        indexes = [
+            models.Index(fields=['status', 'next_payment_at'], name='rental_status_next_payment_idx'),
+            models.Index(fields=['user', 'status'], name='rental_user_status_idx'),
+        ]
 
     def __str__(self):
         return f"{self.user} - {self.offer}"
@@ -77,7 +110,6 @@ class AiRental(models.Model):
 
     def extend(self, days):
         from datetime import timedelta
-
         self.end_date += timedelta(days=days)
         self.save(update_fields=['end_date', 'updated_at'])
 

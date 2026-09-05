@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from transactions.models import Withdrawal, PaymentMethod
@@ -28,7 +29,8 @@ class WithdrawalForm(forms.Form):
         max_length=200,
         widget=forms.TextInput(attrs={
             'class': DARK_INPUT,
-            'placeholder': '+2376XXXXXXXX',
+            'placeholder': '6XXXXXXXX',
+            'readonly': True,
         })
     )
     withdrawal_account_name = forms.CharField(
@@ -38,6 +40,7 @@ class WithdrawalForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': DARK_INPUT,
             'placeholder': 'Nom du titulaire du compte',
+            'readonly': True,
         })
     )
     note = forms.CharField(
@@ -49,6 +52,15 @@ class WithdrawalForm(forms.Form):
             'placeholder': 'Note optionnelle...',
         })
     )
+
+    def clean_withdrawal_number(self):
+        phone = self.cleaned_data.get('withdrawal_number', '').strip()
+        phone = phone.replace('+237', '').replace(' ', '')
+        if not re.match(r'^6\d{8}$', phone):
+            raise forms.ValidationError(
+                _('Le numéro doit commencer par 6 et contenir exactement 9 chiffres (ex: 6XXXXXXXX).')
+            )
+        return phone
 
 
 class WithdrawalSearchForm(forms.Form):

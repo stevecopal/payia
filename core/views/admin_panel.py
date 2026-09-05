@@ -637,10 +637,15 @@ def admin_settings(request):
     settings_qs = Setting.objects.all().order_by('key')
 
     if request.method == 'POST':
+        commission_keys = [f'level_{i}_percentage' for i in range(1, 6)]
+        commission_values = {}
+        has_commission_change = False
+
         for setting in settings_qs:
             field_name = f'setting_{setting.key}'
             value = request.POST.get(field_name, '')
             if value != setting.value:
+                has_commission_change = True
                 old_value = setting.value
                 setting.value = value
                 setting.save(update_fields=['value', 'updated_at'])
@@ -651,7 +656,39 @@ def admin_settings(request):
                     target_id=str(setting.pk),
                     description=f'Paramètre {setting.key} modifié: {old_value} -> {value}',
                 )
-        messages.success(request, _('Paramètres sauvegardés.'))
+                if setting.key in commission_keys:
+                    commission_values[setting.key] = value
+
+        if has_commission_change:
+            from decimal import Decimal, InvalidOperation
+            total = Decimal('0')
+            for key in commission_keys:
+                try:
+                    val = commission_values.get(key)
+                    if val is None:
+                        val = Setting.objects.get(key=key).value
+                    total += Decimal(str(val))
+                except (Setting.DoesNotExist, InvalidOperation, ValueError):
+                    pass
+
+            try:
+                max_setting = Setting.objects.get(key='max_total_commission_percentage')
+                max_total = Decimal(max_setting.value)
+            except (Setting.DoesNotExist, InvalidOperation):
+                max_total = Decimal('90')
+
+            if total > max_total:
+                messages.warning(
+                    request,
+                    f'Paramètres sauvegardés. ATTENTION: Le total des commissions ({total}%) '
+                    f'dépasse la limite ({max_total}%). Les nouveaux dépôts pourront générer '
+                    f'des commissions jusqu\'à cette limite.'
+                )
+            else:
+                messages.success(request, _('Paramètres sauvegardés.'))
+        else:
+            messages.success(request, _('Paramètres sauvegardés.'))
+
         return redirect('admin_settings')
 
     return render(request, 'admin/settings.html', {'settings': settings_qs})

@@ -308,3 +308,31 @@ LOGGING = {
         'level': 'WARNING',
     },
 }
+
+# Celery Configuration
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    'process-due-rental-payments': {
+        'task': 'ai_services.tasks.process_due_rental_payments',
+        'schedule': 60.0,
+    },
+    'expire-rentals': {
+        'task': 'ai_services.tasks.expire_rentals_task',
+        'schedule': 300.0,
+    },
+}
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 300
+CELERY_TASK_SOFT_TIME_LIMIT = 240
+
+# Logging for AI services payments
+LOGGING['loggers']['ai_services'] = {
+    'handlers': ['console', 'payments_file'],
+    'level': 'INFO',
+    'propagate': False,
+}

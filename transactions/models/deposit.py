@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -23,6 +25,20 @@ class Deposit(models.Model):
         _("amount"),
         max_digits=12,
         decimal_places=2,
+    )
+    referral_commission_total = models.DecimalField(
+        _("referral commission total"),
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0"),
+        help_text=_('Total referral commissions deducted from this deposit.'),
+    )
+    productive_amount = models.DecimalField(
+        _("productive amount"),
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0"),
+        help_text=_('Amount available for AI revenue calculations after referral commissions.'),
     )
     payment_method = models.ForeignKey(
         PaymentMethod,

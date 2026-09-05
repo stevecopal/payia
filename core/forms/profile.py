@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from core.models import UserProfile
@@ -32,13 +33,28 @@ class WithdrawalInfoForm(forms.ModelForm):
         widgets = {
             'withdrawal_phone_number': forms.TextInput(attrs={
                 'class': DARK_INPUT,
-                'placeholder': '+2376XXXXXXXX',
+                'placeholder': '6XXXXXXXX',
             }),
             'withdrawal_account_name': forms.TextInput(attrs={
                 'class': DARK_INPUT,
                 'placeholder': 'Nom complet',
             }),
         }
+
+    def clean_withdrawal_phone_number(self):
+        phone = self.cleaned_data.get('withdrawal_phone_number', '').strip()
+        phone = phone.replace('+237', '').replace(' ', '')
+        if not re.match(r'^6\d{8}$', phone):
+            raise forms.ValidationError(
+                _('Le numéro doit commencer par 6 et contenir exactement 9 chiffres (ex: 6XXXXXXXX).')
+            )
+        return phone
+
+    def clean_withdrawal_account_name(self):
+        name = self.cleaned_data.get('withdrawal_account_name', '').strip()
+        if not name:
+            raise forms.ValidationError(_('Le nom du titulaire est obligatoire.'))
+        return name
 
 
 class ProfilePictureForm(forms.ModelForm):

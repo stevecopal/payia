@@ -1,12 +1,9 @@
-{% load i18n %}
+{% load static i18n %}
 <header class="fixed top-0 left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-gray-800 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <a href="{% url 'home' %}" class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold text-sm font-mono">P</span>
-                </div>
-                <span class="text-xl font-bold text-white font-display">PAYIA</span>
+                <img src="{% static 'images/logo.png' %}" alt="PAYIA Logo" class="h-16 w-auto">
             </a>
 
             <div class="flex items-center space-x-3">

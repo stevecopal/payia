@@ -1,3 +1,4 @@
+import re
 from decimal import Decimal
 from django.db import transaction
 from django.utils import timezone
@@ -28,6 +29,10 @@ class WithdrawalService:
         wallet = WalletService.get_wallet(user)
         if wallet.available_balance < amount:
             raise ValueError("Solde insuffisant.")
+
+        withdrawal_number = withdrawal_number.replace('+237', '').replace(' ', '').strip()
+        if not re.match(r'^6\d{8}$', withdrawal_number):
+            raise ValueError("Le numéro de retrait doit commencer par 6 et contenir exactement 9 chiffres.")
 
         with transaction.atomic():
             WalletService.reserve_amount(user, amount)
