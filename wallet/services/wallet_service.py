@@ -75,7 +75,11 @@ class WalletService:
 
     @staticmethod
     def sync_totals(user):
-        """Recalculate wallet totals from ledger entries to fix any inconsistencies."""
+        """Recalculate wallet totals from ALL sources of truth:
+        ledger entries, Commission model, and AiRevenue model."""
+        from referrals.models import Commission
+        from ai_services.models import AiRevenue
+
         wallet = Wallet.objects.select_for_update().get(user=user)
         ledger = LedgerEntry.objects.filter(user=user)
 
@@ -87,13 +91,15 @@ class WalletService:
             entry_type__in=['withdrawal', 'WITHDRAWAL']
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0'))
 
-        wallet.total_earnings = ledger.filter(
-            entry_type__in=['ai_revenue', 'AI_REVENUE', 'referral_commission', 'REFERRAL_COMMISSION']
+        wallet.referral_earnings = Commission.objects.filter(
+            user=user, status__in=['approved', 'available']
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-        wallet.referral_earnings = ledger.filter(
-            entry_type__in=['referral_commission', 'REFERRAL_COMMISSION']
+        ai_earnings = AiRevenue.objects.filter(
+            user=user, status='credited'
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+        wallet.total_earnings = wallet.referral_earnings + ai_earnings
 
         wallet.save(update_fields=[
             'total_deposited', 'total_withdrawn', 'total_earnings',
