@@ -451,7 +451,9 @@ def admin_ai_offer_delete(request, pk):
 
 @admin_required
 def admin_notifications(request):
-    notifications_list = Notification.objects.all().select_related('user').order_by('-created_at')[:100]
+    notifications_list = Notification.objects.filter(
+        user=request.user
+    ).select_related('user').order_by('-created_at')[:100]
     return render(request, 'admin/notifications.html', {'notifications_list': notifications_list})
 
 

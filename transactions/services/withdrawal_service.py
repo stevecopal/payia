@@ -94,6 +94,14 @@ class WithdrawalService:
                 message=f'Votre retrait de {withdrawal.amount} a été approuvé.',
             )
 
+            Notification.objects.create(
+                user=admin_user,
+                notification_type='WITHDRAWAL_APPROVED',
+                title='Retrait approuvé',
+                message=f'Retrait #{withdrawal.pk} de {withdrawal.amount} XAF approuvé pour {withdrawal.user.phone_number}.',
+                link=f'/admin-panel/withdrawals/{withdrawal.pk}/',
+            )
+
             AuditLog.objects.create(
                 actor=admin_user,
                 action='withdrawal.approved',
@@ -122,6 +130,14 @@ class WithdrawalService:
                 notification_type='WITHDRAWAL_REJECTED',
                 title='Retrait refusé',
                 message=f'Votre retrait de {withdrawal.amount} a été refusé. Raison: {reason}',
+            )
+
+            Notification.objects.create(
+                user=admin_user,
+                notification_type='WITHDRAWAL_REJECTED',
+                title='Retrait refusé',
+                message=f'Retrait #{withdrawal.pk} de {withdrawal.amount} XAF refusé pour {withdrawal.user.phone_number}. Raison: {reason}',
+                link=f'/admin-panel/withdrawals/{withdrawal.pk}/',
             )
 
             AuditLog.objects.create(

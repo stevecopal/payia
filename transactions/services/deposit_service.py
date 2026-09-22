@@ -112,6 +112,14 @@ class DepositService:
                 message=f'Votre dépôt de {deposit.amount} XAF a été approuvé. Votre compte a été crédité.',
             )
 
+            Notification.objects.create(
+                user=admin_user,
+                notification_type='DEPOSIT_APPROVED',
+                title='Dépôt approuvé',
+                message=f'Dépôt #{deposit.pk} de {deposit.amount} XAF approuvé pour {deposit.user.phone_number}.',
+                link=f'/admin-panel/deposits/{deposit.pk}/',
+            )
+
             AuditLog.objects.create(
                 actor=admin_user,
                 action='deposit.approved',
@@ -145,6 +153,14 @@ class DepositService:
             notification_type='DEPOSIT_REJECTED',
             title='Dépôt refusé',
             message=message,
+        )
+
+        Notification.objects.create(
+            user=admin_user,
+            notification_type='DEPOSIT_REJECTED',
+            title='Dépôt refusé',
+            message=f'Dépôt #{deposit.pk} de {deposit.amount} XAF refusé pour {deposit.user.phone_number}. Raison: {reason}',
+            link=f'/admin-panel/deposits/{deposit.pk}/',
         )
 
         AuditLog.objects.create(

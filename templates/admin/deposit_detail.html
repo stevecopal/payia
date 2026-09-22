@@ -83,7 +83,27 @@
 <div id="depositApproveModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
     <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
         <h3 class="text-lg font-bold mb-2">{% trans "Approuver le dépôt" %}</h3>
-        <p class="text-sm text-gray-400 mb-4">{% trans "Le montant de" %} <strong class="text-green-400 font-mono">{{ deposit.amount|floatformat:2 }} XAF</strong> {% trans "sera crédité au portefeuille." %}</p>
+        <div class="bg-white/5 rounded-lg p-4 border border-gray-800/50 mb-4 space-y-2">
+            <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "Référence" %}</span>
+                <span class="text-sm font-mono font-bold text-green-400">#{{ deposit.pk }}</span>
+            </div>
+            {% if deposit.transaction_id %}
+            <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "Transaction ID" %}</span>
+                <span class="text-sm font-mono">{{ deposit.transaction_id }}</span>
+            </div>
+            {% endif %}
+            <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "Montant" %}</span>
+                <span class="text-sm font-mono font-bold text-green-400">{{ deposit.amount|floatformat:2 }} XAF</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "Téléphone" %}</span>
+                <span class="text-sm font-mono">{{ deposit.user.phone_number }}</span>
+            </div>
+        </div>
+        <p class="text-sm text-gray-400 mb-4">{% trans "Confirmer l'approbation de ce dépôt." %}</p>
         <form method="post" action="{% url 'admin_deposit_approve' pk=deposit.pk %}" class="flex gap-3 justify-end">
             {% csrf_token %}
             <button type="button" onclick="closeModal('depositApproveModal')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
