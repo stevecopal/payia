@@ -18,7 +18,7 @@
                 <p class="text-xs text-gray-500 mb-2">{{ item.rental.offer.ai_model }}</p>
                 <div class="bg-gray-800 rounded-lg p-3 mb-2">
                     <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Prochain paiement" %}</p>
-                    <p class="text-xs text-gray-400 mb-1 cd-label" data-rental="{{ item.rental.pk }}" data-sync-url="{% url 'ai_rental_sync' pk=item.rental.pk %}"></p>
+                    <p class="text-xs text-gray-400 mb-1 cd-label" data-rental="{{ item.rental.pk }}" data-sync-url="{% url 'ai_rental_sync' pk=item.rental.pk %}" data-trigger-url="{% url 'ai_rental_trigger_payment' pk=item.rental.pk %}"></p>
                     <div class="flex items-center gap-2">
                         <span class="text-xl font-bold font-mono text-green-400 cd-h" data-rental="{{ item.rental.pk }}">--</span>
                         <span class="text-xl font-bold text-green-400/50">:</span>
@@ -29,7 +29,11 @@
                 </div>
                 <div class="flex justify-between text-xs">
                     <span class="text-gray-500">{% trans "Expire:" %} {{ item.rental.end_date|date:"d/m/Y" }}</span>
-                    <span class="text-green-400 font-semibold">{{ item.rental.total_revenue_earned|floatformat:2 }} XAF</span>
+                    <span class="text-green-400 font-semibold cd-earned" data-rental="{{ item.rental.pk }}">{{ item.rental.total_revenue_earned|floatformat:2 }} XAF</span>
+                </div>
+                <div class="flex justify-between text-xs mt-1">
+                    <span class="text-gray-500">{% trans "Paiements" %}</span>
+                    <span class="text-gray-400 cd-payments" data-rental="{{ item.rental.pk }}">{{ item.rental.payment_count }}</span>
                 </div>
             </a>
             {% endfor %}
@@ -65,9 +69,11 @@
 (function() {
     var rentals = [
         {% for item in active_data %}
-        { id: {{ item.rental.pk }}, nextTs: {{ item.next_payment_ts }}, syncUrl: "{% url 'ai_rental_sync' pk=item.rental.pk %}" }{% if not forloop.last %},{% endif %}
+        { id: {{ item.rental.pk }}, nextTs: {{ item.next_payment_ts }}, endTs: {{ item.end_ts }}, syncUrl: "{% url 'ai_rental_sync' pk=item.rental.pk %}", triggerUrl: "{% url 'ai_rental_trigger_payment' pk=item.rental.pk %}" }{% if not forloop.last %},{% endif %}
         {% endfor %}
     ];
+
+    var processing = {};
 
     function pad(n) { return n < 10 ? '0' + n : n; }
 
@@ -88,6 +94,38 @@
         };
     }
 
+    function triggerPayment(r) {
+        if (processing[r.id]) return;
+        processing[r.id] = true;
+
+        fetch(r.triggerUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]') ?
+                    document.querySelector('[name=csrfmiddlewaretoken]').value :
+                    (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || ''
+            }
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                var earnedEl = document.querySelector('.cd-earned[data-rental="' + r.id + '"]');
+                var paymentsEl = document.querySelector('.cd-payments[data-rental="' + r.id + '"]');
+                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2) + ' XAF';
+                if (paymentsEl) paymentsEl.textContent = data.payment_count;
+                if (data.next_payment_ts > 0) {
+                    r.nextTs = data.next_payment_ts;
+                } else {
+                    location.reload();
+                }
+            } else if (data.error === 'expired' || data.error === 'not_active') {
+                location.reload();
+            }
+        })
+        .catch(function() {})
+        .finally(function() { processing[r.id] = false; });
+    }
+
     function updateAll() {
         var now = Date.now();
         for (var i = 0; i < rentals.length; i++) {
@@ -101,11 +139,23 @@
 
             if (!hEl) continue;
 
+            if (r.nextTs === 0) {
+                hEl.textContent = '00';
+                mEl.textContent = '00';
+                sEl.textContent = '00';
+                if (labelEl) labelEl.textContent = '{% trans "En attente..." %}';
+                continue;
+            }
+
             var cd = formatCountdown(diff);
             hEl.textContent = cd.hours;
             mEl.textContent = cd.minutes;
             sEl.textContent = cd.seconds;
             if (labelEl) labelEl.textContent = cd.label;
+
+            if (diff <= 0) {
+                triggerPayment(r);
+            }
         }
     }
 
@@ -115,11 +165,17 @@
                 fetch(r.syncUrl)
                     .then(function(resp) { return resp.json(); })
                     .then(function(data) {
+                        if (data.status !== 'active') {
+                            location.reload();
+                            return;
+                        }
                         if (data.next_payment_ts && data.next_payment_ts > 0) {
                             r.nextTs = data.next_payment_ts;
-                        } else if (data.status !== 'active') {
-                            location.reload();
                         }
+                        var earnedEl = document.querySelector('.cd-earned[data-rental="' + r.id + '"]');
+                        var paymentsEl = document.querySelector('.cd-payments[data-rental="' + r.id + '"]');
+                        if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2) + ' XAF';
+                        if (paymentsEl) paymentsEl.textContent = data.payment_count;
                     })
                     .catch(function() {});
             })(rentals[i]);

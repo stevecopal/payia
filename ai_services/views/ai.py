@@ -6,9 +6,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 from ai_services.models import AiOffer, AiCategory, AiModel, AiRental, AiRevenue
-from ai_services.services.ai_service import AiService
+from ai_services.services.ai_service import AiService, FREQUENCY_INTERVALS
 from core.permissions import login_required_custom
 from analytics.services.analytics_service import AnalyticsService
 
@@ -102,8 +102,6 @@ def ai_my_rentals(request):
     active_data = []
     for rental in active:
         next_payment_at = rental.next_payment_at
-        if next_payment_at and next_payment_at <= now:
-            next_payment_at = None
 
         active_data.append({
             'rental': rental,
@@ -139,14 +137,7 @@ def ai_rental_detail(request, pk):
 
     now = timezone.now()
     next_payment_at = rental.next_payment_at
-    if next_payment_at and next_payment_at <= now:
-        next_payment_at = None
 
-    interval = AiService.FREQUENCY_INTERVALS.get(
-        offer.revenue_frequency, timedelta(days=1)
-    ) if hasattr(AiService, 'FREQUENCY_INTERVALS') else timedelta(days=1)
-
-    from ai_services.services.ai_service import FREQUENCY_INTERVALS
     interval = FREQUENCY_INTERVALS.get(offer.revenue_frequency, timedelta(days=1))
 
     total_periods = int((rental.end_date - rental.start_date) / interval) if interval.total_seconds() > 0 else 0
@@ -195,6 +186,15 @@ def ai_rental_sync(request, pk):
     )
     now = timezone.now()
 
+    if (rental.status == AiRental.Status.ACTIVE
+            and rental.next_payment_at
+            and rental.next_payment_at <= now):
+        try:
+            AiService.process_payment(rental.pk)
+            rental.refresh_from_db()
+        except Exception:
+            pass
+
     return JsonResponse({
         'rental_id': rental.pk,
         'status': rental.status,
@@ -207,4 +207,49 @@ def ai_rental_sync(request, pk):
         'end_date': rental.end_date.isoformat(),
         'now': now.isoformat(),
         'now_ts': int(now.timestamp() * 1000),
+    })
+
+
+@login_required_custom
+@require_POST
+def ai_rental_trigger_payment(request, pk):
+    rental = get_object_or_404(
+        AiRental.objects.select_related('offer'),
+        pk=pk, user=request.user
+    )
+    now = timezone.now()
+
+    if rental.status != AiRental.Status.ACTIVE:
+        return JsonResponse({'error': 'not_active', 'status': rental.status}, status=400)
+
+    if rental.end_date <= now:
+        rental.status = AiRental.Status.EXPIRED
+        rental.next_payment_at = None
+        rental.save(update_fields=['status', 'next_payment_at', 'updated_at'])
+        return JsonResponse({'error': 'expired', 'status': 'expired'}, status=400)
+
+    if rental.next_payment_at is None:
+        return JsonResponse({'error': 'no_next_payment', 'status': rental.status}, status=400)
+
+    if rental.next_payment_at > now:
+        return JsonResponse({'error': 'not_due_yet', 'status': rental.status}, status=400)
+
+    try:
+        revenue = AiService.process_payment(rental.pk)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    rental.refresh_from_db()
+
+    return JsonResponse({
+        'ok': True,
+        'rental_id': rental.pk,
+        'status': rental.status,
+        'payment_count': rental.payment_count,
+        'total_revenue_earned': str(rental.total_revenue_earned),
+        'earning_amount': str(rental.earning_amount),
+        'next_payment_at': rental.next_payment_at.isoformat() if rental.next_payment_at else None,
+        'next_payment_ts': int(rental.next_payment_at.timestamp() * 1000) if rental.next_payment_at else 0,
+        'last_payment_at': rental.last_payment_at.isoformat() if rental.last_payment_at else None,
+        'credited_amount': str(revenue.amount) if revenue else '0',
     })

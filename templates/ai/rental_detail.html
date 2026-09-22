@@ -11,13 +11,12 @@
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
         <div class="flex items-center justify-between mb-1">
             <h1 class="text-lg font-semibold">{{ offer.name }}</h1>
-            {% if rental.status == 'active' %}
-            <span class="px-2 py-0.5 bg-green-600/20 text-green-400 text-xs rounded-full">{% trans "Active" %}</span>
-            {% elif rental.status == 'expired' %}
-            <span class="px-2 py-0.5 bg-gray-700 text-gray-400 text-xs rounded-full">{% trans "Expirée" %}</span>
-            {% else %}
-            <span class="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded-full">{{ rental.get_status_display }}</span>
-            {% endif %}
+            <span class="px-2 py-0.5 text-xs rounded-full
+                {% if rental.status == 'active' %}bg-green-600/20 text-green-400
+                {% elif rental.status == 'expired' %}bg-gray-700 text-gray-400
+                {% else %}bg-red-500/20 text-red-400{% endif %}">
+                {% if rental.status == 'active' %}{% trans "Active" %}{% elif rental.status == 'expired' %}{% trans "Expirée" %}{% else %}{{ rental.get_status_display }}{% endif %}
+            </span>
         </div>
         <p class="text-xs text-gray-500">{{ offer.ai_model }}</p>
     </div>
@@ -53,7 +52,7 @@
         </div>
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
             <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Revenu / période" %}</p>
-            <p class="text-lg font-bold font-mono text-green-400">+{{ revenue_per_period|floatformat:2 }} XAF</p>
+            <p class="text-lg font-bold font-mono text-green-400 cd-earning">+{{ revenue_per_period|floatformat:2 }} XAF</p>
         </div>
     </div>
 
@@ -64,7 +63,7 @@
         </div>
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
             <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Total gagné" %}</p>
-            <p class="text-lg font-bold font-mono text-green-400">{{ rental.total_revenue_earned|floatformat:2 }} XAF</p>
+            <p class="text-lg font-bold font-mono text-green-400 cd-total-earned">{{ rental.total_revenue_earned|floatformat:2 }} XAF</p>
         </div>
     </div>
 
@@ -74,10 +73,10 @@
         <div class="flex items-center gap-3">
             <div class="flex-1">
                 <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-500 rounded-full transition-all" style="width: {{ payment_progress }}%"></div>
+                    <div class="h-full bg-green-500 rounded-full transition-all cd-progress-bar" style="width: {{ payment_progress }}%"></div>
                 </div>
             </div>
-            <span class="text-xs font-mono text-gray-400">{{ payments_received }}/{{ total_periods }}</span>
+            <span class="text-xs font-mono text-gray-400 cd-payment-count">{{ payments_received }}/{{ total_periods }}</span>
         </div>
         <p class="text-xs text-gray-500 mt-1.5">{% trans "paiements reçus" %}</p>
     </div>
@@ -105,12 +104,12 @@
             {% if rental.last_payment_at %}
             <div class="flex justify-between items-center">
                 <span class="text-xs text-gray-400">{% trans "Dernier paiement" %}</span>
-                <span class="text-sm font-mono text-green-400">{{ rental.last_payment_at|date:"d/m/Y H:i" }}</span>
+                <span class="text-sm font-mono text-green-400 cd-last-payment">{{ rental.last_payment_at|date:"d/m/Y H:i" }}</span>
             </div>
             {% endif %}
             <div class="flex justify-between items-center">
                 <span class="text-xs text-gray-400">{% trans "Nombre de paiements" %}</span>
-                <span class="text-sm font-mono">{{ rental.payment_count }}</span>
+                <span class="text-sm font-mono cd-detail-payment-count">{{ rental.payment_count }}</span>
             </div>
             {% if rental.status == 'active' %}
             <div class="flex justify-between items-center">
@@ -129,8 +128,8 @@
     var nextPaymentTs = {{ next_payment_timestamp }};
     var endTs = {{ end_timestamp }};
     var syncUrl = "{% url 'ai_rental_sync' pk=rental.pk %}";
-    var syncTimer = null;
-    var countdownTimer = null;
+    var triggerUrl = "{% url 'ai_rental_trigger_payment' pk=rental.pk %}";
+    var isProcessing = false;
 
     function pad(n) { return n < 10 ? '0' + n : n; }
 
@@ -156,6 +155,38 @@
         };
     }
 
+    function triggerPayment() {
+        if (isProcessing) return;
+        isProcessing = true;
+
+        fetch(triggerUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || ''
+            }
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                var earnedEl = document.querySelector('.cd-total-earned');
+                var countEl = document.querySelector('.cd-payment-count');
+                var detailCountEl = document.querySelector('.cd-detail-payment-count');
+                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2) + ' XAF';
+                if (countEl) countEl.textContent = data.payment_count + '/' + countEl.textContent.split('/')[1];
+                if (detailCountEl) detailCountEl.textContent = data.payment_count;
+                if (data.next_payment_ts > 0) {
+                    nextPaymentTs = data.next_payment_ts;
+                } else {
+                    location.reload();
+                }
+            } else if (data.error === 'expired' || data.error === 'not_active') {
+                location.reload();
+            }
+        })
+        .catch(function() {})
+        .finally(function() { isProcessing = false; });
+    }
+
     function updateCountdown() {
         var now = Date.now();
         var diff = nextPaymentTs - now;
@@ -168,29 +199,50 @@
 
         if (!hEl) return;
 
+        if (nextPaymentTs === 0) {
+            hEl.textContent = '00';
+            mEl.textContent = '00';
+            sEl.textContent = '00';
+            if (labelEl) labelEl.textContent = '{% trans "En attente..." %}';
+            if (dateEl) dateEl.textContent = '';
+            return;
+        }
+
         var cd = formatCountdown(diff);
         hEl.textContent = cd.hours;
         mEl.textContent = cd.minutes;
         sEl.textContent = cd.seconds;
         if (labelEl) labelEl.textContent = cd.label;
         if (dateEl) dateEl.textContent = cd.date;
+
+        if (diff <= 0) {
+            triggerPayment();
+        }
     }
 
     function syncWithBackend() {
         fetch(syncUrl)
             .then(function(resp) { return resp.json(); })
             .then(function(data) {
+                if (data.status !== 'active') {
+                    location.reload();
+                    return;
+                }
                 if (data.next_payment_ts && data.next_payment_ts > 0) {
                     nextPaymentTs = data.next_payment_ts;
-                } else if (data.status !== 'active') {
-                    location.reload();
                 }
+                var earnedEl = document.querySelector('.cd-total-earned');
+                var countEl = document.querySelector('.cd-payment-count');
+                var detailCountEl = document.querySelector('.cd-detail-payment-count');
+                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2) + ' XAF';
+                if (countEl) countEl.textContent = data.payment_count + '/' + countEl.textContent.split('/')[1];
+                if (detailCountEl) detailCountEl.textContent = data.payment_count;
             })
             .catch(function() {});
     }
 
     updateCountdown();
-    countdownTimer = setInterval(updateCountdown, 1000);
+    setInterval(updateCountdown, 1000);
     setInterval(syncWithBackend, 30000);
 })();
 </script>
