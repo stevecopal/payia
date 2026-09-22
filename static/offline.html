@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#16a34a">
+    <title>PAYIA - Vous êtes hors ligne</title>
+    <link rel="stylesheet" href="/static/css/output.css">
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            -webkit-font-smoothing: antialiased;
+        }
+        .offline-badge {
+            background: rgba(34, 197, 94, 0.15);
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.6; }
+            70% { transform: scale(1.6); opacity: 0; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        .pulse-ring { animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes float-y {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-y { animation: float-y 4s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <main class="min-h-screen flex items-center justify-center px-4">
+        <div class="w-full max-w-md text-center">
+
+            <!-- Icône animée -->
+            <div class="relative inline-flex items-center justify-center mb-8 float-y">
+                <span class="pulse-ring absolute inline-flex h-24 w-24 rounded-full bg-green-500/30"></span>
+                <div class="relative w-24 h-24 rounded-full offline-badge border border-green-500/30 flex items-center justify-center">
+                    <svg class="w-11 h-11 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L12 12m0 0L9.75 9.75M3 3l18 18"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Titre -->
+            <h1 class="text-3xl sm:text-4xl font-bold mb-3">Vous êtes hors ligne</h1>
+            <p class="text-gray-400 text-sm sm:text-base leading-relaxed mb-2">
+                Pas de connexion Internet détectée.
+            </p>
+            
+
+            <!-- État de reconnexion -->
+            <div id="reconnect-status" class="hidden mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-gray-800 text-xs text-gray-400">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                Reconnexion en cours…
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button onclick="window.location.reload()"
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Réessayer
+                </button>
+               
+            </div>
+
+            
+        </div>
+    </main>
+
+    <script>
+        // Si la connexion revient, on prévient et on recharge automatiquement.
+        const status = document.getElementById('reconnect-status');
+        window.addEventListener('online', function () {
+            status.classList.remove('hidden');
+            setTimeout(function () { window.location.reload(); }, 1200);
+        });
+    </script>
+</body>
+</html>

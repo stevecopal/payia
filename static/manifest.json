@@ -1,0 +1,61 @@
+{
+    "name": "PAYIA - Plateforme IA et Finance",
+    "short_name": "PAYIA",
+    "description": "Votre plateforme d'intelligence artificielle et de finance. Investissez, gagnez et croissez avec l'IA.",
+    "id": "/",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#000000",
+    "theme_color": "#16a34a",
+    "lang": "fr",
+    "dir": "ltr",
+    "categories": ["finance", "productivity"],
+    "icons": [
+        {
+            "src": "/static/icons/192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/static/icons/512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/static/icons/maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/static/icons/maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Tableau de bord",
+            "short_name": "Dashboard",
+            "url": "/dashboard/",
+            "icons": [{ "src": "/static/icons/192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Portefeuille",
+            "short_name": "Wallet",
+            "url": "/wallet/",
+            "icons": [{ "src": "/static/icons/192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Dépôt",
+            "short_name": "Dépôt",
+            "url": "/transactions/deposits/create/",
+            "icons": [{ "src": "/static/icons/192.png", "sizes": "192x192" }]
+        }
+    ]
+}

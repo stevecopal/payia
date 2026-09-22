@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from core.views import admin_panel
+from core.views.pwa import service_worker, manifest as pwa_manifest, offline as pwa_offline
 
 
 def handler403(request, exception=None):
@@ -20,6 +21,11 @@ def handler500(request):
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
+
+    # PWA
+    path('sw.js', service_worker, name='service_worker'),
+    path('manifest.json', pwa_manifest, name='manifest'),
+    path('offline/', pwa_offline, name='offline'),
     
     path('i18n/', include('django.conf.urls.i18n')),
     
