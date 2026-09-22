@@ -5,6 +5,7 @@ from analytics.models import AnalyticsEvent
 from core.models import User
 from transactions.models import Deposit, Withdrawal
 from ai_services.models import AiRental
+from support.models import SupportTicket
 
 
 class AnalyticsService:
@@ -26,17 +27,24 @@ class AnalyticsService:
         now = timezone.now()
         start = now - timedelta(days=days)
 
+        total_deposits = Deposit.objects.filter(status='completed').aggregate(
+            total=Sum('amount'))['total'] or 0
+        total_withdrawals = Withdrawal.objects.filter(status='completed').aggregate(
+            total=Sum('amount'))['total'] or 0
+        net_finances = total_deposits - total_withdrawals
+
         stats = {
             'total_users': User.objects.count(),
             'active_users': User.objects.filter(is_active=True).count(),
             'new_users': User.objects.filter(date_joined__gte=start).count(),
-            'total_deposits': Deposit.objects.filter(status='completed').aggregate(
-                total=Sum('amount'))['total'] or 0,
-            'total_withdrawals': Withdrawal.objects.filter(status='completed').aggregate(
-                total=Sum('amount'))['total'] or 0,
+            'total_deposits': total_deposits,
+            'total_withdrawals': total_withdrawals,
+            'net_finances': net_finances,
             'pending_deposits': Deposit.objects.filter(status='pending_review').count(),
             'pending_withdrawals': Withdrawal.objects.filter(
                 status__in=['pending', 'under_review']).count(),
+            'pending_support_tickets': SupportTicket.objects.filter(
+                status='OPEN').count(),
             'active_rentals': AiRental.objects.filter(status='ACTIVE').count(),
             'total_rentals': AiRental.objects.count(),
         }

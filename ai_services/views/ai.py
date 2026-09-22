@@ -73,11 +73,24 @@ def ai_offer_detail(request, slug):
     gross_revenue = offer.get_expected_revenue()
     revenue_breakdown = ReferralService.get_revenue_breakdown(gross_revenue)
 
+    frequency_labels = {
+        'daily': _('Quotidien'),
+        'weekly': _('Hebdomadaire'),
+        'monthly': _('Mensuel'),
+    }
+    revenue_type_labels = {
+        'fixed': _('Fixe'),
+        'percentage': _('Pourcentage'),
+        'variable': _('Variable'),
+    }
+
     return render(request, 'ai/detail.html', {
         'offer': offer,
         'can_rent': can_rent,
         'has_active_rental': has_active_rental,
         'revenue_breakdown': revenue_breakdown,
+        'frequency_label': frequency_labels.get(offer.revenue_frequency, offer.revenue_frequency),
+        'revenue_type_label': revenue_type_labels.get(offer.revenue_type, offer.revenue_type),
     })
 
 

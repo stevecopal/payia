@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-bold font-display">{% trans "Notifications" %}</h1>
         <button onclick="openModal('createNotifModal')" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-            {% trans "Créer une notification" %}
+            {% trans "Créer" %}
         </button>
     </div>
 
@@ -38,7 +38,7 @@
 
 <div id="createNotifModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
     <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg p-6" onclick="event.stopPropagation()">
-        <h3 class="text-lg font-bold mb-4">{% trans "Créer une notification" %}</h3>
+        <h3 class="text-lg font-bold mb-4">{% trans "Créer" %}</h3>
         <form method="post" action="{% url 'admin_notification_create' %}" class="space-y-4">
             {% csrf_token %}
             <div>

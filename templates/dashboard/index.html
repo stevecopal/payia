@@ -12,7 +12,7 @@
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
             <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Solde" %}</p>
             <p class="text-xl font-bold mt-1">{{ wallet.available_balance|floatformat:2 }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">{{ user.profile.preferred_currency|default:"XOF" }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ user.profile.preferred_currency|default:"XAF" }}</p>
         </div>
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
             <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Depose" %}</p>
