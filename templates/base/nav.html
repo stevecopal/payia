@@ -1,17 +1,21 @@
 {% load static i18n %}
-<header class="fixed top-0 left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-gray-800 z-50">
+<header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
             <a href="{% url 'home' %}" class="flex items-center space-x-2">
-                <img src="{% static 'images/logo.png' %}" alt="PAYIA Logo" class="h-16 w-auto">
+                <img src="{% static 'images/logo.png' %}" alt="PAYIA" class="h-14 w-auto">
             </a>
 
+            
+
+            <!-- Auth buttons -->
             <div class="flex items-center space-x-3">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="text-sm font-medium text-gray-300 hover:text-green-400 transition-colors">{% trans "Tableau de bord" %}</a>
+                    <a href="{% url 'dashboard' %}" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "Tableau de bord" %}</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="text-sm font-medium text-gray-300 hover:text-green-400 transition-colors">{% trans "Connexion" %}</a>
-                    <a href="{% url 'register' %}" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-500 transition-colors">{% trans "S'inscrire" %}</a>
+                    <a href="{% url 'login' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">{% trans "Connexion" %}</a>
+                    <a href="{% url 'register' %}" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
                 {% endif %}
             </div>
         </div>

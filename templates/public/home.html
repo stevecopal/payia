@@ -1,23 +1,22 @@
 {% extends "base/public.html" %}
 {% load static i18n %}
-{% block title %}PAYIA - Intelligence Artificielle et Finance{% endblock %}
+{% block title %}PAYIA - {% trans "Intelligence Artificielle et Finance" %}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/hero.css' %}">
-{% endblock %}
-
+{% block body_class %}home-page{% endblock %}
+{% block footer %}{% endblock %}
 {% block content %}
-<section class="hero-section text-center md:text-left">
+<section class="hero-section" data-home-hero>
+
     <!-- BG image -->
-    <div class="hero-bg-image" style="background-image:url('{% static "images/hero.png" %}')"></div>
-    <div class="hero-vignette"></div>
+    <div class="hero-bg" style="background-image:url('{% static "images/hero.png" %}')"></div>
+    <div class="hero-overlay"></div>
 
     <!-- Animated grid -->
     <div class="hero-grid"></div>
 
-    <!-- Pulsing circles -->
-    <div class="hero-circle hero-circle-tl"></div>
-    <div class="hero-circle hero-circle-br"></div>
+    <!-- Accent circles -->
+    <div class="hero-accent hero-accent-tl"></div>
+    <div class="hero-accent hero-accent-br"></div>
 
     <!-- Particles -->
     <div class="hero-particles" id="heroParticles"></div>
@@ -25,35 +24,61 @@
     <!-- Glow -->
     <div class="hero-glow"></div>
 
-    <!-- Bottom line -->
-    <div class="hero-bottom-border"></div>
+    <!-- Bottom border -->
+    <div class="hero-border-bottom"></div>
 
     <!-- Content -->
     <div class="hero-content">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-0">
+        <div class="max-w-3xl mx-auto px-5 sm:px-8 text-center">
 
             
 
             <!-- Title -->
-            <h1 class="hero-title">
-                <span class="hero-type-line">
-                    <span class="hero-type-text">Rejoignez la révolution avec </span><span class="hero-type-cursor hero-cursor-off"></span>
+            <h1 class="hero-title mt-6">
+               
+                <span class="hero-brand">
+                    <span class="hero-brand-text" data-hero-brand>POWERED BY <span class="text-green-400">PAYIA</span></span>
                 </span>
-                <span class="hero-payia-wrap"><span class="hero-payia">PAYIA</span></span>
             </h1>
 
+            <!-- Accent line -->
+            <span class="hero-line" data-hero-line></span>
+
             <!-- Subtitle -->
-            <p class="hero-subtitle">
-                L'IA au service de votre succès, et du nôtre.
-            </p>
+            <p class="hero-subtitle mx-auto" data-hero-subtitle>
+                {% trans "Prenez une longueur d'avance. Construisez votre avenir avec la puissance de l'intelligence artificielle. Rejoignez une communauté qui fait le choix de la sérénité et de l'innovation." %}            </p>
 
             <!-- CTA -->
-            <a href="{% url 'register' %}" class="hero-cta">
-                <span>Commencer maintenant</span>
+            <a href="{% url 'register' %}" class="hero-cta mx-auto" data-hero-cta>
+                <span>{% trans "Commencer Maintenant" %}</span>
+                <svg class="hero-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
             </a>
+
+            <!-- Stats -->
+            <div class="hero-stats justify-center" data-hero-stats>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">10K+</div>
+                    <div class="hero-stat-label">{% trans "Utilisateurs" %}</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">99.9%</div>
+                    <div class="hero-stat-label">{% trans "Uptime" %}</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">24/7</div>
+                    <div class="hero-stat-label">{% trans "Support IA" %}</div>
+                </div>
+            </div>
+
+            
 
         </div>
     </div>
+
+    
+
 </section>
 {% endblock %}
 
