@@ -55,12 +55,12 @@
             <!-- État de reconnexion -->
             <div id="reconnect-status" class="hidden mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-gray-800 text-xs text-gray-400">
                 <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                Reconnexion en cours…
+                <span id="reconnect-text">Reconnexion en cours…</span>
             </div>
 
             <!-- Actions -->
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button onclick="window.location.reload()"
+                <button type="button" id="offline-retry"
                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -75,12 +75,111 @@
     </main>
 
     <script>
-        // Si la connexion revient, on prévient et on recharge automatiquement.
-        const status = document.getElementById('reconnect-status');
-        window.addEventListener('online', function () {
-            status.classList.remove('hidden');
-            setTimeout(function () { window.location.reload(); }, 1200);
-        });
+        /* =================================================================
+           Retour dans l'application après reconnexion.
+
+           Cette page n'est jamais un état final : le bouton « Réessayer »
+           et le retour de la connexion doivent ramener vers l'app.
+           On ne fait donc JAMAIS window.location.reload() ici : /offline/
+           est une vraie URL qui réaffiche toujours la page hors ligne,
+           même quand la connexion est revenue.
+           ================================================================= */
+        (function () {
+            'use strict';
+
+            /* Clé de session partagée avec static/js/pwa.js */
+            var LAST_PATH_KEY = 'payia:last-path';
+            var AUTO_REDIRECT_KEY = 'payia:offline-autoredirect';
+            var AUTO_REDIRECT_WINDOW_MS = 5000;
+
+            var statusEl = document.getElementById('reconnect-status');
+            var statusText = document.getElementById('reconnect-text');
+
+            function showStatus(text) {
+                if (statusText && text) statusText.textContent = text;
+                if (statusEl) statusEl.classList.remove('hidden');
+            }
+
+            function isOfflineUrl() {
+                return window.location.pathname.indexOf('/offline/') === 0;
+            }
+
+            /* Chemin interne sûr (jamais une autre origine, jamais /offline/). */
+            function safePath(value) {
+                if (!value) return null;
+                try {
+                    var url = new URL(value, window.location.origin);
+                    if (url.origin !== window.location.origin) return null;
+                    if (url.pathname.indexOf('/offline/') === 0) return null;
+                    return url.pathname + url.search;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            /* Page cible : celle quittée avant la coupure (mémorisée par pwa.js),
+               sinon l'URL courante (page rejouée par le service worker),
+               sinon la racine. */
+            function resolveTarget() {
+                if (!isOfflineUrl()) {
+                    return window.location.pathname + window.location.search;
+                }
+                var saved = null;
+                try { saved = sessionStorage.getItem(LAST_PATH_KEY); } catch (e) {}
+                return safePath(saved) || '/';
+            }
+
+            function goToApp() {
+                /* replace() : on ne laisse pas la page hors ligne dans l'historique */
+                window.location.replace(resolveTarget());
+            }
+
+            /* Bouton « Réessayer » */
+            function retryNow() {
+                if (navigator.onLine !== false) {
+                    goToApp();
+                    return;
+                }
+                showStatus('Toujours hors ligne — vérification…');
+                /* navigator.onLine est parfois pessimiste (WebView mobiles) :
+                   on confirme par une requête réseau réelle. */
+                fetch('/manifest.json', { method: 'GET', cache: 'no-store' })
+                    .then(function (response) {
+                        if (response && response.ok) {
+                            goToApp();
+                        } else {
+                            showStatus('Toujours hors ligne — vérifiez votre connexion.');
+                        }
+                    })
+                    .catch(function () {
+                        showStatus('Toujours hors ligne — vérifiez votre connexion.');
+                    });
+            }
+
+            var retryBtn = document.getElementById('offline-retry');
+            if (retryBtn) retryBtn.addEventListener('click', retryNow);
+
+            /* Connexion rétablie pendant l'affichage : retour automatique dans l'app */
+            window.addEventListener('online', function () {
+                showStatus('Connexion rétablie — redirection…');
+                setTimeout(goToApp, 600);
+            });
+
+            /* Page chargée alors que la connexion est déjà revenue (rechargement
+               manuel, retour arrière, réponse du service worker) : on repart
+               dans l'app. Garde-fou : une seule redirection automatique par
+               fenêtre courte, pour éviter toute boucle si le serveur reste
+               injoignable alors que navigator.onLine est vrai. */
+            if (navigator.onLine !== false) {
+                var now = Date.now();
+                var last = 0;
+                try { last = parseInt(sessionStorage.getItem(AUTO_REDIRECT_KEY), 10) || 0; } catch (e) {}
+                if (now - last > AUTO_REDIRECT_WINDOW_MS) {
+                    try { sessionStorage.setItem(AUTO_REDIRECT_KEY, String(now)); } catch (e) {}
+                    goToApp();
+                }
+            }
+        })();
     </script>
 </body>
 </html>

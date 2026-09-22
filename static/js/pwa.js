@@ -194,12 +194,27 @@
     /* ---------------------------------------------------------------
        4) Statut réseau : bascule vers /offline/ en cas de coupure
        --------------------------------------------------------------- */
+    /* Clé de session partagée avec static/offline.html : elle contient la
+       page à rejoindre dès que la connexion revient. */
+    var LAST_PATH_KEY = 'payia:last-path';
+
     function isOfflinePage() {
         return window.location.pathname.indexOf('/offline/') === 0;
     }
 
+    function rememberCurrentPage() {
+        if (isOfflinePage()) return;
+        try {
+            sessionStorage.setItem(
+                LAST_PATH_KEY,
+                window.location.pathname + window.location.search
+            );
+        } catch (e) {}
+    }
+
     window.addEventListener('offline', function () {
         if (!isOfflinePage()) {
+            rememberCurrentPage();
             window.location.href = '/offline/';
         }
     });

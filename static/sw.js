@@ -5,7 +5,9 @@
    Aucun contenu applicatif (HTML) n'est mis en cache.
    ===================================================================== */
 
-const VERSION = 'payia-v1';
+/* VERSION : à incrémenter dès qu'un fichier précaché change (offline.html,
+   CSS, icônes), sinon les clients déjà installés gardent l'ancienne copie. */
+const VERSION = 'payia-v2';
 const OFFLINE_URL = '/offline/';
 
 /* App shell minimal : uniquement ce dont l'app a réellement besoin
