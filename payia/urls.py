@@ -96,7 +96,6 @@ urlpatterns = [
     path('admin-panel/ai/offers/create/', admin_panel.admin_ai_offer_create, name='admin_ai_offer_create'),
     path('admin-panel/ai/offers/<int:pk>/edit/', admin_panel.admin_ai_offer_edit, name='admin_ai_offer_edit'),
     path('admin-panel/ai/offers/<int:pk>/delete/', admin_panel.admin_ai_offer_delete, name='admin_ai_offer_delete'),
-    path('admin-panel/referrals/', admin_panel.admin_referrals, name='admin_referrals'),
     path('admin-panel/commissions/', admin_panel.admin_commissions, name='admin_commissions'),
     path('admin-panel/notifications/', admin_panel.admin_notifications, name='admin_notifications'),
     path('admin-panel/notifications/create/', admin_panel.admin_notification_create, name='admin_notification_create'),

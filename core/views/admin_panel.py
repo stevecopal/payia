@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db import IntegrityError
 from datetime import timedelta
+from decimal import Decimal
 import csv
 import re
 
@@ -18,7 +19,6 @@ from transactions.services.withdrawal_service import WithdrawalService
 from wallet.models import Wallet, LedgerEntry
 from ai_services.models import AiModel, AiCategory, AiOffer, AiRental, AiRevenue
 from referrals.models import Referral, Commission
-from referrals.services.referral_service import ReferralService
 from notifications.models import Notification, Message
 from notifications.services.notification_service import NotificationService
 from support.models import SupportTicket, SupportMessage
@@ -74,8 +74,61 @@ def admin_user_detail(request, pk):
     deposits = Deposit.objects.filter(user=user).order_by('-created_at')[:10]
     withdrawals = Withdrawal.objects.filter(user=user).order_by('-created_at')[:10]
     rentals = AiRental.objects.filter(user=user).select_related('offer').order_by('-created_at')[:10]
-    referrals = Referral.objects.filter(referrer=user).select_related('referred_user')[:20]
     audit_logs = AuditLog.objects.filter(actor=user).order_by('-created_at')[:20]
+
+    # --- Parrainage : parrain de l'utilisateur + liste de ses filleuls ------
+    referrer_referral = Referral.objects.filter(
+        referred_user=user
+    ).select_related('referrer', 'referrer__profile').first()
+    parrain = referrer_referral.referrer if referrer_referral else user.referred_by
+
+    filleuls = list(
+        Referral.objects.filter(referrer=user).select_related(
+            'referred_user', 'referred_user__profile'
+        ).order_by('-created_at')
+    )
+    filleul_ids = [f.referred_user_id for f in filleuls]
+
+    # Commissions réellement gagnées par l'utilisateur, par filleul source
+    commissions_by_filleul = dict(
+        Commission.objects.filter(
+            user=user,
+            source_user_id__in=filleul_ids,
+            status__in=[Commission.Status.APPROVED, Commission.Status.AVAILABLE],
+        ).values_list('source_user_id').annotate(total=Sum('amount'))
+    )
+
+    # Filleuls de niveau 2 = filleuls de ses filleuls (5% pour l'utilisateur)
+    filleuls_niveau_2 = {}
+    if filleul_ids:
+        for ref in Referral.objects.filter(referrer_id__in=filleul_ids).select_related(
+            'referred_user', 'referred_user__profile'
+        ).order_by('-created_at'):
+            filleuls_niveau_2.setdefault(ref.referrer_id, []).append(ref)
+
+    # Filleuls dont une machine tourne actuellement (donc source de revenus)
+    filleuls_avec_machine = set()
+    if filleul_ids:
+        filleuls_avec_machine = set(
+            AiRental.objects.filter(
+                user_id__in=filleul_ids,
+                status=AiRental.Status.ACTIVE,
+                end_date__gt=timezone.now(),
+            ).values_list('user_id', flat=True)
+        )
+
+    filleuls_data = [{
+        'referral': ref,
+        'filleul': ref.referred_user,
+        'commission_total': commissions_by_filleul.get(ref.referred_user_id, Decimal('0')),
+        'has_active_machine': ref.referred_user_id in filleuls_avec_machine,
+        'filleuls_niveau_2': filleuls_niveau_2.get(ref.referred_user_id, []),
+    } for ref in filleuls]
+
+    total_commissions_earned = Commission.objects.filter(
+        user=user,
+        status__in=[Commission.Status.APPROVED, Commission.Status.AVAILABLE],
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
     return render(request, 'admin/user_detail.html', {
         'target_user': user,
@@ -83,7 +136,12 @@ def admin_user_detail(request, pk):
         'deposits': deposits,
         'withdrawals': withdrawals,
         'rentals': rentals,
-        'referrals': referrals,
+        'parrain': parrain,
+        'referrer_referral': referrer_referral,
+        'filleuls': filleuls_data,
+        'filleuls_count': len(filleuls_data),
+        'filleuls_niveau_2_count': sum(len(v) for v in filleuls_niveau_2.values()),
+        'total_commissions_earned': total_commissions_earned,
         'audit_logs': audit_logs,
     })
 
@@ -532,24 +590,6 @@ def admin_messages(request):
 def admin_commissions(request):
     commissions = Commission.objects.all().select_related('user', 'source_user').order_by('-created_at')
     return render(request, 'admin/commissions.html', {'commissions': commissions})
-
-
-@admin_required
-def admin_referrals(request):
-    referrals = Referral.objects.all().select_related('referrer', 'referred_user').order_by('-created_at')
-
-    stats = {
-        'total_referrals': Referral.objects.count(),
-        'level_1': Referral.objects.filter(referral_level=1).count(),
-        'level_2': Referral.objects.filter(referral_level=2).count(),
-        'total_commissions': Commission.objects.aggregate(total=Sum('amount'))['total'] or 0,
-    }
-
-    paginator = Paginator(referrals, 20)
-    page = request.GET.get('page', 1)
-    referrals = paginator.get_page(page)
-
-    return render(request, 'admin/referrals.html', {'referrals': referrals, 'stats': stats})
 
 
 @admin_required

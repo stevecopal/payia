@@ -153,22 +153,90 @@
     </div>
     {% endif %}
 
-    {% if referrals %}
+    <!-- Parrainage : parrain + filleuls (niveaux 1 et 2) -->
     <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
-        <h2 class="text-lg font-semibold mb-4">{% trans "Parrainages" %}</h2>
-        <div class="space-y-2">
-            {% for ref in referrals %}
-            <div class="flex items-center justify-between py-2 border-b border-gray-800/50 last:border-0">
-                <div>
-                    <p class="text-sm font-medium">{{ ref.referred_user.profile.first_name|default:ref.referred_user.username }} {{ ref.referred_user.profile.last_name }}</p>
-                    <p class="text-xs text-gray-500 font-mono">{{ ref.referred_user.phone_number }}</p>
-                </div>
-                <span class="px-2 py-1 text-xs rounded-full bg-blue-500/15 text-blue-400">{% trans "Niveau" %} {{ ref.referral_level }}</span>
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 class="text-lg font-semibold">{% trans "Parrainage" %}</h2>
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+                <span class="px-2 py-1 rounded-full bg-blue-500/15 text-blue-400">N1 : {{ filleuls_count }}</span>
+                <span class="px-2 py-1 rounded-full bg-blue-500/15 text-blue-400">N2 : {{ filleuls_niveau_2_count }}</span>
+                <span class="px-2 py-1 rounded-full bg-green-500/15 text-green-400">{% trans "Commissions reçues" %} : {{ total_commissions_earned|floatformat:2 }} XAF</span>
             </div>
+        </div>
+
+        <!-- Parrain -->
+        <div class="mb-5 p-3 bg-white/5 rounded-lg border border-gray-800/50">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">{% trans "Parrain" %}</p>
+            {% if parrain %}
+            <a href="{% url 'admin_user_detail' pk=parrain.pk %}" class="flex items-center justify-between gap-3 group">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">
+                        {{ parrain.profile.first_name|first|upper }}{{ parrain.profile.last_name|first|upper }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium group-hover:text-green-400 transition-colors">{{ parrain.profile.first_name|default:parrain.username }} {{ parrain.profile.last_name }}</p>
+                        <p class="text-xs text-gray-500 font-mono">{{ parrain.phone_number }}</p>
+                    </div>
+                </div>
+                <div class="text-right shrink-0">
+                    <span class="px-2 py-1 text-xs rounded-full bg-blue-500/15 text-blue-400">{% trans "Niveau" %} {{ referrer_referral.referral_level|default:1 }}</span>
+                    {% if referrer_referral %}<p class="text-[10px] text-gray-600 mt-1">{{ referrer_referral.created_at|date:"d/m/Y" }}</p>{% endif %}
+                </div>
+            </a>
+            {% else %}
+            <p class="text-sm text-gray-500">{% trans "Aucun parrain : inscription directe, sans code de parrainage." %}</p>
+            {% endif %}
+        </div>
+
+        <!-- Filleuls directs (niveau 1) -->
+        <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">{% trans "Filleuls directs (niveau 1)" %}</p>
+        <div class="space-y-1">
+            {% for item in filleuls %}
+            <div class="py-2 border-b border-gray-800/50 last:border-0">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <a href="{% url 'admin_user_detail' pk=item.filleul.pk %}" class="flex items-center gap-3 min-w-0 group">
+                        <div class="w-9 h-9 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">
+                            {{ item.filleul.profile.first_name|first|upper }}{{ item.filleul.profile.last_name|first|upper }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium truncate group-hover:text-green-400 transition-colors">{{ item.filleul.profile.first_name|default:item.filleul.username }} {{ item.filleul.profile.last_name }}</p>
+                            <p class="text-xs text-gray-500 font-mono">{{ item.filleul.phone_number }} · {{ item.referral.created_at|date:"d/m/Y" }}</p>
+                        </div>
+                    </a>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        {% if item.filleul.is_suspended %}
+                        <span class="px-2 py-1 rounded-full bg-red-500/15 text-red-400">{% trans "Suspendu" %}</span>
+                        {% elif item.filleul.is_active %}
+                        <span class="px-2 py-1 rounded-full bg-green-500/15 text-green-400">{% trans "Actif" %}</span>
+                        {% else %}
+                        <span class="px-2 py-1 rounded-full bg-gray-500/15 text-gray-400">{% trans "Inactif" %}</span>
+                        {% endif %}
+                        {% if item.has_active_machine %}
+                        <span class="px-2 py-1 rounded-full bg-green-500/15 text-green-400">{% trans "Machine active" %}</span>
+                        {% endif %}
+                        {% if item.filleuls_niveau_2 %}
+                        <span class="px-2 py-1 rounded-full bg-blue-500/15 text-blue-400">{{ item.filleuls_niveau_2|length }} N2</span>
+                        {% endif %}
+                        <span class="px-2 py-1 rounded-full bg-white/5 text-gray-300" title="{% trans 'Commissions générées par ce filleul' %}">{{ item.commission_total|floatformat:2 }} XAF</span>
+                    </div>
+                </div>
+                {% if item.filleuls_niveau_2 %}
+                <div class="mt-2 ml-12 space-y-1">
+                    {% for sub in item.filleuls_niveau_2 %}
+                    <a href="{% url 'admin_user_detail' pk=sub.referred_user.pk %}" class="flex items-center justify-between gap-2 text-xs text-gray-500 hover:text-green-400 transition-colors">
+                        <span>↳ {{ sub.referred_user.profile.first_name|default:sub.referred_user.username }} {{ sub.referred_user.profile.last_name }} · <span class="font-mono">{{ sub.referred_user.phone_number }}</span></span>
+                        <span class="font-mono shrink-0">{{ sub.created_at|date:"d/m/Y" }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-sm text-gray-500 py-3">{% trans "Aucun filleul." %}</p>
             {% endfor %}
         </div>
+
     </div>
-    {% endif %}
 
     {% if audit_logs %}
     <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 p-6">
