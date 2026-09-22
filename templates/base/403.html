@@ -1,13 +1,19 @@
-{% extends "base/public.html" %}
+{% extends "base/error.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Accès interdit{% endblock %}
-{% block content %}
-<div class="min-h-[70vh] flex items-center justify-center px-4">
-    <div class="text-center">
-        <h1 class="text-6xl font-bold text-black mb-4">403</h1>
-        <p class="text-xl text-gray-600 mb-8">{% trans "Accès interdit" %}</p>
-        <p class="text-gray-500 mb-8">{% trans "Vous n'avez pas la permission d'accéder à cette page." %}</p>
-        <a href="{% url 'home' %}" class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Retour à l'accueil" %}</a>
-    </div>
-</div>
+
+{% block error_document_title %}PAYIA - {% trans "Accès interdit" %}{% endblock %}
+
+{% block error_icon %}
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+</svg>
+{% endblock %}
+
+{% block error_code %}403{% endblock %}
+{% block error_title %}{% trans "Accès interdit" %}{% endblock %}
+{% block error_message %}{% trans "Vous n'avez pas la permission d'accéder à cette page." %}{% endblock %}
+
+{% block error_actions %}
+<a href="/" class="error-button">{% trans "Retour à l'accueil" %}</a>
 {% endblock %}

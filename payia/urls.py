@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -6,17 +8,52 @@ from core.views import admin_panel
 from core.views.pwa import service_worker, manifest as pwa_manifest, offline as pwa_offline
 
 
+logger = logging.getLogger(__name__)
+
+
+def _render_error_page(template_name):
+    """Rend une page d'erreur SANS contexte, donc sans context processor.
+
+    Indispensable quand DEBUG=False : les pages 403/404/500 doivent rester
+    affichables même si la base de données, les sessions ou le cache sont
+    indisponibles. Or les context processors `global_context` (compteurs de
+    notifications) et `auth` (session) interrogent la base : les exécuter ici
+    rejouerait l'erreur qui a provoqué la page d'erreur elle-même.
+    """
+    from django.template.loader import render_to_string
+    return render_to_string(template_name)
+
+
 def handler403(request, exception=None):
-    from django.shortcuts import render
-    return render(request, 'base/403.html', status=403)
+    from django.http import HttpResponseForbidden
+    return HttpResponseForbidden(_render_error_page('base/403.html'))
+
 
 def handler404(request, exception=None):
-    from django.shortcuts import render
-    return render(request, 'base/404.html', status=404)
+    from django.http import HttpResponseNotFound
+    return HttpResponseNotFound(_render_error_page('base/404.html'))
+
+
+# Ultime filet de sécurité : si le template du 500 est introuvable ou cassé,
+# on renvoie quand même une réponse HTML plutôt qu'une page vide.
+_FALLBACK_500 = (
+    '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">'
+    '<title>PAYIA - Erreur serveur</title></head>'
+    '<body style="margin:0;height:100vh;display:flex;align-items:center;'
+    'justify-content:center;background:#000;color:#fff;font-family:monospace">'
+    '<p>Une erreur est survenue. Merci de réessayer dans un instant.</p>'
+    '</body></html>'
+)
+
 
 def handler500(request):
-    from django.shortcuts import render
-    return render(request, 'base/500.html', status=500)
+    from django.http import HttpResponseServerError
+    try:
+        html = _render_error_page('base/500.html')
+    except Exception:
+        logger.exception('Rendu de base/500.html impossible')
+        html = _FALLBACK_500
+    return HttpResponseServerError(html)
 
 
 urlpatterns = [
