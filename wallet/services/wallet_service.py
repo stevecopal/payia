@@ -91,15 +91,15 @@ class WalletService:
             entry_type__in=['withdrawal', 'WITHDRAWAL']
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0'))
 
+        ai_earnings = ledger.filter(
+            entry_type__in=['ai_revenue', 'AI_REVENUE']
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
         wallet.referral_earnings = Commission.objects.filter(
             user=user, status__in=['approved', 'available']
         ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-        ai_earnings = AiRevenue.objects.filter(
-            user=user, status='credited'
-        ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-        wallet.total_earnings = wallet.referral_earnings + ai_earnings
+        wallet.total_earnings = ai_earnings + wallet.referral_earnings
 
         wallet.save(update_fields=[
             'total_deposited', 'total_withdrawn', 'total_earnings',

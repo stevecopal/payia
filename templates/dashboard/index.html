@@ -10,25 +10,26 @@
 
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
-            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Solde" %}</p>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Solde" %}</p>
             <p class="text-xl font-bold mt-1">{{ wallet.available_balance|floatformat:2 }}</p>
             <p class="text-xs text-gray-500 mt-0.5">{{ user.profile.preferred_currency|default:"XOF" }}</p>
         </div>
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
-            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Déposé" %}</p>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Depose" %}</p>
             <p class="text-xl font-bold mt-1">{{ wallet.total_deposited|floatformat:2 }}</p>
         </div>
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
-            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Retiré" %}</p>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Retire" %}</p>
             <p class="text-xl font-bold mt-1">{{ wallet.total_withdrawn|floatformat:2 }}</p>
         </div>
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
-            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Revenus" %}</p>
-            <p class="text-xl font-bold mt-1 text-green-400">{{ wallet.total_earnings|floatformat:2 }}</p>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Revenus" %}</p>
+            <p class="text-xl font-bold mt-1 text-green-400">{{ ai_revenue_total|floatformat:2 }}</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">{% trans "Machines IA" %}</p>
         </div>
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
-            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Parrainage" %}</p>
-            <p class="text-xl font-bold mt-1 text-green-400">{{ wallet.referral_earnings|floatformat:2 }}</p>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Total Parrainage" %}</p>
+            <p class="text-xl font-bold mt-1 text-green-400">{{ referral_total|floatformat:2 }}</p>
         </div>
     </div>
 
