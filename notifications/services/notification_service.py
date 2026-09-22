@@ -14,6 +14,21 @@ class NotificationService:
         return qs.order_by('-created_at')
 
     @staticmethod
+    def get_commission_notifications(user, unread_only=False):
+        qs = Notification.objects.filter(
+            user=user, notification_type='COMMISSION_RECEIVED'
+        )
+        if unread_only:
+            qs = qs.filter(is_read=False)
+        return qs.order_by('-created_at')
+
+    @staticmethod
+    def get_unread_commission_count(user):
+        return Notification.objects.filter(
+            user=user, notification_type='COMMISSION_RECEIVED', is_read=False
+        ).count()
+
+    @staticmethod
     def mark_read(notification_id, user):
         try:
             notification = Notification.objects.get(id=notification_id, user=user)

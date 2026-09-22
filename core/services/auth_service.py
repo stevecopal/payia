@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import secrets
 import logging
 from datetime import timedelta
@@ -109,17 +110,18 @@ class AuthService:
         if not user.check_password(current_password):
             return False, _('Le mot de passe actuel est incorrect.')
 
-        user.set_password(new_password)
-        user.save(update_fields=['password'])
+        with transaction.atomic():
+            user.set_password(new_password)
+            user.save(update_fields=['password'])
 
-        AuditLog.log(
-            actor=user,
-            action='auth.password_change',
-            target_type='User',
-            target_id=str(user.pk),
-            description='Mot de passe modifié',
-            ip_address=AuthService._get_client_ip(request),
-        )
+            AuditLog.log(
+                actor=user,
+                action='auth.password_change',
+                target_type='User',
+                target_id=str(user.pk),
+                description='Mot de passe modifié',
+                ip_address=AuthService._get_client_ip(request),
+            )
         return True, _('Mot de passe modifié avec succès.')
 
     @staticmethod
@@ -166,23 +168,24 @@ class AuthService:
         if not user:
             return False, _('Lien de réinitialisation invalide ou expiré.')
 
-        hashed = hashlib.sha256(token.encode()).hexdigest()
-        OTP.objects.filter(
-            user=user,
-            code=hashed,
-            purpose='PASSWORD_RESET',
-        ).update(is_used=True)
+        with transaction.atomic():
+            hashed = hashlib.sha256(token.encode()).hexdigest()
+            OTP.objects.filter(
+                user=user,
+                code=hashed,
+                purpose='PASSWORD_RESET',
+            ).update(is_used=True)
 
-        user.set_password(new_password)
-        user.save(update_fields=['password'])
+            user.set_password(new_password)
+            user.save(update_fields=['password'])
 
-        AuditLog.log(
-            actor=user,
-            action='auth.password_reset',
-            target_type='User',
-            target_id=str(user.pk),
-            description='Mot de passe réinitialisé',
-        )
+            AuditLog.log(
+                actor=user,
+                action='auth.password_reset',
+                target_type='User',
+                target_id=str(user.pk),
+                description='Mot de passe réinitialisé',
+            )
         return True, _('Mot de passe réinitialisé avec succès.')
 
     @staticmethod
@@ -232,7 +235,7 @@ class AuthService:
             otp.save(update_fields=['is_used'])
             return False, _('Nombre maximum de tentatives atteint.')
 
-        if otp.code != code:
+        if not hmac.compare_digest(otp.code, code):
             otp.increment_attempts()
             remaining = otp.max_attempts - otp.attempts
             return False, _('Code incorrect. %(remaining)s tentative(s) restante(s).') % {

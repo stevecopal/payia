@@ -325,6 +325,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'ai_services.tasks.expire_rentals_task',
         'schedule': 300.0,
     },
+    'daily-commission-summary': {
+        'task': 'ai_services.tasks.daily_commission_summary',
+        'schedule': 86400.0,
+    },
 }
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 300
@@ -336,3 +340,19 @@ LOGGING['loggers']['ai_services'] = {
     'level': 'INFO',
     'propagate': False,
 }
+
+# Cache configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Security: ensure SECRET_KEY is not default in production
+if not DEBUG and SECRET_KEY.startswith('django-insecure'):
+    import warnings
+    warnings.warn(
+        'SECRET_KEY is using default insecure value! Set SECRET_KEY in environment.',
+        RuntimeWarning,
+    )

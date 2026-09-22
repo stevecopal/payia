@@ -66,9 +66,10 @@
         <div>
             <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Montant" %}</label>
             <div class="flex items-center gap-0">
-                <input type="number" name="amount" value="{{ form_data.amount|default:'' }}" min="1" step="1" inputmode="numeric" class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-mono placeholder-gray-500" placeholder="0">
+                <input type="number" name="amount" value="{{ form_data.amount|default:'' }}" min="1" step="1" inputmode="numeric" class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-mono placeholder-gray-500" placeholder="0" required>
                 <span class="px-3 py-3 bg-gray-800 border border-gray-700 border-l-0 rounded-r-lg text-sm text-gray-400 font-mono">XAF</span>
             </div>
+            <p class="mt-1 text-xs text-gray-500">{% trans "Montant minimum:" %} {{ form_data.min_deposit|default:min_deposit|default:"2500" }} XAF</p>
             {% if errors.amount %}<p class="mt-1 text-xs text-red-400">{{ errors.amount }}</p>{% endif %}
         </div>
 

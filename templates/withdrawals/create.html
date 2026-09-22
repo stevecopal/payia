@@ -27,6 +27,7 @@
         <div>
             <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Montant" %}</label>
             {{ form.amount }}
+            <p class="mt-1 text-xs text-gray-500">{% trans "Montant minimum de retrait:" %} {{ min_withdrawal }} XAF</p>
             {% if form.amount.errors %}<p class="mt-1 text-xs text-red-400">{{ form.amount.errors.0 }}</p>{% endif %}
         </div>
 

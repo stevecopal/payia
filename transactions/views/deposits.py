@@ -1,11 +1,14 @@
 import json
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 from transactions.models import Deposit, PaymentMethod
 from transactions.services.deposit_service import DepositService
 from core.permissions import login_required_custom
+from core.models import Setting
 from analytics.services.analytics_service import AnalyticsService
 
 
@@ -32,11 +35,36 @@ def deposit_create(request):
                 errors['amount'] = _('Veuillez saisir un montant.')
             else:
                 try:
-                    amount_dec = float(amount)
+                    amount_dec = Decimal(amount)
                     if amount_dec <= 0:
                         errors['amount'] = _('Le montant doit être supérieur à 0.')
                 except (ValueError, TypeError):
                     errors['amount'] = _('Montant invalide.')
+
+            if not errors:
+                try:
+                    pm = PaymentMethod.objects.get(id=payment_method_id, is_active=True)
+                except PaymentMethod.DoesNotExist:
+                    messages.error(request, _('Méthode de paiement invalide.'))
+                    return redirect('deposit_create')
+
+                if pm.min_amount and amount_dec < pm.min_amount:
+                    errors['amount'] = _('Le montant minimum est {amount} XAF.').format(amount=pm.min_amount)
+                elif pm.max_amount and amount_dec > pm.max_amount:
+                    errors['amount'] = _('Le montant maximum est {amount} XAF.').format(amount=pm.max_amount)
+                else:
+                    try:
+                        min_deposit = Decimal(Setting.objects.get(key='minimum_deposit').value)
+                    except Setting.DoesNotExist:
+                        min_deposit = Decimal('2500')
+                    if amount_dec < min_deposit:
+                        errors['amount'] = _('Le montant minimum de depot est {amount} XAF.').format(amount=min_deposit)
+
+            try:
+                min_deposit_setting = Setting.objects.get(key='minimum_deposit')
+                min_deposit_val = str(min_deposit_setting.value)
+            except Setting.DoesNotExist:
+                min_deposit_val = '2500'
 
             if errors:
                 payment_methods = PaymentMethod.objects.filter(is_active=True)
@@ -48,6 +76,7 @@ def deposit_create(request):
                         'payment_method_id': payment_method_id,
                         'phone_digits': phone_digits,
                         'amount': amount,
+                        'min_deposit': min_deposit_val,
                     },
                 })
 
@@ -67,6 +96,7 @@ def deposit_create(request):
                 'reception_number': pm.phone_number,
                 'reception_name': pm.reception_name or pm.phone_number,
                 'ussd_code': ussd_code,
+                'min_deposit': min_deposit_val,
             }
 
             return render(request, 'deposits/create.html', {
@@ -138,9 +168,15 @@ def deposit_create(request):
                 })
 
     payment_methods = PaymentMethod.objects.filter(is_active=True)
+    try:
+        min_deposit = Setting.objects.get(key='minimum_deposit')
+        min_deposit_val = str(min_deposit.value)
+    except Setting.DoesNotExist:
+        min_deposit_val = '2500'
     return render(request, 'deposits/create.html', {
         'step': 1,
         'payment_methods': payment_methods,
+        'min_deposit': min_deposit_val,
     })
 
 

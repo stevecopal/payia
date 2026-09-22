@@ -530,9 +530,6 @@ def admin_referrals(request):
         'total_referrals': Referral.objects.count(),
         'level_1': Referral.objects.filter(referral_level=1).count(),
         'level_2': Referral.objects.filter(referral_level=2).count(),
-        'level_3': Referral.objects.filter(referral_level=3).count(),
-        'level_4': Referral.objects.filter(referral_level=4).count(),
-        'level_5': Referral.objects.filter(referral_level=5).count(),
         'total_commissions': Commission.objects.aggregate(total=Sum('amount'))['total'] or 0,
     }
 

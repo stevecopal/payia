@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.db import transaction
-from django.db.models import Sum, Q
+from django.db.models import Sum
 from wallet.models import Wallet, LedgerEntry
 
 
@@ -17,17 +17,21 @@ class WalletService:
         amount = Decimal(str(amount))
         entry_type_str = str(entry_type).lower()
         balance_before = wallet.available_balance
+
         wallet.available_balance += amount
-        wallet.save(update_fields=['available_balance', 'updated_at'])
+        update_fields = ['available_balance', 'updated_at']
 
         if entry_type_str == LedgerEntry.EntryType.DEPOSIT:
             wallet.total_deposited += amount
-            wallet.save(update_fields=['total_deposited', 'updated_at'])
+            update_fields.append('total_deposited')
         elif entry_type_str in [LedgerEntry.EntryType.AI_REVENUE, LedgerEntry.EntryType.REFERRAL_COMMISSION]:
             wallet.total_earnings += amount
+            update_fields.append('total_earnings')
             if entry_type_str == LedgerEntry.EntryType.REFERRAL_COMMISSION:
                 wallet.referral_earnings += amount
-            wallet.save(update_fields=['total_earnings', 'referral_earnings', 'updated_at'])
+                update_fields.append('referral_earnings')
+
+        wallet.save(update_fields=update_fields)
 
         ledger_entry = LedgerEntry.objects.create(
             user=user,
@@ -54,11 +58,13 @@ class WalletService:
 
         balance_before = wallet.available_balance
         wallet.available_balance -= amount
+        update_fields = ['available_balance', 'updated_at']
 
         if entry_type_str == LedgerEntry.EntryType.WITHDRAWAL:
             wallet.total_withdrawn += amount
+            update_fields.append('total_withdrawn')
 
-        wallet.save(update_fields=['available_balance', 'total_withdrawn', 'updated_at'])
+        wallet.save(update_fields=update_fields)
 
         ledger_entry = LedgerEntry.objects.create(
             user=user,
@@ -74,11 +80,9 @@ class WalletService:
         return wallet, ledger_entry
 
     @staticmethod
+    @transaction.atomic
     def sync_totals(user):
-        """Recalculate wallet totals from ALL sources of truth:
-        ledger entries, Commission model, and AiRevenue model."""
         from referrals.models import Commission
-        from ai_services.models import AiRevenue
 
         wallet = Wallet.objects.select_for_update().get(user=user)
         ledger = LedgerEntry.objects.filter(user=user)
@@ -114,7 +118,7 @@ class WalletService:
         amount = Decimal(str(amount))
 
         if wallet.available_balance < amount:
-            raise ValueError("Solde insuffisant pour cette opération.")
+            raise ValueError("Solde insuffisant pour cette operation.")
 
         wallet.available_balance -= amount
         wallet.pending_balance += amount
@@ -128,7 +132,7 @@ class WalletService:
         amount = Decimal(str(amount))
 
         if wallet.pending_balance < amount:
-            raise ValueError("Montant à libérer supérieur au solde en attente.")
+            raise ValueError("Montant a liberer superieur au solde en attente.")
 
         wallet.pending_balance -= amount
         wallet.available_balance += amount

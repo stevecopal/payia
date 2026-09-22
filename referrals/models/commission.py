@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -5,6 +7,15 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Commission(models.Model):
+    """Commission earned by a referrer from a referred user's machine revenue.
+
+    Commissions are ONLY generated when a machine produces revenue.
+    They are NEVER taken from deposits.
+
+    Financial rule:
+        revenue_amount = commission_L1 + commission_L2 + user_net_amount
+        The machine's gross revenue is split: referrers get their %, user gets the rest.
+    """
 
     class Status(models.TextChoices):
         PENDING = 'pending', _('Pending')
@@ -17,33 +28,42 @@ class Commission(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='commissions_earned',
-        verbose_name=_('user'),
+        verbose_name=_('user (referrer)'),
     )
     source_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='commissions_generated',
-        verbose_name=_('source user'),
+        verbose_name=_('source user (referred)'),
     )
     referral_level = models.IntegerField(
         verbose_name=_('referral level'),
     )
-    source_transaction_type = models.CharField(
-        max_length=50,
-        verbose_name=_('source transaction type'),
-    )
-    source_transaction_id = models.PositiveIntegerField(
-        verbose_name=_('source transaction ID'),
+    ai_revenue = models.ForeignKey(
+        'ai_services.AiRevenue',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='commissions',
+        verbose_name=_('AI revenue source'),
+        help_text=_('The revenue event that generated this commission.'),
     )
     percentage = models.DecimalField(
-        max_digits=12,
+        max_digits=5,
         decimal_places=2,
         verbose_name=_('percentage'),
+    )
+    gross_revenue = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal('0'),
+        verbose_name=_('gross revenue'),
+        help_text=_('The machine revenue before commissions.'),
     )
     amount = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        verbose_name=_('amount'),
+        verbose_name=_('commission amount'),
     )
     status = models.CharField(
         max_length=20,
@@ -77,13 +97,20 @@ class Commission(models.Model):
         verbose_name = _('commission')
         verbose_name_plural = _('commissions')
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'status'], name='commission_user_status_idx'),
+            models.Index(fields=['source_user'], name='commission_source_user_idx'),
+            models.Index(fields=['status'], name='commission_status_idx'),
+            models.Index(fields=['created_at'], name='commission_created_idx'),
+        ]
 
     def __str__(self):
         return f"{self.user} - {self.amount} ({self.get_status_display()})"
 
     def approve(self):
         self.status = self.Status.APPROVED
-        self.save(update_fields=['status', 'updated_at'])
+        self.paid_at = timezone.now()
+        self.save(update_fields=['status', 'paid_at', 'updated_at'])
 
     def cancel(self):
         self.status = self.Status.CANCELLED

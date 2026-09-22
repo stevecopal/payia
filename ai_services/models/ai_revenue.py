@@ -79,6 +79,9 @@ class AiRevenue(models.Model):
         indexes = [
             models.Index(fields=['payment_reference'], name='revenue_payment_ref_idx'),
             models.Index(fields=['rental', 'status'], name='revenue_rental_status_idx'),
+            models.Index(fields=['user', 'status'], name='revenue_user_status_idx'),
+            models.Index(fields=['user', 'created_at'], name='revenue_user_created_idx'),
+            models.Index(fields=['status'], name='revenue_status_idx'),
         ]
 
     def __str__(self):

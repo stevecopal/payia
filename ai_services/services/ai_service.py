@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from ai_services.models import AiOffer, AiRental, AiRevenue
+from wallet.models import Wallet
 from wallet.services.wallet_service import WalletService
 from core.models import AuditLog
 from notifications.models import Notification
@@ -28,35 +29,24 @@ def _compute_next_payment_at(current_next, frequency):
 class AiService:
     @staticmethod
     def rent_offer(user, offer_id):
-        offer = AiOffer.objects.get(id=offer_id, is_active=True)
-
-        if not offer.can_rent(user):
-            raise ValueError("Vous ne pouvez pas louer cette offre.")
-
-        wallet = WalletService.get_wallet(user)
-        if wallet.available_balance < offer.price:
-            raise ValueError("Solde insuffisant pour louer cette offre.")
-
-        existing_active = AiRental.objects.filter(
-            user=user, offer=offer, status=AiRental.Status.ACTIVE, end_date__gt=timezone.now()
-        ).exists()
-        if existing_active:
-            raise ValueError("Vous avez déjà une location active pour cette offre.")
-
-        from transactions.models import Deposit
-        last_deposit = Deposit.objects.filter(
-            user=user,
-            status='completed',
-        ).order_by('-created_at').first()
-
-        if last_deposit and last_deposit.productive_amount > 0:
-            productive_amount = last_deposit.productive_amount
-        else:
-            productive_amount = offer.price
-
-        earning_amount = offer.get_expected_revenue_for_amount(productive_amount)
-
         with transaction.atomic():
+            offer = AiOffer.objects.select_for_update().get(id=offer_id, is_active=True)
+
+            if not offer.can_rent(user):
+                raise ValueError("Vous ne pouvez pas louer cette offre.")
+
+            wallet = Wallet.objects.select_for_update().get(user=user)
+            if wallet.available_balance < offer.price:
+                raise ValueError("Solde insuffisant pour louer cette offre.")
+
+            existing_active = AiRental.objects.filter(
+                user=user, offer=offer, status=AiRental.Status.ACTIVE, end_date__gt=timezone.now()
+            ).exists()
+            if existing_active:
+                raise ValueError("Vous avez deja une location active pour cette offre.")
+
+            earning_amount = offer.get_expected_revenue()
+
             WalletService.debit_wallet(
                 user=user,
                 amount=offer.price,
@@ -76,7 +66,7 @@ class AiService:
                 start_date=now,
                 end_date=now + timedelta(days=offer.duration_days),
                 amount_paid=offer.price,
-                productive_amount=productive_amount,
+                productive_amount=offer.price,
                 earning_amount=earning_amount,
                 next_payment_at=next_payment_at,
                 status=AiRental.Status.ACTIVE,
@@ -89,7 +79,7 @@ class AiService:
             Notification.objects.create(
                 user=user,
                 notification_type='AI_ACTIVATED',
-                title='Offre IA activée',
+                title='Offre IA activee',
                 message=f'Votre offre "{offer.name}" est maintenant active jusqu\'au {rental.end_date.strftime("%d/%m/%Y")}.',
             )
 
@@ -98,7 +88,7 @@ class AiService:
                 action='ai.rented',
                 target_type='AiRental',
                 target_id=str(rental.pk),
-                description=f'Offre {offer.name} louée pour {offer.price} (base productive: {productive_amount})',
+                description=f'Offre {offer.name} louee pour {offer.price} (revenu brut: {earning_amount}/periode)',
             )
 
         return rental
@@ -116,6 +106,8 @@ class AiService:
     @staticmethod
     @transaction.atomic
     def process_payment(rental_id):
+        from referrals.services.referral_service import ReferralService
+
         rental = AiRental.objects.select_for_update().get(id=rental_id)
 
         now = timezone.now()
@@ -131,8 +123,8 @@ class AiService:
             Notification.objects.create(
                 user=rental.user,
                 notification_type='AI_EXPIRED',
-                title='Offre IA expirée',
-                message=f'Votre offre "{rental.offer.name}" a expiré.',
+                title='Offre IA expiree',
+                message=f'Votre offre "{rental.offer.name}" a expire.',
             )
             logger.info(f'Rental {rental_id} expired.')
             return None
@@ -159,22 +151,31 @@ class AiService:
         )
         period_end = period_start + interval
 
+        gross_revenue = rental.earning_amount
+
         revenue = AiRevenue.objects.create(
             user=rental.user,
             rental=rental,
             offer=rental.offer,
-            amount=rental.earning_amount,
+            amount=gross_revenue,
             payment_reference=payment_reference,
             period_start=period_start,
             period_end=period_end,
             status=AiRevenue.Status.PENDING,
         )
 
+        commission_result = ReferralService.calculate_revenue_commission(rental, gross_revenue)
+        net_amount = commission_result['net_amount']
+
+        for c in commission_result['commissions']:
+            c.ai_revenue = revenue
+            c.save(update_fields=['ai_revenue'])
+
         wallet, ledger_entry = WalletService.credit_wallet(
             user=rental.user,
-            amount=rental.earning_amount,
+            amount=net_amount,
             entry_type='AI_REVENUE',
-            description=f'Revenu IA: {rental.offer.name} (Cycle {payment_count})',
+            description=f'Revenu IA net: {rental.offer.name} (Cycle {payment_count})',
             reference_type='AiRevenue',
             reference_id=revenue.pk,
         )
@@ -191,7 +192,7 @@ class AiService:
 
         rental.payment_count = payment_count
         rental.last_payment_at = rental.next_payment_at
-        rental.total_revenue_earned += rental.earning_amount
+        rental.total_revenue_earned += net_amount
         rental.next_payment_at = next_payment_at
 
         if next_payment_at is None:
@@ -203,8 +204,8 @@ class AiService:
             Notification.objects.create(
                 user=rental.user,
                 notification_type='AI_EXPIRED',
-                title='Location terminée',
-                message=f'Votre location "{rental.offer.name}" est terminée. Total gagné: {rental.total_revenue_earned} XAF.',
+                title='Location terminee',
+                message=f'Votre location "{rental.offer.name}" est terminee. Total gagne: {rental.total_revenue_earned} XAF.',
             )
         else:
             rental.save(update_fields=[
@@ -215,8 +216,8 @@ class AiService:
         Notification.objects.create(
             user=rental.user,
             notification_type='AI_ACTIVATED',
-            title='Paiement reçu',
-            message=f'Votre machine "{rental.offer.name}" a généré {rental.earning_amount} XAF. Votre compte a été crédité.',
+            title='Paiement recu',
+            message=f'Votre machine "{rental.offer.name}" a genere {gross_revenue} XAF. Apres commissions parrainage ({commission_result["total_commission"]} XAF), vous recevez {net_amount} XAF.',
         )
 
         AuditLog.objects.create(
@@ -224,17 +225,19 @@ class AiService:
             action='ai.payment.credited',
             target_type='AiRental',
             target_id=str(rental.pk),
-            description=f'Revenu {rental.earning_amount} XAF crédité (cycle {payment_count})',
+            description=f'Revenu brut {gross_revenue} XAF, commission {commission_result["total_commission"]} XAF, net {net_amount} XAF (cycle {payment_count})',
         )
 
         logger.info(
-            f'Payment {payment_reference} processed: +{rental.earning_amount} XAF '
+            f'Payment {payment_reference} processed: gross={gross_revenue}, '
+            f'commission={commission_result["total_commission"]}, net={net_amount} '
             f'for rental {rental_id}, next_payment_at={next_payment_at}'
         )
 
         return revenue
 
     @staticmethod
+    @transaction.atomic
     def process_due_payments():
         now = timezone.now()
         due_rentals = AiRental.objects.filter(
@@ -258,11 +261,13 @@ class AiService:
         return processed, errors
 
     @staticmethod
+    @transaction.atomic
     def expire_rentals():
         now = timezone.now()
         expired = AiRental.objects.filter(
             status=AiRental.Status.ACTIVE, end_date__lte=now
-        )
+        ).select_for_update()
+
         count = 0
         for rental in expired:
             rental.status = AiRental.Status.EXPIRED
@@ -271,8 +276,8 @@ class AiService:
             Notification.objects.create(
                 user=rental.user,
                 notification_type='AI_EXPIRED',
-                title='Offre IA expirée',
-                message=f'Votre offre "{rental.offer.name}" a expiré.',
+                title='Offre IA expiree',
+                message=f'Votre offre "{rental.offer.name}" a expire.',
             )
             count += 1
         return count

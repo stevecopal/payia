@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from decimal import Decimal
 from transactions.forms.withdrawal import WithdrawalForm
 from transactions.services.withdrawal_service import WithdrawalService
 from transactions.models import Withdrawal
 from core.permissions import login_required_custom
+from core.models import Setting
+from transactions.models import PaymentMethod
+from wallet.services.wallet_service import WalletService
 
 
 @login_required_custom
@@ -20,7 +25,7 @@ def withdrawal_create(request):
     except Exception:
         messages.warning(request, _('Veuillez compléter votre profil.'))
         return redirect('profile_complete')
-    
+
     if request.method == 'POST':
         form = WithdrawalForm(request.POST)
         if form.is_valid():
@@ -43,15 +48,18 @@ def withdrawal_create(request):
             'withdrawal_account_name': profile.withdrawal_account_name,
         }
         form = WithdrawalForm(initial=initial_data)
-    
-    from transactions.models import PaymentMethod
-    from wallet.services.wallet_service import WalletService
+
+    try:
+        min_withdrawal = Decimal(Setting.objects.get(key='minimum_withdrawal').value)
+    except Setting.DoesNotExist:
+        min_withdrawal = Decimal('3500')
     payment_methods = PaymentMethod.objects.filter(is_active=True)
     wallet = WalletService.get_wallet(request.user)
     return render(request, 'withdrawals/create.html', {
         'form': form,
         'payment_methods': payment_methods,
         'wallet': wallet,
+        'min_withdrawal': str(min_withdrawal),
     })
 
 
@@ -68,10 +76,10 @@ def withdrawal_list(request):
     status_lower = status.lower()
     if status_lower:
         withdrawals = withdrawals.filter(status=status_lower)
-    
+
     from django.core.paginator import Paginator
     paginator = Paginator(withdrawals, 15)
     page = request.GET.get('page', 1)
     withdrawals = paginator.get_page(page)
-    
+
     return render(request, 'withdrawals/list.html', {'withdrawals': withdrawals, 'current_status': status_lower})

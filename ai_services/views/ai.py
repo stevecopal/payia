@@ -69,10 +69,15 @@ def ai_offer_detail(request, slug):
         can_rent = wallet.available_balance >= offer.price
         has_active_rental = AiService.get_active_rentals(request.user).filter(offer=offer).exists()
 
+    from referrals.services.referral_service import ReferralService
+    gross_revenue = offer.get_expected_revenue()
+    revenue_breakdown = ReferralService.get_revenue_breakdown(gross_revenue)
+
     return render(request, 'ai/detail.html', {
         'offer': offer,
         'can_rent': can_rent,
         'has_active_rental': has_active_rental,
+        'revenue_breakdown': revenue_breakdown,
     })
 
 
@@ -146,6 +151,9 @@ def ai_rental_detail(request, pk):
 
     revenue_per_period = rental.earning_amount if rental.earning_amount else offer.get_expected_revenue()
 
+    from referrals.services.referral_service import ReferralService
+    revenue_breakdown = ReferralService.get_revenue_breakdown(revenue_per_period)
+
     remaining_total = (rental.end_date - now).total_seconds()
     remaining_days = int(remaining_total // 86400)
     remaining_hours = int((remaining_total % 86400) // 3600)
@@ -161,6 +169,7 @@ def ai_rental_detail(request, pk):
         'frequency_label': frequency_labels.get(offer.revenue_frequency, offer.revenue_frequency),
         'revenue_type_label': revenue_type_labels.get(offer.revenue_type, offer.revenue_type),
         'revenue_per_period': revenue_per_period,
+        'revenue_breakdown': revenue_breakdown,
         'next_payment': next_payment_at,
         'next_payment_timestamp': int(next_payment_at.timestamp() * 1000) if next_payment_at else 0,
         'now_timestamp': int(now.timestamp() * 1000),

@@ -31,14 +31,14 @@ class Deposit(models.Model):
         max_digits=12,
         decimal_places=2,
         default=Decimal("0"),
-        help_text=_('Total referral commissions deducted from this deposit.'),
+        help_text=_('Deprecated: commissions are now taken from machine revenue, not deposits.'),
     )
     productive_amount = models.DecimalField(
         _("productive amount"),
         max_digits=12,
         decimal_places=2,
         default=Decimal("0"),
-        help_text=_('Amount available for AI revenue calculations after referral commissions.'),
+        help_text=_('Deprecated: 100% of deposit now goes to machine. Use deposit.amount directly.'),
     )
     payment_method = models.ForeignKey(
         PaymentMethod,
@@ -113,6 +113,12 @@ class Deposit(models.Model):
                 condition=~models.Q(status="rejected"),
                 name="unique_user_transaction_id_non_rejected",
             ),
+        ]
+        indexes = [
+            models.Index(fields=["status"], name="deposit_status_idx"),
+            models.Index(fields=["user", "status"], name="deposit_user_status_idx"),
+            models.Index(fields=["created_at"], name="deposit_created_idx"),
+            models.Index(fields=["user", "created_at"], name="deposit_user_created_idx"),
         ]
 
     def __str__(self):

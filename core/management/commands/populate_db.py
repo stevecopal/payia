@@ -149,16 +149,12 @@ class Command(BaseCommand):
     # ── Settings ─────────────────────────────────────────────────
     def create_settings(self):
         settings_data = [
-            ('minimum_withdrawal', '1000', 'INTEGER', 'Montant minimum de retrait'),
-            ('minimum_deposit', '500', 'INTEGER', 'Montant minimum de dépôt'),
+            ('minimum_withdrawal', '3500', 'INTEGER', 'Montant minimum de retrait'),
+            ('minimum_deposit', '2500', 'INTEGER', 'Montant minimum de depot'),
             ('level_1_percentage', '10', 'DECIMAL', 'Commission parrainage niveau 1 (%)'),
             ('level_2_percentage', '5', 'DECIMAL', 'Commission parrainage niveau 2 (%)'),
-            ('level_3_percentage', '3', 'DECIMAL', 'Commission parrainage niveau 3 (%)'),
-            ('level_4_percentage', '2', 'DECIMAL', 'Commission parrainage niveau 4 (%)'),
-            ('level_5_percentage', '1', 'DECIMAL', 'Commission parrainage niveau 5 (%)'),
-            ('max_total_commission_percentage', '90', 'DECIMAL', 'Plafond maximal total des commissions (%)'),
             ('platform_name', 'PAYIA', 'STRING', 'Nom de la plateforme'),
-            ('platform_currency', 'XOF', 'STRING', 'Devise par défaut'),
+            ('platform_currency', 'XAF', 'STRING', 'Devise par defaut'),
             ('maintenance_mode', 'false', 'BOOLEAN', 'Mode maintenance'),
         ]
         for key, value, stype, desc in settings_data:

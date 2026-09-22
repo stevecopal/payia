@@ -32,7 +32,7 @@
                 <h3 class="font-semibold text-sm mb-1">{{ offer.name }}</h3>
                 <p class="text-xs text-gray-500 line-clamp-2 mb-3">{{ offer.description|truncatewords:15 }}</p>
                 <div class="flex items-center justify-between">
-                    <span class="text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }}</span>
+                    <span class="text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }} XAF</span>
                     <span class="text-xs text-gray-500">{{ offer.duration_days }} {% trans "jours" %}</span>
                 </div>
             </div>

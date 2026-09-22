@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.test import TestCase
-from core.models import User, UserProfile
+from core.models import User, UserProfile, Setting
 from wallet.models import Wallet
 from wallet.services.wallet_service import WalletService
 from transactions.models import Deposit, PaymentMethod
@@ -85,6 +85,10 @@ class DepositServiceNewTestCase(TestCase):
             is_active=True,
             min_amount=Decimal('500'),
             max_amount=Decimal('500000'),
+        )
+        Setting.objects.get_or_create(
+            key='minimum_deposit',
+            defaults={'value': '500', 'setting_type': 'INTEGER'},
         )
 
     def _create_admin(self, phone):

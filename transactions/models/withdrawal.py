@@ -92,6 +92,12 @@ class Withdrawal(models.Model):
         verbose_name = _("withdrawal")
         verbose_name_plural = _("withdrawals")
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["status"], name="withdrawal_status_idx"),
+            models.Index(fields=["user", "status"], name="withdrawal_user_status_idx"),
+            models.Index(fields=["created_at"], name="withdrawal_created_idx"),
+            models.Index(fields=["user", "created_at"], name="withdrawal_user_created_idx"),
+        ]
 
     def __str__(self):
         return f"Withdrawal #{self.pk} — {self.user} — {self.net_amount}"

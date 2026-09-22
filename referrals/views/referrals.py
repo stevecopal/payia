@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Sum
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from referrals.services.referral_service import ReferralService
 from referrals.models import Referral, Commission
@@ -14,6 +15,13 @@ def referral_dashboard(request):
     referral_code = ReferralService.get_referral_code(request.user)
     referral_link = ReferralService.get_referral_link(request.user, request)
 
+    from ai_services.models import AiRental
+    has_active_machine = AiRental.objects.filter(
+        user=request.user,
+        status=AiRental.Status.ACTIVE,
+        end_date__gt=timezone.now()
+    ).exists()
+
     referrals = Referral.objects.filter(
         referrer=request.user, is_active=True
     ).select_related('referred_user').order_by('-created_at')
@@ -21,15 +29,15 @@ def referral_dashboard(request):
     referrals_with_data = []
     for ref in referrals:
         user = ref.referred_user
-        has_deposit = Commission.objects.filter(
-            source_user=user, source_transaction_type='DEPOSIT_COMPLETED'
+        has_machine = Commission.objects.filter(
+            source_user=user
         ).exists()
         total_revenue = Commission.objects.filter(
             user=request.user, source_user=user
         ).aggregate(total=Sum('amount'))['total'] or 0
         referrals_with_data.append({
             'referral': ref,
-            'has_deposit': has_deposit,
+            'has_machine': has_machine,
             'total_revenue': total_revenue,
         })
 
@@ -42,6 +50,7 @@ def referral_dashboard(request):
         'commission_stats': commission_stats,
         'referral_code': referral_code,
         'referral_link': referral_link,
+        'has_active_machine': has_active_machine,
         'referrals_with_data': referrals_with_data,
         'commissions': commissions,
         'total_commissions': commission_stats['total'],
@@ -50,7 +59,7 @@ def referral_dashboard(request):
 
 def referral_register(request, code):
     if request.user.is_authenticated:
-        messages.info(request, _('Vous êtes déjà connecté.'))
+        messages.info(request, _('Vous etes deja connecte.'))
         return redirect('dashboard')
 
     from core.models import User
@@ -59,5 +68,5 @@ def referral_register(request, code):
         return redirect('register')
 
     request.session['referral_code'] = code
-    messages.info(request, _('Code de parrainage enregistré. Créez votre compte pour continuer.'))
+    messages.info(request, _('Code de parrainage enregistre. Creez votre compte pour continuer.'))
     return redirect('register')

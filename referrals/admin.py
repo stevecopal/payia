@@ -9,6 +9,6 @@ class ReferralAdmin(admin.ModelAdmin):
 
 @admin.register(Commission)
 class CommissionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'source_user', 'referral_level', 'percentage', 'amount', 'status', 'created_at')
+    list_display = ('user', 'source_user', 'referral_level', 'percentage', 'gross_revenue', 'amount', 'status', 'created_at')
     list_filter = ('status', 'referral_level')
     search_fields = ('user__phone_number', 'source_user__phone_number')
