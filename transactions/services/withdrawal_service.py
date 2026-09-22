@@ -160,6 +160,33 @@ class WithdrawalService:
         return withdrawal
 
     @staticmethod
+    def complete_withdrawal(withdrawal, admin_user):
+        with transaction.atomic():
+            withdrawal = Withdrawal.objects.select_for_update().get(pk=withdrawal.pk)
+
+            if withdrawal.status not in [Withdrawal.Status.APPROVED, Withdrawal.Status.PROCESSING]:
+                raise ValueError("Seuls les retraits approuves peuvent etre marques comme payes.")
+
+            withdrawal.complete(admin_user)
+
+            Notification.objects.create(
+                user=withdrawal.user,
+                notification_type='WITHDRAWAL_COMPLETED',
+                title='Retrait complete',
+                message=f'Votre retrait de {withdrawal.net_amount} XAF a ete paye.',
+            )
+
+            AuditLog.objects.create(
+                actor=admin_user,
+                action='withdrawal.completed',
+                target_type='Withdrawal',
+                target_id=str(withdrawal.pk),
+                description=f'Retrait de {withdrawal.net_amount} marque comme paye pour {withdrawal.user.phone_number}',
+            )
+
+        return withdrawal
+
+    @staticmethod
     def get_user_withdrawals(user, status=None):
         qs = Withdrawal.objects.filter(user=user).select_related('withdrawal_method', 'reviewed_by')
         if status:

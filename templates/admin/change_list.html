@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list %}
+{% block title %}{{ cl.title }} | {% trans "PAYIA Admin" %}{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold font-display">{{ cl.result_count }} {{ opts.verbose_name_plural|title }}</h1>
+        {% if has_add_permission %}
+        <a href="{% url opts|admin_urlname:'add' %}" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            {% trans "Ajouter" %}
+        </a>
+        {% endif %}
+    </div>
+    {% if cl.search_fields %}
+    <form method="get" class="flex gap-2">
+        <input type="text" name="q" value="{{ cl.query }}" placeholder="{% trans 'Rechercher...' %}" class="px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm flex-1">
+        <button type="submit" class="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">{% trans "Chercher" %}</button>
+    </form>
+    {% endif %}
+    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-800 text-gray-400 text-left">
+                        {% for item in cl.result_headers %}
+                        <th class="p-4 font-medium">
+                            {% if item.url %}<a href="{{ item.url }}">{{ item.text|default:item.sequence_number|default:"" }}</a>{% else %}{{ item.text|default:"" }}{% endif %}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in cl.result_list %}
+                    <tr class="border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+                        {% for item in result.cl_result_items %}
+                        <td class="p-4">
+                            {% if item.url %}<a href="{{ item.url }}" class="text-green-400 hover:text-green-300">{{ item.item }}</a>{% else %}{{ item.item }}{% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="{{ cl.result_headers|length }}" class="p-12 text-center text-gray-500">{% trans "Aucun résultat." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if cl.paginator.num_pages > 1 %}
+    <div class="flex justify-center gap-2">
+        {% if cl.page_has_previous %}
+        <a href="?page={{ cl.page_number|add:-1 }}{% if cl.query %}&q={{ cl.query }}{% endif %}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ cl.page_number }} / {{ cl.paginator.num_pages }}</span>
+        {% if cl.page_has_next %}
+        <a href="?page={{ cl.page_number|add:1 }}{% if cl.query %}&q={{ cl.query }}{% endif %}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

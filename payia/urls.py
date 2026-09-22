@@ -43,6 +43,7 @@ urlpatterns = [
     path('admin-panel/withdrawals/', admin_panel.admin_withdrawals, name='admin_withdrawals'),
     path('admin-panel/withdrawals/<int:pk>/', admin_panel.admin_withdrawal_detail, name='admin_withdrawal_detail'),
     path('admin-panel/withdrawals/<int:pk>/approve/', admin_panel.admin_withdrawal_approve, name='admin_withdrawal_approve'),
+    path('admin-panel/withdrawals/<int:pk>/complete/', admin_panel.admin_withdrawal_complete, name='admin_withdrawal_complete'),
     path('admin-panel/withdrawals/<int:pk>/reject/', admin_panel.admin_withdrawal_reject, name='admin_withdrawal_reject'),
     path('admin-panel/ai/models/', admin_panel.admin_ai_models, name='admin_ai_models'),
     path('admin-panel/ai/models/create/', admin_panel.admin_ai_model_create, name='admin_ai_model_create'),

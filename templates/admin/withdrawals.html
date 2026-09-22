@@ -1,7 +1,7 @@
 {% extends "admin/base_admin.html" %}
 {% load i18n %}
 {% block title %}PAYIA - Retraits{% endblock %}
-{% block dashboard_content %}
+{% block content %}
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 class="text-2xl font-bold font-display">{% trans "Retraits" %}</h1>
@@ -40,6 +40,12 @@
                     </span>
                 </div>
             </div>
+            {% if w.status == 'approved' or w.status == 'processing' %}
+            <div class="flex gap-2 mt-3 ml-13 sm:ml-13">
+                <button onclick="openModal('wCompleteModal{{ w.pk }}')" class="px-3 py-1.5 bg-green-600/15 text-green-400 text-xs rounded-lg hover:bg-green-600/25 transition-colors border border-green-500/20 font-medium">{% trans "Valider / Déjà payé" %}</button>
+            </div>
+            {% endif %}
+
             {% if w.status == 'pending' or w.status == 'under_review' %}
             <div class="flex gap-2 mt-3 ml-13 sm:ml-13">
                 <button onclick="openModal('wApproveModal{{ w.pk }}')" class="px-3 py-1.5 bg-green-600/15 text-green-400 text-xs rounded-lg hover:bg-green-600/25 transition-colors border border-green-500/20 font-medium">{% trans "Approuver" %}</button>
@@ -51,11 +57,41 @@
         <div id="wApproveModal{{ w.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
             <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
                 <h3 class="text-lg font-bold mb-2">{% trans "Approuver le retrait" %}</h3>
-                <div class="bg-white/5 rounded-lg p-4 mb-4 border border-gray-800/50 space-y-1">
-                    <p class="text-sm text-gray-400">{% trans "Montant" %} <span class="font-bold text-green-400 font-mono">{{ w.amount|floatformat:2 }}</span></p>
-                    <p class="text-sm text-gray-400">{% trans "Frais" %} <span class="font-mono">{{ w.fee|floatformat:2 }}</span></p>
-                    <p class="text-sm text-gray-400">{% trans "Net" %} <span class="font-bold font-mono text-green-400">{{ w.net_amount|floatformat:2 }}</span></p>
-                    <p class="text-sm text-gray-400">{% trans "Utilisateur" %} <span class="font-medium">{{ w.user.phone_number }}</span></p>
+                <div class="bg-white/5 rounded-lg p-4 mb-4 border border-gray-800/50 space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "Nom" %}</span>
+                        <span class="text-sm font-medium text-white">{{ w.user.profile.first_name|default:"" }} {{ w.user.profile.last_name|default:"" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "Utilisateur" %}</span>
+                        <span class="text-sm font-mono text-green-400">{{ w.user.phone_number }}</span>
+                    </div>
+                    {% if w.withdrawal_account_name %}
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "Compte" %}</span>
+                        <span class="text-sm text-gray-300">{{ w.withdrawal_account_name }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "N° retrait" %}</span>
+                        <span class="text-sm font-mono text-gray-300">{{ w.withdrawal_number }}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-gray-800 pt-2 mt-2">
+                        <span class="text-sm text-gray-400">{% trans "Montant" %}</span>
+                        <span class="text-sm font-bold font-mono text-green-400">{{ w.amount|floatformat:2 }} XAF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "Frais" %}</span>
+                        <span class="text-sm font-mono">{{ w.fee|floatformat:2 }} XAF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "Net" %}</span>
+                        <span class="text-sm font-bold font-mono text-green-400">{{ w.net_amount|floatformat:2 }} XAF</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">{% trans "Méthode" %}</span>
+                        <span class="text-sm text-gray-300">{{ w.withdrawal_method }}</span>
+                    </div>
                 </div>
                 <form method="post" action="{% url 'admin_withdrawal_approve' pk=w.pk %}" class="space-y-3">
                     {% csrf_token %}
@@ -71,7 +107,50 @@
             </div>
         </div>
 
-        <div id="wRejectModal{{ w.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
+            {% if w.status == 'approved' or w.status == 'processing' %}
+            <div id="wCompleteModal{{ w.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
+                <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+                    <div class="w-12 h-12 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-center mb-1">{% trans "Valider le paiement" %}</h3>
+                    <p class="text-sm text-gray-400 text-center mb-4">{% trans "Confirmez que vous avez effectué le paiement de ce retrait." %}</p>
+                    <div class="bg-white/5 rounded-lg p-4 mb-4 border border-gray-800/50 space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-400">{% trans "Utilisateur" %}</span>
+                            <span class="text-sm font-mono text-green-400">{{ w.user.phone_number }}</span>
+                        </div>
+                        {% if w.withdrawal_account_name %}
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-400">{% trans "Compte" %}</span>
+                            <span class="text-sm text-gray-300">{{ w.withdrawal_account_name }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-400">{% trans "N° retrait" %}</span>
+                            <span class="text-sm font-mono text-gray-300">{{ w.withdrawal_number }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-400">{% trans "Méthode" %}</span>
+                            <span class="text-sm text-gray-300">{{ w.withdrawal_method }}</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-800 pt-2 mt-2">
+                            <span class="text-sm text-gray-400">{% trans "Montant net" %}</span>
+                            <span class="text-sm font-bold font-mono text-green-400">{{ w.net_amount|floatformat:2 }} XAF</span>
+                        </div>
+                    </div>
+                    <form method="post" action="{% url 'admin_withdrawal_complete' pk=w.pk %}" class="space-y-3">
+                        {% csrf_token %}
+                        <div class="flex gap-3 justify-end">
+                            <button type="button" onclick="closeModal('wCompleteModal{{ w.pk }}')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Confirmer le paiement" %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <div id="wRejectModal{{ w.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
             <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
                 <h3 class="text-lg font-bold mb-4">{% trans "Rejeter le retrait" %}</h3>
                 <form method="post" action="{% url 'admin_withdrawal_reject' pk=w.pk %}" class="space-y-4">

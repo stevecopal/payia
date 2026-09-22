@@ -22,17 +22,17 @@
         <div class="space-y-3">
             <div class="flex justify-between items-center py-2 border-b border-gray-800/50">
                 <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Montant demandé" %}</span>
-                <span class="text-sm font-semibold font-mono">{{ withdrawal.amount|floatformat:2 }} XOF</span>
+                <span class="text-sm font-semibold font-mono">{{ withdrawal.amount|floatformat:2 }} XAF</span>
             </div>
 
             <div class="flex justify-between items-center py-2 border-b border-gray-800/50">
                 <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Frais" %}</span>
-                <span class="text-sm font-mono text-red-400">-{{ withdrawal.fee|floatformat:2 }} XOF</span>
+                <span class="text-sm font-mono text-red-400">-{{ withdrawal.fee|floatformat:2 }} XAF</span>
             </div>
 
             <div class="flex justify-between items-center py-2 border-b border-gray-800/50">
                 <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Montant net" %}</span>
-                <span class="text-sm font-semibold font-mono text-green-400">{{ withdrawal.net_amount|floatformat:2 }} XOF</span>
+                <span class="text-sm font-semibold font-mono text-green-400">{{ withdrawal.net_amount|floatformat:2 }} XAF</span>
             </div>
 
             <div class="flex justify-between items-center py-2 border-b border-gray-800/50">
@@ -57,19 +57,7 @@
                 <span class="text-sm">{{ withdrawal.created_at|date:"d/m/Y" }} {{ withdrawal.created_at|date:"H:i:s" }}</span>
             </div>
 
-            {% if withdrawal.reviewed_at %}
-            <div class="flex justify-between items-center py-2 border-b border-gray-800/50">
-                <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Date de vérification" %}</span>
-                <span class="text-sm">{{ withdrawal.reviewed_at|date:"d/m/Y" }} {{ withdrawal.reviewed_at|date:"H:i:s" }}</span>
-            </div>
-            {% endif %}
-
-            {% if withdrawal.completed_at %}
-            <div class="flex justify-between items-center py-2 border-b border-gray-800/50">
-                <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Date de traitement" %}</span>
-                <span class="text-sm text-green-400">{{ withdrawal.completed_at|date:"d/m/Y" }} {{ withdrawal.completed_at|date:"H:i:s" }}</span>
-            </div>
-            {% endif %}
+            
 
             {% if withdrawal.external_reference %}
             <div class="flex justify-between items-center py-2">

@@ -1,7 +1,7 @@
 {% extends "admin/base_admin.html" %}
 {% load i18n %}
 {% block title %}PAYIA - Dépôt #{{ deposit.pk }}{% endblock %}
-{% block dashboard_content %}
+{% block content %}
 <div class="max-w-3xl mx-auto space-y-6">
     <a href="{% url 'admin_deposits' %}" class="inline-flex items-center text-sm text-green-400 hover:text-green-300 transition-colors">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -83,24 +83,38 @@
 <div id="depositApproveModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
     <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
         <h3 class="text-lg font-bold mb-2">{% trans "Approuver le dépôt" %}</h3>
-        <div class="bg-white/5 rounded-lg p-4 border border-gray-800/50 mb-4 space-y-2">
+        <div class="bg-white/5 rounded-lg p-4 border border-gray-800/50 mb-4 space-y-3">
             <div class="flex justify-between">
-                <span class="text-sm text-gray-400">{% trans "Référence" %}</span>
-                <span class="text-sm font-mono font-bold text-green-400">#{{ deposit.pk }}</span>
+                <span class="text-sm text-gray-400">{% trans "Nom" %}</span>
+                <span class="text-sm font-medium text-white">{{ deposit.user.profile.first_name|default:"" }} {{ deposit.user.profile.last_name|default:"" }}</span>
             </div>
-            {% if deposit.transaction_id %}
             <div class="flex justify-between">
-                <span class="text-sm text-gray-400">{% trans "Transaction ID" %}</span>
-                <span class="text-sm font-mono">{{ deposit.transaction_id }}</span>
+                <span class="text-sm text-gray-400">{% trans "Utilisateur" %}</span>
+                <span class="text-sm font-mono text-green-400">{{ deposit.user.phone_number }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "N° transaction" %}</span>
+                <span class="text-sm font-mono text-green-400">{{ deposit.transaction_id|default:"—" }}</span>
+            </div>
+            {% if deposit.phone_number %}
+            <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "N° utilisé" %}</span>
+                <span class="text-sm font-mono text-gray-300">{{ deposit.phone_number }}</span>
             </div>
             {% endif %}
+            {% if deposit.ussd_code %}
             <div class="flex justify-between">
+                <span class="text-sm text-gray-400">{% trans "Code USSD" %}</span>
+                <span class="text-sm font-mono text-green-400">{{ deposit.ussd_code }}</span>
+            </div>
+            {% endif %}
+            <div class="flex justify-between border-t border-gray-800 pt-2 mt-2">
                 <span class="text-sm text-gray-400">{% trans "Montant" %}</span>
-                <span class="text-sm font-mono font-bold text-green-400">{{ deposit.amount|floatformat:2 }} XAF</span>
+                <span class="text-sm font-bold font-mono text-green-400">{{ deposit.amount|floatformat:2 }} XAF</span>
             </div>
             <div class="flex justify-between">
-                <span class="text-sm text-gray-400">{% trans "Téléphone" %}</span>
-                <span class="text-sm font-mono">{{ deposit.user.phone_number }}</span>
+                <span class="text-sm text-gray-400">{% trans "Méthode" %}</span>
+                <span class="text-sm text-gray-300">{{ deposit.payment_method }}</span>
             </div>
         </div>
         <p class="text-sm text-gray-400 mb-4">{% trans "Confirmer l'approbation de ce dépôt." %}</p>

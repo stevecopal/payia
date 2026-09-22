@@ -145,8 +145,8 @@ class Withdrawal(models.Model):
         ])
 
     def complete(self, admin_user):
-        if self.status != self.Status.PROCESSING:
-            raise ValueError("Only processing withdrawals can be completed.")
+        if self.status not in (self.Status.APPROVED, self.Status.PROCESSING):
+            raise ValueError("Only approved or processing withdrawals can be completed.")
 
         self.status = self.Status.COMPLETED
         self.completed_at = timezone.now()

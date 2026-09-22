@@ -230,6 +230,18 @@ def admin_withdrawal_approve(request, pk):
 
 
 @admin_required
+def admin_withdrawal_complete(request, pk):
+    if request.method == 'POST':
+        withdrawal = get_object_or_404(Withdrawal, pk=pk)
+        try:
+            WithdrawalService.complete_withdrawal(withdrawal, request.user)
+            messages.success(request, _('Retrait marqué comme payé.'))
+        except ValueError as e:
+            messages.error(request, str(e))
+    return redirect('admin_withdrawal_detail', pk=pk)
+
+
+@admin_required
 def admin_withdrawal_reject(request, pk):
     if request.method == 'POST':
         withdrawal = get_object_or_404(Withdrawal, pk=pk)

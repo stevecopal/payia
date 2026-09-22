@@ -7,7 +7,7 @@
 
     <div class="bg-gradient-to-br from-green-600/20 to-gray-900 rounded-xl p-6 border border-green-600/20">
         <p class="text-xs text-gray-400 uppercase tracking-wider">{% trans "Solde disponible" %}</p>
-        <p class="text-3xl font-bold mt-1">{{ wallet.available_balance|floatformat:2 }} <span class="text-lg text-gray-400">{{ user.profile.preferred_currency|default:"XOF" }}</span></p>
+        <p class="text-3xl font-bold mt-1">{{ wallet.available_balance|floatformat:2 }} <span class="text-lg text-gray-400">{{ user.profile.preferred_currency|default:"XAF" }}</span></p>
         {% if wallet.pending_balance > 0 %}
         <p class="text-sm text-gray-400 mt-1">{% trans "En attente:" %} {{ wallet.pending_balance|floatformat:2 }}</p>
         {% endif %}

@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
                 ('country', models.CharField(blank=True, default='', max_length=2, verbose_name='country')),
                 ('withdrawal_phone_number', models.CharField(blank=True, default='', max_length=20, verbose_name='withdrawal phone number')),
                 ('withdrawal_account_name', models.CharField(blank=True, default='', max_length=200, verbose_name='withdrawal account name')),
-                ('preferred_currency', models.CharField(default='XOF', max_length=3, verbose_name='preferred currency')),
+                ('preferred_currency', models.CharField(default='XAF', max_length=3, verbose_name='preferred currency')),
                 ('profile_picture', models.ImageField(blank=True, default='', upload_to='profiles/', verbose_name='profile picture')),
                 ('is_profile_complete', models.BooleanField(default=False, verbose_name='profile complete')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created at')),

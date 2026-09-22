@@ -46,7 +46,7 @@ class UserProfile(models.Model):
     )
     preferred_currency = models.CharField(
         max_length=3,
-        default='XOF',
+        default='XAF',
         verbose_name=_('preferred currency'),
     )
     profile_picture = models.ImageField(

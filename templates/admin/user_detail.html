@@ -1,7 +1,7 @@
 {% extends "admin/base_admin.html" %}
 {% load i18n %}
 {% block title %}PAYIA - {{ target_user.phone_number }}{% endblock %}
-{% block dashboard_content %}
+{% block content %}
 <div class="max-w-5xl mx-auto space-y-6">
     <a href="{% url 'admin_users' %}" class="inline-flex items-center text-sm text-green-400 hover:text-green-300 transition-colors">
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>

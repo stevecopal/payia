@@ -7,7 +7,7 @@
 
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 flex items-center justify-between">
         <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Solde disponible" %}</span>
-        <span class="text-lg font-bold">{{ wallet.available_balance|floatformat:2 }} {{ user.profile.preferred_currency|default:"XOF" }}</span>
+        <span class="text-lg font-bold">{{ wallet.available_balance|floatformat:2 }} {{ user.profile.preferred_currency|default:"XAF" }}</span>
     </div>
 
     <form method="post" class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4">

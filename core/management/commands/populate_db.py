@@ -256,7 +256,7 @@ class Command(BaseCommand):
                 'revenue_frequency': 'daily',
                 'revenue_type': 'fixed',
                 'revenue_value': Decimal('1200'),
-                'conditions': 'Revenu garanti de 1200 XOF/jour pendant 30 jours.',
+                'conditions': 'Revenu garanti de 1200 XAF/jour pendant 30 jours.',
                 'is_featured': True,
                 'display_order': 1,
             },
@@ -271,7 +271,7 @@ class Command(BaseCommand):
                 'revenue_frequency': 'daily',
                 'revenue_type': 'fixed',
                 'revenue_value': Decimal('5500'),
-                'conditions': 'Revenu garanti de 5500 XOF/jour pendant 60 jours.',
+                'conditions': 'Revenu garanti de 5500 XAF/jour pendant 60 jours.',
                 'is_featured': True,
                 'display_order': 2,
             },
@@ -300,7 +300,7 @@ class Command(BaseCommand):
                 'revenue_frequency': 'daily',
                 'revenue_type': 'fixed',
                 'revenue_value': Decimal('1800'),
-                'conditions': 'Revenu de 1800 XOF/jour. Idéal pour créateurs de contenu.',
+                'conditions': 'Revenu de 1800 XAF/jour. Idéal pour créateurs de contenu.',
                 'display_order': 4,
             },
             {
@@ -314,7 +314,7 @@ class Command(BaseCommand):
                 'revenue_frequency': 'daily',
                 'revenue_type': 'fixed',
                 'revenue_value': Decimal('1500'),
-                'conditions': 'Revenu de 1500 XOF/jour pendant 15 jours.',
+                'conditions': 'Revenu de 1500 XAF/jour pendant 15 jours.',
                 'display_order': 5,
             },
             {
@@ -369,7 +369,7 @@ class Command(BaseCommand):
                     'first_name': 'Admin',
                     'last_name': 'PAYIA',
                     'country': 'CM',
-                    'preferred_currency': 'XOF',
+                    'preferred_currency': 'XAF',
                 }
             )
         self.stdout.write(f'  ✓ Admin créé (admin / admin123)')
@@ -412,7 +412,7 @@ class Command(BaseCommand):
                         'first_name': first,
                         'last_name': last,
                         'country': 'CM',
-                        'preferred_currency': 'XOF',
+                        'preferred_currency': 'XAF',
                     }
                 )
             users.append(user)
@@ -505,7 +505,7 @@ class Command(BaseCommand):
     # ── Notifications ────────────────────────────────────────────
     def create_notifications(self, users):
         notif_data = [
-            ('DEPOSIT_APPROVED', 'Dépôt approuvé', 'Votre dépôt de 50 000 XOF a été approuvé.'),
+            ('DEPOSIT_APPROVED', 'Dépôt approuvé', 'Votre dépôt de 50 000 XAF a été approuvé.'),
             ('AI_ACTIVATED', 'Offre IA activée', 'Votre offre "Trading Starter" est maintenant active.'),
             ('NEW_REFERRAL', 'Nouveau filleul', 'Un nouvel utilisateur s\'est inscrit avec votre code.'),
             ('SYSTEM_MESSAGE', 'Bienvenue', 'Bienvenue sur PAYIA. Commencez à investir dès maintenant.'),
@@ -543,7 +543,7 @@ class Command(BaseCommand):
     # ── Support Tickets ──────────────────────────────────────────
     def create_support_tickets(self, users, admin):
         tickets_data = [
-            ('DEPOSIT', 'HIGH', 'Dépôt non crédité', 'J\'ai effectué un dépôt de 25 000 XOF mais il n\'a pas encore été crédité.'),
+            ('DEPOSIT', 'HIGH', 'Dépôt non crédité', 'J\'ai effectué un dépôt de 25 000 XAF mais il n\'a pas encore été crédité.'),
             ('AI', 'MEDIUM', 'Question sur les revenus', 'Comment sont calculés les revenus de mon offre IA ?'),
             ('ACCOUNT', 'LOW', 'Modification de profil', 'Je souhaite modifier mon numéro de téléphone.'),
         ]

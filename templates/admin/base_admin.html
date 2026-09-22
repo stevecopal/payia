@@ -125,7 +125,7 @@
             </header>
 
             <main class="flex-1 overflow-y-auto p-4 lg:p-8">
-                {% block dashboard_content %}{% endblock %}
+                {% block content %}{% block dashboard_content %}{% endblock %}{% endblock %}
             </main>
         </div>
     </div>
