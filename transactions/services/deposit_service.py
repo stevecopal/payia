@@ -44,17 +44,13 @@ class DepositService:
         except Setting.DoesNotExist:
             min_deposit = Decimal('2500')
 
-        if amount < min_deposit:
-            raise ValueError(f"Le montant minimum de depot est {min_deposit} XAF.")
-
+        
         payment_method = PaymentMethod.objects.filter(
             id=payment_method_id, is_active=True
         ).first()
         if not payment_method:
             raise ValueError("Methode de paiement invalide ou inactive.")
 
-        if payment_method.min_amount and amount < payment_method.min_amount:
-            raise ValueError(f"Le montant minimum est {payment_method.min_amount}.")
         if payment_method.max_amount and amount > payment_method.max_amount:
             raise ValueError(f"Le montant maximum est {payment_method.max_amount}.")
 

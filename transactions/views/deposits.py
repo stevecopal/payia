@@ -48,29 +48,31 @@ def deposit_create(request):
                     messages.error(request, _('Méthode de paiement invalide.'))
                     return redirect('deposit_create')
 
-                if pm.min_amount and amount_dec < pm.min_amount:
-                    errors['amount'] = _('Le montant minimum est {amount} XAF.').format(amount=pm.min_amount)
-                elif pm.max_amount and amount_dec > pm.max_amount:
+                if pm.max_amount and amount_dec > pm.max_amount:
                     errors['amount'] = _('Le montant maximum est {amount} XAF.').format(amount=pm.max_amount)
-                else:
-                    try:
-                        min_deposit = Decimal(Setting.objects.get(key='minimum_deposit').value)
-                    except Setting.DoesNotExist:
-                        min_deposit = Decimal('2500')
-                    if amount_dec < min_deposit:
-                        errors['amount'] = _('Le montant minimum de depot est {amount} XAF.').format(amount=min_deposit)
 
+                try:
+                    min_deposit_limit = Decimal(Setting.objects.get(key='minimum_deposit').value)
+                except Setting.DoesNotExist:
+                    min_deposit_limit = Decimal('2500')
+                if amount_dec < min_deposit_limit:
+                    errors['amount'] = _('Le montant minimum de dépôt est {amount} XAF.').format(
+                        amount=min_deposit_limit
+                    )
+
+            min_deposit_val = '2500'
             try:
                 min_deposit_setting = Setting.objects.get(key='minimum_deposit')
                 min_deposit_val = str(min_deposit_setting.value)
             except Setting.DoesNotExist:
-                min_deposit_val = '2500'
+                pass
 
             if errors:
                 payment_methods = PaymentMethod.objects.filter(is_active=True)
                 return render(request, 'deposits/create.html', {
                     'step': 1,
                     'payment_methods': payment_methods,
+                    'min_deposit': min_deposit_val,
                     'errors': errors,
                     'form_data': {
                         'payment_method_id': payment_method_id,
