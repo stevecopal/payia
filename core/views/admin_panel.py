@@ -154,6 +154,7 @@ def admin_user_detail(request, pk):
         'filleuls_niveau_2_count': sum(len(v) for v in filleuls_niveau_2.values()),
         'total_commissions_earned': total_commissions_earned,
         'audit_logs': audit_logs,
+        'profile_status': user.profile.profile_status,
     })
 
 
