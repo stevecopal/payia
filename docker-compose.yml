@@ -3,6 +3,9 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 x-payia-app: &payia-app
+  build:
+    context: .
+    dockerfile: Dockerfile
   image: payia-app:latest
   restart: unless-stopped
   env_file:
@@ -73,9 +76,6 @@ services:
   # ── Application Web Django + Gunicorn ──────────────────────────────────
   payia_web:
     <<: *payia-app
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: payia-web
     environment:
       <<: *payia-env
