@@ -6,9 +6,6 @@ from wallet.services.wallet_service import WalletService
 from ai_services.services.ai_service import AiService
 from referrals.services.referral_service import ReferralService
 from notifications.services.notification_service import NotificationService
-from transactions.models import Deposit, Withdrawal
-from wallet.models import LedgerEntry
-from referrals.models import Commission
 
 
 @login_required_custom
@@ -24,34 +21,15 @@ def dashboard_view(request):
     referral_stats = ReferralService.get_referral_stats(request.user)
     unread_notifications = NotificationService.get_unread_count(request.user)
 
-    ai_revenue_total = LedgerEntry.objects.filter(
-        user=request.user, entry_type__in=['ai_revenue', 'AI_REVENUE']
-    ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+    profile = request.user.profile
 
-    referral_total = Commission.objects.filter(
-        user=request.user, status__in=['approved', 'available']
-    ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-
-    recent_transactions = LedgerEntry.objects.filter(
-        user=request.user
-    ).order_by('-created_at')[:10]
-
-    recent_deposits = Deposit.objects.filter(
-        user=request.user
-    ).order_by('-created_at')[:5]
-
-    recent_withdrawals = Withdrawal.objects.filter(
-        user=request.user
-    ).order_by('-created_at')[:5]
+    recent_notifications = NotificationService.get_notifications(request.user, unread_only=True)[:5]
 
     return render(request, 'dashboard/index.html', {
         'wallet': wallet,
         'active_rentals': active_rentals,
         'referral_stats': referral_stats,
         'unread_notifications': unread_notifications,
-        'ai_revenue_total': ai_revenue_total,
-        'referral_total': referral_total,
-        'recent_transactions': recent_transactions,
-        'recent_deposits': recent_deposits,
-        'recent_withdrawals': recent_withdrawals,
+        'profile': profile,
+        'recent_notifications': recent_notifications,
     })
