@@ -81,46 +81,28 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'payia.wsgi.application'
-
-DB_ENGINE = config(
-    'DB_ENGINE',
-    default='django.db.backends.sqlite3'
-)
-
-DATABASES = {
-    'default': {
-        'ENGINE': DB_ENGINE,
-        'NAME': config(
-            'DB_NAME',
-            default=str(BASE_DIR / 'db.sqlite3')
-        ),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default=''),
-        'PORT': config('DB_PORT', default=''),
+if DEBUG:
+    # Use SQLite in development for simplicity
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
-
-# Options SQLite — indispensables en production lorsque plusieurs process
-# écrivent dans le même fichier (gunicorn + celery worker + celery beat) :
-#   * timeout          : attente en secondes avant « database is locked »
-#   * journal_mode=WAL : lectures concurrentes pendant une écriture
-#   * transaction_mode : BEGIN IMMEDIATE → évite les deadlocks de verrou
-if DB_ENGINE == 'django.db.backends.sqlite3':
-    _sqlite_options = {
-        'timeout': config('DB_TIMEOUT', default=20, cast=int),
-        'init_command': config(
-            'DB_INIT_COMMAND',
-            default='PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;'
-        ),
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config('DB_NAME', default='payia_db'),
+            "USER": config('DB_USER', default='payia_user'),
+            "PASSWORD": config('DB_PASSWORD', default='payia_password_p@ss_2026'),
+            "HOST": config('DB_HOST', default='localhost'),
+            "PORT": config('DB_PORT', default='5432'),
+        }       
     }
-    _transaction_mode = config('DB_TRANSACTION_MODE', default='')
-    if _transaction_mode:
-        _sqlite_options['transaction_mode'] = _transaction_mode
-    DATABASES['default']['OPTIONS'] = _sqlite_options
 
-# Use DATABASE_URL if provided (e.g. postgres://user:pass@host:port/dbname)
-DATABASE_URL = config('DATABASE_URL', default=None)
+
+
 
 AUTH_USER_MODEL = 'core.User'
 

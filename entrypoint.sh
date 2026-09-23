@@ -1,26 +1,9 @@
 #!/bin/sh
-# ═══════════════════════════════════════════════════════════════════════════
-# PAYIA — Entrypoint de PRODUCTION
-#
-#   1. Corrige les permissions des volumes Docker (créés en root au premier
-#      montage d'un volume nommé).
-#   2. Collecte les fichiers statiques → volume `payia_static` servi par Caddy.
-#   3. Applique les migrations (SQLite dans le volume `payia_sqlite_data`).
-#   4. Abandonne les privilèges (appuser) et exécute la commande demandée
-#      (gunicorn, celery worker, celery beat, manage.py …).
-#
-# Variables d'environnement :
-#   RUN_MIGRATIONS      "1" (défaut) → `manage.py migrate`
-#   RUN_COLLECTSTATIC   "1" (défaut) → `manage.py collectstatic`
-#   → mettre les deux à "0" pour les conteneurs Celery worker / beat :
-#     les migrations et le collectstatic ne doivent s'exécuter qu'UNE fois.
-# ═══════════════════════════════════════════════════════════════════════════
 set -e
 
 APP_USER="appuser"
 VENV_PYTHON="/app/.venv/bin/python"
 
-# Le venv doit primer dans le PATH (gunicorn, celery, …)
 export PATH="/app/.venv/bin:$PATH"
 export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-payia.settings}"
 export PYTHONDONTWRITEBYTECODE=1
@@ -30,29 +13,33 @@ RUN_MIGRATIONS="${RUN_MIGRATIONS:-1}"
 RUN_COLLECTSTATIC="${RUN_COLLECTSTATIC:-1}"
 
 # ── 1/4 — Permissions des volumes ─────────────────────────────────────────
-echo "=== [1/4] Permissions des volumes (data, media, staticfiles, logs) ==="
-mkdir -p /app/data /app/media /app/staticfiles /app/logs
-chown -R "$APP_USER:$APP_USER" \
-    /app/data /app/media /app/staticfiles /app/logs
+echo "=== [1/4] Permissions des volumes (media, staticfiles, logs) ==="
+mkdir -p /app/media /app/staticfiles /app/logs
+chown -R "$APP_USER:$APP_USER" /app/media /app/staticfiles /app/logs
 
-# ── 2/4 — Fichiers statiques (volume partagé, monté en :ro dans Caddy) ────
+# ── 2/4 — Attente de la disponibilité de PostgreSQL ──────────────────────
+if [ -n "$DB_HOST" ]; then
+    echo "=== [2/4] Attente de la base de données PostgreSQL ($DB_HOST:$DB_PORT)... ==="
+    until "$VENV_PYTHON" -c "import socket; s = socket.socket(); s.settimeout(2); s.connect(('${DB_HOST:-payia_db}', ${DB_PORT:-5432}))" 2>/dev/null; do
+        echo "PostgreSQL n'est pas encore prêt, nouvelle tentative dans 2 secondes..."
+        sleep 2
+    done
+    echo "PostgreSQL est en ligne et accessible !"
+fi
+
+# ── 3/4 — Fichiers statiques et Migrations ────────────────────────────────
 if [ "$RUN_COLLECTSTATIC" = "1" ]; then
-    echo "=== [2/4] collectstatic ==="
+    echo "=== [3/4] Execution de collectstatic ==="
     gosu "$APP_USER" "$VENV_PYTHON" manage.py collectstatic --noinput
-else
-    echo "=== [2/4] collectstatic ignoré (RUN_COLLECTSTATIC=$RUN_COLLECTSTATIC) ==="
 fi
 
-# ── 3/4 — Migrations ──────────────────────────────────────────────────────
 if [ "$RUN_MIGRATIONS" = "1" ]; then
-    echo "=== [3/4] migrate ==="
+    echo "=== [3/4] Execution des migrations ==="
     gosu "$APP_USER" "$VENV_PYTHON" manage.py migrate --noinput
-else
-    echo "=== [3/4] migrate ignoré (RUN_MIGRATIONS=$RUN_MIGRATIONS) ==="
 fi
 
-# ── 4/4 — Application ─────────────────────────────────────────────────────
-echo "=== [4/4] Démarrage : $* ==="
+# ── 4/4 — Démarrage de l'application ─────────────────────────────────────
+echo "=== [4/4] Démarrage de la commande : $* ==="
 exec gosu "$APP_USER" env \
     PATH="$PATH" \
     HOME=/app \

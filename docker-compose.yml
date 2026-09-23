@@ -1,30 +1,7 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# PAYIA — Stack Docker de PRODUCTION
-#   Django 6.1 + Gunicorn  ·  SQLite (volume Docker)  ·  Celery/Redis
-#
-#   ┌─────────────┐        ┌───────────────────────────┐
-#   │    Caddy    │──proxy─▶ payia_web (gunicorn:8000) │
-#   │ (VPS, 80/443)│        └──────────┬────────────────┘
-#   └─────────────┘                   │ payia-internal
-#        │ static/media (volumes)     ├─▶ payia_celery_worker
-#        └────────────────────────────┴─▶ payia_celery_beat ─▶ payia_redis
-#
-# ─────────────────────────────────────────────────────────────────────────
-# PRÉ-REQUIS (à exécuter UNE SEULE FOIS sur le VPS, AVANT `docker compose up`)
-# ─────────────────────────────────────────────────────────────────────────
-#   docker network create proxy-net            # déjà créé si Caddy tourne
-#   docker volume create payia_sqlite_data
-#   docker volume create payia_static
-#   docker volume create payia_media
-#   docker volume create payia_logs
-#
-# DÉPLOIEMENT
-#   docker compose build
-#   docker compose up -d
-#   docker compose logs -f payia_web
+# PAYIA — Stack Docker de PRODUCTION avec PostgreSQL & Celery
 # ═══════════════════════════════════════════════════════════════════════════
 
-# ── Modèle commun aux 3 conteneurs applicatifs ────────────────────────────
 x-payia-app: &payia-app
   image: payia-app:latest
   restart: unless-stopped
@@ -36,39 +13,64 @@ x-payia-app: &payia-app
       max-size: "10m"
       max-file: "3"
 
-# ── Variables partagées ───────────────────────────────────────────────────
-# `environment` a la PRIORITÉ sur `env_file` : les réglages de production
-# sont garantis même si le .env du VPS est encore en mode développement.
 x-payia-env: &payia-env
   DJANGO_SETTINGS_MODULE: payia.settings
   DEBUG: "False"
 
-  # ── SQLite : fichier stocké dans le volume payia_sqlite_data ────────────
-  DB_ENGINE: django.db.backends.sqlite3
-  DB_NAME: /app/data/db.sqlite3
-  DB_TIMEOUT: "20"
-  # Évite « database is locked » avec gunicorn + celery qui écrivent ensemble
-  DB_TRANSACTION_MODE: IMMEDIATE
-  DB_INIT_COMMAND: "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;"
+  # PostgreSQL
+  DB_ENGINE: django.db.backends.postgresql
+  DB_HOST: payia_db
+  DB_PORT: "5432"
+  DB_NAME: ${DB_NAME:-payia_db}
+  DB_USER: ${DB_USER:-payia_user}
+  DB_PASSWORD: ${DB_PASSWORD:-payia_secure_pass_2026}
 
-  # ── Celery (broker Redis interne, non exposé) ───────────────────────────
+  # Redis / Celery
   CELERY_BROKER_URL: redis://payia_redis:6379/0
   CELERY_RESULT_BACKEND: redis://payia_redis:6379/1
 
-  # ── Hôtes / sécurité (surchargés par .env si tu les y définis) ──────────
+  # Hôtes et sécurité
   ALLOWED_HOSTS: ${ALLOWED_HOSTS:-payia.cohub.site,127.0.0.1,localhost}
   CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://payia.cohub.site}
-  # Caddy gère déjà la redirection HTTP→HTTPS : on garde Django en False
-  # (sinon boucle de redirection, faute de SECURE_PROXY_SSL_HEADER).
   SECURE_SSL_REDIRECT: "False"
 
   TZ: UTC
 
 services:
 
-  # ═══════════════════════════════════════════════════════════════════════
-  # Application Web — Django + Gunicorn (joignable par Caddy sur proxy-net)
-  # ═══════════════════════════════════════════════════════════════════════
+  # ── Base de données PostgreSQL dédiée à Payia ───────────────────────────
+  payia_db:
+    image: postgres:16-alpine
+    container_name: payia-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-payia_db}
+      POSTGRES_USER: ${DB_USER:-payia_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-payia_secure_pass_2026}
+    volumes:
+      - payia_postgres_data:/var/lib/postgresql/data
+    networks:
+      - payia-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-payia_user} -d ${DB_NAME:-payia_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Courtier de messages Redis ──────────────────────────────────────────
+  payia_redis:
+    image: redis:7-alpine
+    container_name: payia-redis
+    restart: unless-stopped
+    networks:
+      - payia-internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Application Web Django + Gunicorn ──────────────────────────────────
   payia_web:
     <<: *payia-app
     build:
@@ -79,38 +81,75 @@ services:
       <<: *payia-env
       RUN_MIGRATIONS: "1"
       RUN_COLLECTSTATIC: "1"
-    command:
-      - gunicorn
-      - payia.wsgi:application
-      - --bind=0.0.0.0:8000
-      - --workers=3
-      - --timeout=120
-      - --graceful-timeout=30
-      - --max-requests=1000
-      - --max-requests-jitter=100
-      - --access-logfile=-
-      - --error-logfile=-
-      - --log-level=info
     volumes:
-      # Base de données SQLite
-      - payia_sqlite_data:/app/data
-      # Fichiers statiques → montés en :ro dans le conteneur Caddy
       - payia_static:/app/staticfiles
-      # Médias uploadés → montés en :ro dans le conteneur Caddy
       - payia_media:/app/media
-      # Logs applicatifs (django.log, payments.log, security.log, admin.log)
       - payia_logs:/app/logs
     networks:
       - proxy-net
       - payia-internal
+    depends_on:
+      payia_db:
+        condition: service_healthy
+      payia_redis:
+        condition: service_healthy
     healthcheck:
-      # /manifest.json est servi sans accès à la base → test fiable et léger
-      test:
-        - CMD
-        - python
-        - -c
-        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/manifest.json', timeout=5)"
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/manifest.json', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  # ── Celery Worker ────────────────────────────────────────────────────────
+  payia_celery_worker:
+    <<: *payia-app
+    container_name: payia-celery-worker
+    environment:
+      <<: *payia-env
+      RUN_MIGRATIONS: "0"
+      RUN_COLLECTSTATIC: "0"
+    command: celery -A payia worker --loglevel=info --concurrency=2
+    volumes:
+      - payia_media:/app/media
+      - payia_logs:/app/logs
+    networks:
+      - payia-internal
+    depends_on:
+      payia_db:
+        condition: service_healthy
+      payia_redis:
+        condition: service_healthy
+
+  # ── Celery Beat ──────────────────────────────────────────────────────────
+  payia_celery_beat:
+    <<: *payia-app
+    container_name: payia-celery-beat
+    environment:
+      <<: *payia-env
+      RUN_MIGRATIONS: "0"
+      RUN_COLLECTSTATIC: "0"
+    command: celery -A payia beat --loglevel=info
+    volumes:
+      - payia_logs:/app/logs
+    networks:
+      - payia-internal
+    depends_on:
+      payia_db:
+        condition: service_healthy
+      payia_redis:
+        condition: service_healthy
+
+networks:
+  proxy-net:
+    external: true
+  payia-internal:
+    driver: bridge
+
+volumes:
+  payia_postgres_data:
+  payia_static:
+    external: true
+  payia_media:
+    external: true
+  payia_logs:
+    external: true
