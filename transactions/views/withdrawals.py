@@ -16,7 +16,7 @@ from wallet.services.wallet_service import WalletService
 def withdrawal_create(request):
     try:
         profile = request.user.profile
-        if not profile.is_profile_complete:
+        if profile.profile_status == "PENDING":
             messages.warning(request, _('Veuillez compléter votre profil avant de faire un retrait.'))
             return redirect('profile_complete')
         if not profile.withdrawal_phone_number:

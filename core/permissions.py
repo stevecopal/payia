@@ -65,7 +65,7 @@ def profile_required(view_func):
             return redirect('/auth/login/')
         try:
             profile = request.user.profile
-            if not profile.is_profile_complete:
+            if profile.profile_status == "PENDING":
                 messages.warning(request, _('Veuillez compléter votre profil avant de continuer.'))
                 return redirect('profile_complete')
         except Exception:

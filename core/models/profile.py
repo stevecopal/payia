@@ -3,6 +3,12 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserProfile(models.Model):
+    PROFILE_STATUS_CHOICES = [
+        ('PENDING', _('Pending')),
+        ('EN_ATTENTE', _('En attente')),
+        ('VERIFIED', _('Verified')),
+    ]
+
     user = models.OneToOneField(
         'core.User',
         on_delete=models.CASCADE,
@@ -59,6 +65,12 @@ class UserProfile(models.Model):
         default=False,
         verbose_name=_('profile complete'),
     )
+    profile_status = models.CharField(
+        max_length=20,
+        choices=PROFILE_STATUS_CHOICES,
+        default='PENDING',
+        verbose_name=_('profile status'),
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_('created at'),
@@ -71,17 +83,24 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = _('user profile')
         verbose_name_plural = _('user profiles')
+        ordering = ['-created_at']
 
     def __str__(self):
         return f'Profile of {self.user.phone_number}'
 
-    def complete_profile(self):
-        required_fields = [
-            self.first_name,
-            self.last_name,
-            self.withdrawal_phone_number,
-            self.withdrawal_account_name,
-        ]
-        self.is_profile_complete = all(field.strip() for field in required_fields)
-        self.save(update_fields=['is_profile_complete', 'updated_at'])
-        return self.is_profile_complete
+    def update_profile_status(self):
+        basic_filled = bool(self.first_name.strip() and self.last_name.strip())
+        withdrawal_filled = bool(self.withdrawal_phone_number.strip() and self.withdrawal_account_name.strip())
+
+        if withdrawal_filled:
+            self.profile_status = 'VERIFIED'
+            self.is_profile_complete = True
+        elif basic_filled:
+            self.profile_status = 'EN_ATTENTE'
+            self.is_profile_complete = True
+        else:
+            self.profile_status = 'PENDING'
+            self.is_profile_complete = False
+
+        self.save(update_fields=['profile_status', 'is_profile_complete', 'updated_at'])
+        return self.profile_status

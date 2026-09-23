@@ -29,6 +29,7 @@ def profile_edit(request):
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
+            profile.update_profile_status()
             messages.success(request, _('Profil mis à jour.'))
             return redirect('profile')
     else:
@@ -44,9 +45,13 @@ def profile_complete(request):
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user
-            profile.is_profile_complete = True
-            profile.save()
-            messages.success(request, _('Profil complété avec succès.'))
+            profile.update_profile_status()
+            if profile.profile_status == 'EN_ATTENTE':
+                messages.success(request, _('Profil complété. Veuillez ajouter vos informations de retrait.'))
+            elif profile.profile_status == 'VERIFIED':
+                messages.success(request, _('Profil vérifié avec succès.'))
+            else:
+                messages.success(request, _('Profil mis à jour.'))
             return redirect('dashboard')
     else:
         form = ProfileForm(instance=profile)
@@ -67,8 +72,12 @@ def withdrawal_info_view(request):
     if request.method == 'POST':
         form = WithdrawalInfoForm(request.POST, instance=profile)
         if form.is_valid():
-            form.save()
-            messages.success(request, _('Informations de retrait mises à jour.'))
+            profile = form.save(commit=False)
+            profile.update_profile_status()
+            if profile.profile_status == 'VERIFIED':
+                messages.success(request, _('Informations de retrait enregistrées. Profil vérifié.'))
+            else:
+                messages.success(request, _('Informations de retrait mises à jour.'))
             return redirect('profile')
     else:
         form = WithdrawalInfoForm(instance=profile)

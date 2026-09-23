@@ -179,7 +179,7 @@ def verify_otp_view(request):
                     return redirect('admin_dashboard')
                 try:
                     profile = user.profile
-                    if not profile.is_profile_complete:
+                    if profile.profile_status == "PENDING":
                         return redirect('profile_complete')
                 except Exception:
                     return redirect('profile_complete')

@@ -36,6 +36,17 @@ def _slugify(text):
 @admin_required
 def admin_dashboard(request):
     stats = AnalyticsService.get_dashboard_stats(days=30)
+    daily_deposits = AnalyticsService.get_daily_deposits(days=30)
+    daily_registrations = AnalyticsService.get_daily_registrations(days=30)
+    conversion_rate = AnalyticsService.get_conversion_rate(days=30)
+
+    max_deposit = max([d['total'] for d in daily_deposits], default=1) if daily_deposits else 1
+    max_registration = max([d['count'] for d in daily_registrations], default=1) if daily_registrations else 1
+    stats['daily_deposits'] = daily_deposits
+    stats['daily_registrations'] = daily_registrations
+    stats['conversion_rate'] = conversion_rate
+    stats['max_deposit'] = max_deposit
+    stats['max_registration'] = max_registration
     return render(request, 'admin/dashboard.html', {'stats': stats})
 
 

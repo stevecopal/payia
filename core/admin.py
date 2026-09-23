@@ -55,14 +55,14 @@ class UserAdmin(BaseUserAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         'user', 'first_name', 'last_name', 'country',
-        'is_profile_complete', 'preferred_currency',
+        'profile_status', 'preferred_currency',
     )
-    list_filter = ('is_profile_complete', 'country', 'preferred_currency')
+    list_filter = ('profile_status', 'country', 'preferred_currency')
     search_fields = ('user__username', 'user__phone_number', 'first_name', 'last_name')
     readonly_fields = ('created_at', 'updated_at')
     fields = (
         'user', 'first_name', 'last_name', 'country',
-        'is_profile_complete', 'preferred_currency',
+        'profile_status', 'preferred_currency',
     )
 
 

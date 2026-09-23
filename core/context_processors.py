@@ -23,7 +23,7 @@ def global_context(request):
             context['unread_commission_count'] = 0
         try:
             profile = request.user.profile
-            context['profile_complete'] = profile.is_profile_complete
+            context['profile_status'] = profile.profile_status
         except Exception:
-            context['profile_complete'] = False
+            context['profile_status'] = 'PENDING'
     return context
