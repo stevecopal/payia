@@ -109,7 +109,6 @@ class Command(BaseCommand):
                 "description": "Le modèle de langage le plus puissant au monde. GPT-4o Turbo offre des performances exceptionnelles en compréhension et génération de texte, avec une vitesse de traitement ultra-rapide et une précision maximale pour les applications professionnelles, la rédaction technique et l'analyse de documents complexes.",
                 "version": "4.0",
                 "image": "ai_models/gpt-4o-turbo.png",
-                "display_order": 1,
             },
             {
                 "name": "Claude 3.5 Sonnet",
@@ -117,7 +116,6 @@ class Command(BaseCommand):
                 "description": "L'assistant IA d'Anthropic avec une intelligence remarquable et une safety intégrée. Claude 3.5 Sonnet excelle dans le raisonnement logique, la programmation avancée et l'analyse nuancée de textes, tout en respectant les plus hauts standards de sécurité et d'éthique.",
                 "version": "3.5",
                 "image": "ai_models/claude-3-5-sonnet.png",
-                "display_order": 2,
             },
             {
                 "name": "Gemini 1.5 Pro",
@@ -125,7 +123,6 @@ class Command(BaseCommand):
                 "description": "Le modèle multimodal de Google AI capable de comprendre et traiter simultanément texte, images, audio et vidéo. Gemini 1.5 Pro offre une fenêtre de contexte massive de 1 million de tokens pour des analyses approfondies et des réponses ultra-précises.",
                 "version": "1.5",
                 "image": "ai_models/gemini-1-5-pro.png",
-                "display_order": 3,
             },
             {
                 "name": "Stable Diffusion XL",
@@ -133,7 +130,6 @@ class Command(BaseCommand):
                 "description": "Le générateur d'images par IA le plus avancé. Stable Diffusion XL produit des images photoréalistes et artistiques de qualité professionnelle à partir de descriptions textuelles. Idéal pour la création visuelle, le design graphique et la génération de contenu médiatique.",
                 "version": "2.0",
                 "image": "ai_models/stable-diffusion-xl.png",
-                "display_order": 4,
             },
             {
                 "name": "DALL-E 3",
@@ -141,7 +137,6 @@ class Command(BaseCommand):
                 "description": "Le générateur d'images d'OpenAI avec une compréhension linguistique inégalée. DALL-E 3 transforme vos descriptions textuelles en images détaillées et cohérentes avec une fidélité exceptionnelle aux instructions. Parfait pour le marketing, l'illustration et la création de contenu visuel.",
                 "version": "3.0",
                 "image": "ai_models/dall-e-3.png",
-                "display_order": 5,
             },
             {
                 "name": "Midjourney v6",
@@ -149,7 +144,6 @@ class Command(BaseCommand):
                 "description": "La référence en matière de création artistique par IA. Midjourney v6 génère des œuvres d'art, des illustrations et des visuels de qualité galerie avec un style unique et esthétique. Idéal pour les créateurs, les designers et les artistes cherchant l'excellence visuelle.",
                 "version": "6.0",
                 "image": "ai_models/midjourney-v6.png",
-                "display_order": 6,
             },
             {
                 "name": "Whisper Large v3",
@@ -157,7 +151,6 @@ class Command(BaseCommand):
                 "description": "Le système de reconnaissance vocale le plus précis au monde. Whisper Large v3 transcrit automatiquement la parole en texte avec une précision de 95%+ dans plus de 50 langues. Essentiel pour la transcription médicale, l'accessibilité et l'analyse de réunions.",
                 "version": "3.0",
                 "image": "ai_models/whisper-large-v3.png",
-                "display_order": 7,
             },
             {
                 "name": "TradingBot Pro",
@@ -165,7 +158,6 @@ class Command(BaseCommand):
                 "description": "Le bot de trading algorithmique le plus sophistiqué. TradingBot Pro analyse les marchés financiers en temps réel avec des stratégies de trading avancées, des indicateurs techniques et des algorithmes de machine learning pour maximiser vos rendements avec une gestion des risques intelligente.",
                 "version": "5.0",
                 "image": "ai_models/tradingbot-pro.png",
-                "display_order": 8,
             },
             {
                 "name": "DataSense AI",
@@ -173,7 +165,6 @@ class Command(BaseCommand):
                 "description": "La plateforme d'analyse de données pilotée par IA. DataSense AI transforme vos données brutes en insights actionnables grâce à des algorithmes de machine learning avancés, des visualisations interactives et des prédictions précises pour les entreprises et les chercheurs.",
                 "version": "4.0",
                 "image": "ai_models/datasense-ai.png",
-                "display_order": 9,
             },
             {
                 "name": "AutoML Engine",
@@ -181,7 +172,6 @@ class Command(BaseCommand):
                 "description": "La plateforme d'auto-apprentissage automatique la plus complète. AutoML Engine permet de créer, déployer et optimiser des modèles de machine learning sans code. Idéal pour les entreprises qui souhaitent exploiter la puissance de l'IA sans expertise technique approfondie.",
                 "version": "3.0",
                 "image": "ai_models/automl-engine.png",
-                "display_order": 10,
             },
         ]
         for data in models_data:
@@ -193,7 +183,6 @@ class Command(BaseCommand):
                     "version": data["version"],
                     "image": data["image"],
                     "is_active": True,
-                    "display_order": data["display_order"],
                 }
             )
             self.stdout.write(f'  ✅ Modèle IA créé : {data["name"]} (v{data["version"]})')
