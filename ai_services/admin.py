@@ -6,13 +6,24 @@ from .models import AiModel, AiCategory, AiOffer, AiRental, AiRevenue
 class AiModelAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'version', 'is_active', 'created_at')
     list_filter = ('is_active',)
+    search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('created_at', 'updated_at')
+    fields = (
+        'name', 'slug', 'image', 'description', 'version',
+        'is_active',
+    )
 
 
 @admin.register(AiCategory)
 class AiCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'display_order', 'is_active')
     prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name', 'description')
+    readonly_fields = ('created_at',)
+    fields = (
+        'name', 'slug', 'description', 'display_order', 'is_active',
+    )
 
 
 @admin.register(AiOffer)
@@ -21,6 +32,13 @@ class AiOfferAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'is_featured', 'revenue_frequency', 'ai_model', 'category')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('created_at', 'updated_at')
+    fields = (
+        'name', 'slug', 'ai_model', 'category',
+        'price', 'duration_days', 'revenue_frequency', 'revenue_type', 'revenue_value',
+        'description', 'image', 'is_active', 'is_featured',
+        'total_rentals',
+    )
 
 
 @admin.register(AiRental)
@@ -33,6 +51,13 @@ class AiRentalAdmin(admin.ModelAdmin):
     list_filter = ('status', 'offer__revenue_frequency')
     search_fields = ('user__phone_number', 'offer__name', 'user__username')
     readonly_fields = ('created_at', 'updated_at')
+    fields = (
+        'user', 'offer',
+        'amount_paid', 'productive_amount', 'earning_amount',
+        'start_date', 'end_date',
+        'next_payment_at', 'last_payment_at', 'payment_count',
+        'total_revenue_earned', 'status',
+    )
 
 
 @admin.register(AiRevenue)
@@ -44,3 +69,8 @@ class AiRevenueAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     search_fields = ('user__phone_number', 'payment_reference')
     readonly_fields = ('created_at',)
+    fields = (
+        'user', 'offer', 'rental',
+        'amount', 'payment_reference',
+        'period_start', 'period_end', 'status', 'credited_at',
+    )

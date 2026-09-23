@@ -57,7 +57,7 @@ def handler500(request):
 
 
 urlpatterns = [
-    path('django-admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
 
     # PWA
     path('sw.js', service_worker, name='service_worker'),
