@@ -8,4 +8,10 @@ dependencies = [
     "django>=6.1.1",
     "gunicorn>=26.2.0",
     "python-decouple>=3.8",
+    # Importé au démarrage par payia/__init__.py (app Celery) + shared_task
+    "celery>=5.6.3",
+    # Broker / result backend Celery
+    "redis>=5.0",
+    # ImageField / ImageField forms (profils, offres IA, preuves de dépôt)
+    "pillow>=10.0",
 ]

@@ -1,0 +1,65 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# PAYIA — .dockerignore
+# Tout ce qui suit n'est JAMAIS envoyé au contexte de build (image plus
+# petite, cache Docker plus stable, aucun secret dans l'image).
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Git / IDE ──────────────────────────────────────────────────────────────
+.git
+.gitignore
+.gitattributes
+.github
+.vscode
+.idea
+*.swp
+*.swo
+
+# ── Python ─────────────────────────────────────────────────────────────────
+.venv
+venv
+ENV
+env
+__pycache__
+**/__pycache__
+*.py[cod]
+*.egg-info
+.installed.cfg
+.pytest_cache
+.tox
+.nox
+.coverage
+.coverage.*
+htmlcov
+coverage.xml
+
+# ── Node ───────────────────────────────────────────────────────────────────
+node_modules
+npm-debug.log*
+
+# ── Données locales : JAMAIS dans l'image (ce sont des volumes) ────────────
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3-wal
+db.sqlite3-shm
+media
+logs
+staticfiles
+
+# ── Secrets ────────────────────────────────────────────────────────────────
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ── Outillage / docs ───────────────────────────────────────────────────────
+.claude
+Dockerfile
+docker-compose.yml
+docker-compose.yaml
+.dockerignore
+*.log
+celerybeat-schedule
+celerybeat-schedule.*

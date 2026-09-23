@@ -39,8 +39,6 @@ media/
 
 # Static files
 staticfiles/
-static/css/output.css
-static/src/
 
 # Node modules
 node_modules/

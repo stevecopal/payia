@@ -82,12 +82,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'payia.wsgi.application'
 
+DB_ENGINE = config(
+    'DB_ENGINE',
+    default='django.db.backends.sqlite3'
+)
+
 DATABASES = {
     'default': {
-        'ENGINE': config(
-            'DB_ENGINE',
-            default='django.db.backends.sqlite3'
-        ),
+        'ENGINE': DB_ENGINE,
         'NAME': config(
             'DB_NAME',
             default=str(BASE_DIR / 'db.sqlite3')
@@ -98,6 +100,24 @@ DATABASES = {
         'PORT': config('DB_PORT', default=''),
     }
 }
+
+# Options SQLite — indispensables en production lorsque plusieurs process
+# écrivent dans le même fichier (gunicorn + celery worker + celery beat) :
+#   * timeout          : attente en secondes avant « database is locked »
+#   * journal_mode=WAL : lectures concurrentes pendant une écriture
+#   * transaction_mode : BEGIN IMMEDIATE → évite les deadlocks de verrou
+if DB_ENGINE == 'django.db.backends.sqlite3':
+    _sqlite_options = {
+        'timeout': config('DB_TIMEOUT', default=20, cast=int),
+        'init_command': config(
+            'DB_INIT_COMMAND',
+            default='PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;'
+        ),
+    }
+    _transaction_mode = config('DB_TRANSACTION_MODE', default='')
+    if _transaction_mode:
+        _sqlite_options['transaction_mode'] = _transaction_mode
+    DATABASES['default']['OPTIONS'] = _sqlite_options
 
 # Use DATABASE_URL if provided (e.g. postgres://user:pass@host:port/dbname)
 DATABASE_URL = config('DATABASE_URL', default=None)
