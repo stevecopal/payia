@@ -1,25 +1,61 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Paramètres{% endblock %}
+{% block title %}PAYIA — {% trans "Paramètres" %}{% endblock %}
 {% block dashboard_content %}
-<div class="max-w-lg mx-auto space-y-4">
-    <h1 class="text-xl font-display">{% trans "Paramètres" %}</h1>
-    <div class="bg-gray-900 rounded-xl border border-gray-800 divide-y divide-gray-800">
-        <a href="{% url 'profile' %}" class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
-            <div><p class="text-sm font-medium">{% trans "Profil" %}</p><p class="text-xs text-gray-500">{% trans "Informations personnelles" %}</p></div>
-            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+<div class="max-w-lg mx-auto app-stack app-stagger">
+    <header class="app-stagger-item">
+        <a href="{% url 'profile' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Profil" %}</a>
+        <h1 class="app-page-title mt-1">{% trans "Paramètres" %}</h1>
+    </header>
+
+    <section class="app-stagger-item app-card overflow-hidden">
+        <a href="{% url 'profile' %}" class="app-list-row app-list-row-click">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold">{% trans "Profil" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Informations personnelles" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </a>
-        <a href="{% url 'security_settings' %}" class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
-            <div><p class="text-sm font-medium">{% trans "Sécurité" %}</p><p class="text-xs text-gray-500">{% trans "Mot de passe et sécurité" %}</p></div>
-            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <a href="{% url 'security_settings' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold">{% trans "Sécurité" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Mot de passe et connexion" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </a>
-        <a href="{% url 'notifications' %}" class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
-            <div><p class="text-sm font-medium">{% trans "Notifications" %}</p><p class="text-xs text-gray-500">{% trans "Préférences" %}</p></div>
-            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <a href="{% url 'notifications' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold">{% trans "Notifications" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Voir toutes les alertes" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </a>
-        <div class="px-4 py-3.5">
-            <a href="{% url 'logout' %}" class="text-red-400 text-sm font-medium hover:text-red-300">{% trans "Se déconnecter" %}</a>
-        </div>
-    </div>
+        <a href="{% url 'withdrawal_info' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold">{% trans "Informations de retrait" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Numéro et titulaire" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'referrals' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold">{% trans "Parrainage" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Lien et commissions" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'support_list' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold">{% trans "Support" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Nous contacter" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+    </section>
+
+    <form method="post" action="{% url 'logout' %}" class="app-stagger-item">
+        {% csrf_token %}
+        <button type="submit" class="app-btn app-btn-danger app-btn-block">{% trans "Se déconnecter" %}</button>
+    </form>
 </div>
 {% endblock %}

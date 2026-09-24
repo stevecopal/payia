@@ -1,16 +1,42 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Sécurité{% endblock %}
+{% block title %}PAYIA — {% trans "Sécurité" %}{% endblock %}
 {% block dashboard_content %}
-<div class="max-w-lg mx-auto space-y-4">
-    <h1 class="text-xl font-display">{% trans "Sécurité" %}</h1>
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-0 divide-y divide-gray-800">
-        <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Téléphone" %}</span><span class="text-sm">{{ user.phone_number }}</span></div>
-        <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Dernière connexion" %}</span><span class="text-sm">{{ user.last_login|date:"d/m/Y H:i" }}</span></div>
-        <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "KYC" %}</span><span class="text-sm">{{ user.get_kyc_status_display }}</span></div>
-    </div>
-    <a href="{% url 'password_change' %}" class="block bg-gray-900 rounded-xl border border-gray-800 px-4 py-3.5 hover:bg-gray-800/50 transition-colors">
-        <p class="text-sm font-medium">{% trans "Changer le mot de passe" %}</p>
+<div class="max-w-lg mx-auto app-stack app-stagger">
+    <header class="app-stagger-item">
+        <a href="{% url 'settings' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Paramètres" %}</a>
+        <h1 class="app-page-title mt-1">{% trans "Sécurité" %}</h1>
+    </header>
+
+    <section class="app-stagger-item app-card overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-white/[0.06]">
+            <h2 class="app-section-title">{% trans "Compte" %}</h2>
+        </div>
+        <div class="divide-y divide-white/[0.06]">
+            <div class="px-5 py-3.5 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Téléphone" %}</span>
+                <span class="text-sm font-mono">{{ user.phone_number }}</span>
+            </div>
+            <div class="px-5 py-3.5 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Dernière connexion" %}</span>
+                <span class="text-sm font-mono">{{ user.last_login|date:"d/m/Y H:i"|default:"—" }}</span>
+            </div>
+            <div class="px-5 py-3.5 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "KYC" %}</span>
+                <span class="text-sm">{{ user.get_kyc_status_display }}</span>
+            </div>
+        </div>
+    </section>
+
+    <a href="{% url 'password_change' %}" class="app-stagger-item app-quick-link">
+        <span class="app-quick-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </span>
+        <span class="min-w-0 flex-1">
+            <span class="block text-sm font-semibold">{% trans "Changer le mot de passe" %}</span>
+            <span class="block text-xs text-gray-500 mt-0.5">{% trans "Mettre à jour votre mot de passe" %}</span>
+        </span>
+        <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
     </a>
 </div>
 {% endblock %}

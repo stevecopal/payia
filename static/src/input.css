@@ -144,6 +144,306 @@
   .chip-signal {
     @apply bg-green-600/15 text-green-400 border border-green-500/30;
   }
+
+  /* ============================================================
+     Espace client — application mobile-first
+     ============================================================ */
+  .app-shell {
+    @apply min-h-[100dvh] flex flex-col bg-black;
+  }
+
+  .app-topbar {
+    @apply sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-white/[0.07];
+  }
+
+  .app-topbar-inner {
+    @apply mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-4;
+  }
+
+  .app-logo {
+    @apply flex items-center gap-2 shrink-0 text-white hover:text-green-400 transition-colors;
+  }
+
+  .app-logo-mark {
+    @apply h-10 w-10 sm:h-11 sm:w-11 object-contain rounded-lg;
+  }
+
+  .app-logo-word {
+    @apply hidden sm:inline font-display font-bold text-lg tracking-tight;
+  }
+
+  .app-topnav {
+    @apply hidden md:flex items-center gap-0.5 min-w-0 flex-1 justify-center overflow-x-auto;
+  }
+
+  .app-topnav-link {
+    @apply relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-semibold text-gray-400 hover:text-white hover:bg-white/[0.06] transition-colors whitespace-nowrap;
+  }
+
+  .app-topnav-link svg {
+    @apply w-[17px] h-[17px] shrink-0;
+  }
+
+  .app-topnav-link.is-active {
+    @apply text-green-400 bg-green-600/10;
+  }
+
+  .app-topbar-right {
+    @apply flex items-center gap-2 shrink-0;
+  }
+
+  .app-public-link {
+    @apply hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-semibold text-gray-300 hover:text-white hover:bg-white/[0.07] border border-white/15 transition-colors whitespace-nowrap;
+  }
+
+  .app-public-link svg {
+    @apply w-4 h-4;
+  }
+
+  .app-avatar {
+    @apply w-10 h-10 rounded-full bg-green-600/15 border border-green-500/30 text-green-400 text-sm font-bold flex items-center justify-center hover:bg-green-600/25 transition-colors;
+  }
+
+  .app-main {
+    @apply flex-1 w-full;
+  }
+
+  .app-main-inner {
+    @apply mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 pt-4 sm:pt-5 pb-32 lg:pb-14;
+  }
+
+  /* Bottom navigation (mobile) — barre horizontale flottante */
+  .app-bottomnav {
+    @apply fixed bottom-0 inset-x-0 z-40 flex items-stretch lg:hidden;
+    background: transparent;
+    border-top: none;
+    padding: 0 10px;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 10px);
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .app-bottomnav::before {
+    content: "";
+    position: absolute;
+    inset: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: rgba(12, 14, 13, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-bottomnav-item {
+    @apply relative z-10 flex flex-1 flex-col items-center justify-center gap-1 min-w-0 text-gray-500 transition-colors duration-150;
+    pointer-events: auto;
+    min-height: 52px;
+    padding-top: 10px;
+    padding-bottom: 8px;
+  }
+
+  .app-bottomnav-icon {
+    @apply relative flex items-center justify-center w-6 h-6;
+  }
+
+  .app-bottomnav-icon svg {
+    @apply w-[21px] h-[21px];
+  }
+
+  .app-bottomnav-label {
+    @apply text-[10px] font-semibold leading-none truncate max-w-full px-0.5;
+  }
+
+  .app-bottomnav-item.is-active {
+    @apply text-green-400;
+  }
+
+  .app-bottomnav-item.is-active .app-bottomnav-icon {
+    transform: translateY(-1px);
+  }
+
+  .app-nav-badge {
+    @apply absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-green-600 text-black text-[10px] font-bold flex items-center justify-center leading-none;
+  }
+
+  /* Cartes & surfaces — densité type WhatsApp / Facebook */
+  .app-card {
+    @apply bg-white/[0.035] border border-white/[0.08] rounded-2xl;
+  }
+
+  .app-hero-card {
+    @apply relative overflow-hidden rounded-2xl p-4 sm:p-5 border border-green-500/20;
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgba(0, 250, 154, 0.16) 0%, transparent 55%),
+      linear-gradient(160deg, rgba(0, 250, 154, 0.08) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(255, 255, 255, 0.02) 100%);
+  }
+
+  .app-icon-btn {
+    @apply w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-white/70 hover:text-green-400 hover:border-green-500/40 flex items-center justify-center transition-colors;
+  }
+
+  .app-icon-btn svg {
+    @apply w-5 h-5;
+  }
+
+  .app-chip {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider;
+  }
+
+  .app-chip-signal {
+    @apply bg-green-600/15 text-green-400 border border-green-500/30;
+  }
+
+  .app-chip-warn {
+    @apply bg-yellow-500/15 text-yellow-400 border border-yellow-500/25;
+  }
+
+  .app-chip-danger {
+    @apply bg-red-500/15 text-red-400 border border-red-500/25;
+  }
+
+  .app-chip-muted {
+    @apply bg-white/[0.06] text-gray-400 border border-white/10;
+  }
+
+  /* Boutons app */
+  .app-btn {
+    @apply inline-flex items-center justify-center gap-2 font-bold text-sm rounded-xl px-5 py-2.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black;
+  }
+
+  .app-btn-primary {
+    @apply bg-green-600 text-black hover:bg-green-500 active:scale-[0.98];
+  }
+
+  .app-btn-secondary {
+    @apply border border-white/15 text-white/90 hover:border-white/35 hover:text-white bg-transparent active:scale-[0.98];
+  }
+
+  .app-btn-ghost {
+    @apply text-green-400 hover:text-green-300 bg-transparent px-3 py-2;
+  }
+
+  .app-btn-danger {
+    @apply border border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50 bg-transparent;
+  }
+
+  .app-btn-block {
+    @apply w-full;
+  }
+
+  /* Progression de cycle */
+  .app-progress {
+    @apply h-1.5 w-full rounded-full bg-white/[0.07] overflow-hidden;
+  }
+
+  .app-progress-fill {
+    @apply block h-full rounded-full bg-green-400;
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* CTA principal home */
+  .app-cta-banner {
+    @apply flex items-center justify-between gap-4 rounded-2xl px-4 py-4 sm:px-5 sm:py-5 bg-green-600 text-black transition-transform duration-200 active:scale-[0.99];
+    box-shadow: 0 12px 40px rgba(0, 250, 154, 0.18);
+  }
+
+  /* Raccourcis discrets */
+  .app-quick-link {
+    @apply app-card flex items-center gap-3 p-3.5 hover:border-white/15 hover:bg-white/[0.05] transition-colors;
+  }
+
+  .app-quick-icon {
+    @apply w-10 h-10 rounded-xl bg-green-600/10 border border-green-500/20 text-green-400 flex items-center justify-center shrink-0;
+  }
+
+  .app-quick-icon svg {
+    @apply w-5 h-5;
+  }
+
+  .app-inline-banner {
+    @apply app-card flex items-center gap-3 p-3.5 hover:border-yellow-500/30 transition-colors;
+  }
+
+  /* Liste type application */
+  .app-list {
+    @apply app-card overflow-hidden divide-y divide-white/[0.06];
+  }
+
+  .app-list-row {
+    @apply flex items-center gap-3 px-4 sm:px-5 py-3 transition-colors hover:bg-white/[0.03];
+  }
+
+  .app-list-row-click {
+    @apply block;
+  }
+
+  .app-page-title {
+    @apply text-xl sm:text-2xl font-display font-bold tracking-tight;
+  }
+
+  .app-section-title {
+    @apply text-sm font-display font-bold;
+  }
+
+  .app-stack {
+    @apply space-y-4 sm:space-y-5;
+  }
+
+  /* Filtres pills */
+  .app-pills {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .app-pill {
+    @apply px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-colors bg-white/[0.05] text-gray-400 hover:text-white border border-transparent;
+  }
+
+  .app-pill.is-active {
+    @apply bg-green-600 text-black border-green-600;
+  }
+
+  /* Empty state */
+  .app-empty {
+    @apply text-center py-12 px-6;
+  }
+
+  .app-empty-icon {
+    @apply mx-auto w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-gray-500;
+  }
+
+  /* Icône carrée par type */
+  .app-tile {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center shrink-0;
+  }
+
+  /* Apparition en cascade (reduced-motion neutralisé plus bas) */
+  .app-stagger-item {
+    opacity: 0;
+    animation: appRise 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .app-stagger-item:nth-child(1) { animation-delay: 0ms; }
+  .app-stagger-item:nth-child(2) { animation-delay: 40ms; }
+  .app-stagger-item:nth-child(3) { animation-delay: 80ms; }
+  .app-stagger-item:nth-child(4) { animation-delay: 120ms; }
+  .app-stagger-item:nth-child(5) { animation-delay: 160ms; }
+  .app-stagger-item:nth-child(6) { animation-delay: 200ms; }
+  .app-stagger-item:nth-child(7) { animation-delay: 240ms; }
+  .app-stagger-item:nth-child(8) { animation-delay: 280ms; }
+
+  @keyframes appRise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 /* ============================================================
@@ -385,6 +685,16 @@
 
   .lp-progress-fill {
     width: var(--progress, 60%) !important;
+  }
+
+  .app-stagger-item {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .app-progress-fill {
+    transition: none !important;
   }
 }
 

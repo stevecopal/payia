@@ -1,33 +1,109 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Profil{% endblock %}
+{% block title %}PAYIA — {% trans "Mon profil" %}{% endblock %}
 {% block dashboard_content %}
-<div class="max-w-lg mx-auto space-y-4">
-    <h1 class="text-xl font-display">{% trans "Mon profil" %}</h1>
+<div class="max-w-lg mx-auto app-stack app-stagger">
 
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
-        <div class="flex items-center gap-4 mb-5">
-            
+    <header class="app-stagger-item">
+        <h1 class="app-page-title">{% trans "Mon profil" %}</h1>
+    </header>
+
+    {# Identité #}
+    <section class="app-stagger-item app-card p-4 sm:p-5">
+        <div class="flex items-center gap-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-green-600/15 border border-green-500/30 text-green-400 flex items-center justify-center text-xl font-display font-bold shrink-0">
+                {{ profile.first_name|default:user.username|first|upper }}
+            </div>
             <div class="min-w-0">
-                <h2 class="font-semibold">{{ profile.first_name }} {{ profile.last_name }}</h2>
-
-                <p class="text-sm text-gray-400">{{ user.phone_number }}</p>
-                {% if profile.email %}<p class="text-xs text-gray-500">{{ profile.email }}</p>{% endif %}
+                <h2 class="font-display font-bold text-lg truncate">{{ profile.first_name }} {{ profile.last_name }}</h2>
+                <p class="text-sm text-gray-400 font-mono">{{ user.phone_number }}</p>
+                {% if profile.email %}<p class="text-xs text-gray-500 truncate">{{ profile.email }}</p>{% endif %}
             </div>
         </div>
 
-        <div class="space-y-0 divide-y divide-gray-800">
-            <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Retrait" %}</span><span class="text-sm">{{ profile.withdrawal_phone_number|default:"-" }}</span></div>
-            <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Titulaire" %}</span><span class="text-sm">{{ profile.withdrawal_account_name|default:"-" }}</span></div>
-            <div class="flex justify-between py-2.5"><span class="text-xs text-gray-500">{% trans "Code parrainage" %}</span><span class="text-sm font-mono">{{ user.referral_code }}</span></div>
+        <div class="mt-3.5 flex flex-wrap gap-2">
+            {% if profile.profile_status == 'VERIFIED' %}
+            <span class="app-chip app-chip-signal">{% trans "Profil vérifié" %}</span>
+            {% elif profile.profile_status == 'EN_ATTENTE' %}
+            <span class="app-chip app-chip-warn">{% trans "En attente" %}</span>
+            {% else %}
+            <span class="app-chip app-chip-muted">{% trans "Profil à compléter" %}</span>
+            {% endif %}
+            <span class="app-chip app-chip-muted font-mono">{{ user.referral_code }}</span>
         </div>
 
-        <div class="flex gap-3 mt-5">
-            <a href="{% url 'profile_edit' %}" class="flex-1 py-2.5 bg-green-600 text-black text-xs font-semibold rounded-lg hover:bg-green-500 text-center">{% trans "Modifier" %}</a>
-            <a href="{% url 'withdrawal_info' %}" class="flex-1 py-2.5 border border-gray-700 text-white text-xs font-semibold rounded-lg hover:border-green-500 text-center">{% trans "Retrait" %}</a>
+        <div class="mt-4 grid grid-cols-2 gap-2.5">
+            <a href="{% url 'profile_edit' %}" class="app-btn app-btn-primary">{% trans "Modifier" %}</a>
+            <a href="{% url 'withdrawal_info' %}" class="app-btn app-btn-secondary">{% trans "Retrait" %}</a>
         </div>
-    </div>
+    </section>
 
-    
+    {# Infos retrait #}
+    <section class="app-stagger-item app-card overflow-hidden">
+        <div class="px-4 sm:px-5 py-3 border-b border-white/[0.06]">
+            <h2 class="app-section-title">{% trans "Informations de retrait" %}</h2>
+        </div>
+        <div class="divide-y divide-white/[0.06]">
+            <div class="px-4 sm:px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Numéro" %}</span>
+                <span class="text-sm font-mono text-right">{{ profile.withdrawal_phone_number|default:"—" }}</span>
+            </div>
+            <div class="px-4 sm:px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Titulaire" %}</span>
+                <span class="text-sm text-right">{{ profile.withdrawal_account_name|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    {# Menu compte #}
+    <section class="app-stagger-item app-card overflow-hidden">
+        <a href="{% url 'settings' %}" class="app-list-row app-list-row-click">
+            <span class="app-tile bg-white/[0.05] text-gray-400">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </span>
+            <span class="flex-1 min-w-0">
+                <span class="block text-sm font-semibold">{% trans "Paramètres" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Préférences et sécurité" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'referrals' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="app-tile bg-green-600/10 text-green-400">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </span>
+            <span class="flex-1 min-w-0">
+                <span class="block text-sm font-semibold">{% trans "Parrainage" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Inviter et gagner des commissions" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'support_list' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="app-tile bg-white/[0.05] text-gray-400">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </span>
+            <span class="flex-1 min-w-0">
+                <span class="block text-sm font-semibold">{% trans "Support" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Tickets et aide" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'home' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="app-tile bg-white/[0.05] text-gray-400">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+            </span>
+            <span class="flex-1 min-w-0">
+                <span class="block text-sm font-semibold">{% trans "Site public" %}</span>
+                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Voir la page d'accueil" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+    </section>
+
+    {# Déconnexion #}
+    <form method="post" action="{% url 'logout' %}" class="app-stagger-item">
+        {% csrf_token %}
+        <button type="submit" class="app-btn app-btn-danger app-btn-block">{% trans "Se déconnecter" %}</button>
+    </form>
+
 </div>
 {% endblock %}

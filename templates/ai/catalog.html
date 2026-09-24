@@ -1,40 +1,47 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Catalogue IA{% endblock %}
+{% block title %}PAYIA — {% trans "Machines" %}{% endblock %}
 {% block dashboard_content %}
-<div class="space-y-4">
-    <h1 class="text-xl font-display">{% trans "Catalogue IA" %}</h1>
+<div class="app-stack app-stagger">
+    <header class="app-stagger-item flex items-end justify-between gap-3">
+        <div>
+            <h1 class="app-page-title">{% trans "Machines" %}</h1>
+            <p class="text-sm text-gray-500 mt-1">{% trans "Découvrez et louez vos machines IA." %}</p>
+        </div>
+        <a href="{% url 'ai_my_rentals' %}" class="app-pill is-active shrink-0">{% trans "Mes locations" %}</a>
+    </header>
 
-    
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="app-stagger-item grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {% for offer in offers %}
-        <a href="{% url 'ai_offer_detail' slug=offer.slug %}" class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden hover:border-green-600/50 transition-all">
+        <a href="{% url 'ai_offer_detail' slug=offer.slug %}" class="app-card overflow-hidden hover:border-green-500/40 transition-all group">
             {% if offer.image %}
-            <div class="h-40 bg-gray-800 overflow-hidden">
-                <img src="{{ offer.image.url }}" alt="{{ offer.name }}" class="w-full h-full object-cover hover:scale-105 transition-transform">
+            <div class="h-40 bg-white/[0.03] overflow-hidden">
+                <img src="{{ offer.image.url }}" alt="{{ offer.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
             </div>
             {% else %}
-            <div class="h-40 bg-gray-800 flex items-center justify-center">
-                <span class="text-green-500 text-3xl font-display">{{ offer.name|first }}</span>
+            <div class="h-40 bg-gradient-to-br from-green-600/10 to-white/[0.03] flex items-center justify-center">
+                <span class="text-green-400/80 text-4xl font-display font-bold">{{ offer.name|first }}</span>
             </div>
             {% endif %}
             <div class="p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs text-gray-500">{{ offer.ai_model }}</span>
-                    {% if offer.is_featured %}<span class="px-2 py-0.5 bg-green-600/20 text-green-400 text-xs rounded-full">{% trans "Populaire" %}</span>{% endif %}
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <span class="text-xs text-gray-500 truncate">{{ offer.ai_model }}</span>
+                    {% if offer.is_featured %}<span class="app-chip app-chip-signal shrink-0">{% trans "Populaire" %}</span>{% endif %}
                 </div>
-                <h3 class="font-semibold text-sm mb-1">{{ offer.name }}</h3>
+                <h3 class="font-display font-bold text-sm mb-1 truncate">{{ offer.name }}</h3>
                 <p class="text-xs text-gray-500 line-clamp-2 mb-3">{{ offer.description|truncatewords:15 }}</p>
                 <div class="flex items-center justify-between">
-                    <span class="text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }} XAF</span>
-                    <span class="text-xs text-gray-500">{{ offer.duration_days }} {% trans "jours" %}</span>
+                    <span class="font-mono text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }} <span class="text-xs text-gray-500">XAF</span></span>
+                    <span class="text-xs text-gray-500 font-mono">{{ offer.duration_days }} {% trans "jours" %}</span>
                 </div>
             </div>
         </a>
         {% empty %}
-        <div class="col-span-full text-center py-12">
-            <p class="text-gray-500 text-sm">{% trans "Aucune offre disponible" %}</p>
+        <div class="col-span-full app-empty">
+            <div class="app-empty-icon mb-4">
+                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <p class="text-sm text-gray-500">{% trans "Aucune offre disponible" %}</p>
         </div>
         {% endfor %}
     </div>

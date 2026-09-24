@@ -1,21 +1,24 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Nouveau retrait{% endblock %}
+{% block title %}PAYIA — {% trans "Nouveau retrait" %}{% endblock %}
 {% block dashboard_content %}
-<div class="max-w-lg mx-auto space-y-4">
-    <h1 class="text-xl font-display">{% trans "Effectuer un retrait" %}</h1>
+<div class="max-w-lg mx-auto app-stack app-stagger">
+    <header class="app-stagger-item">
+        <a href="{% url 'wallet' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Portefeuille" %}</a>
+        <h1 class="app-page-title mt-1">{% trans "Effectuer un retrait" %}</h1>
+    </header>
 
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 flex items-center justify-between">
-        <span class="text-xs text-gray-500 uppercase tracking-wider">{% trans "Solde disponible" %}</span>
-        <span class="text-lg font-bold">{{ wallet.available_balance|floatformat:2 }} {{ user.profile.preferred_currency|default:"XAF" }}</span>
+    <div class="app-stagger-item app-hero-card !p-4 flex items-center justify-between gap-3">
+        <span class="text-[11px] text-white/55 uppercase tracking-wider">{% trans "Solde disponible" %}</span>
+        <span class="font-mono text-lg font-bold">{{ wallet.available_balance|floatformat:2 }} <span class="text-sm text-white/50">{{ user.profile.preferred_currency|default:"XAF" }}</span></span>
     </div>
 
-    <form method="post" class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4">
+    <form method="post" class="app-stagger-item app-card p-5 space-y-4">
         {% csrf_token %}
 
         <div>
             <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Méthode de retrait" %}</label>
-            <select name="payment_method" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm">
+            <select name="payment_method" class="field">
                 <option value="">{% trans "Choisir une méthode" %}</option>
                 {% for pm in payment_methods %}
                 <option value="{{ pm.pk }}">{{ pm.name }}</option>
@@ -27,28 +30,24 @@
         <div>
             <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Montant" %}</label>
             {{ form.amount }}
-            <p class="mt-1 text-xs text-gray-500">{% trans "Montant minimum de retrait:" %} {{ min_withdrawal }} XAF</p>
+            <p class="mt-1 text-xs text-gray-500">{% trans "Minimum" %} : <span class="font-mono">{{ min_withdrawal }} XAF</span></p>
             {% if form.amount.errors %}<p class="mt-1 text-xs text-red-400">{{ form.amount.errors.0 }}</p>{% endif %}
         </div>
 
         <div>
             <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Numéro de retrait" %}</label>
-            <input type="text" name="withdrawal_number" value="{{ form.withdrawal_number.value }}" readonly class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-gray-400 rounded-lg text-sm cursor-not-allowed">
+            <input type="text" name="withdrawal_number" value="{{ form.withdrawal_number.value }}" readonly class="field !text-gray-400 cursor-not-allowed">
             <p class="mt-1 text-xs text-gray-500">{% trans "Numéro enregistré dans votre profil" %}</p>
             {% if form.withdrawal_number.errors %}<p class="mt-1 text-xs text-red-400">{{ form.withdrawal_number.errors.0 }}</p>{% endif %}
         </div>
 
         <div>
             <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{% trans "Nom du titulaire" %}</label>
-            <input type="text" name="withdrawal_account_name" value="{{ form.withdrawal_account_name.value }}" readonly class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-gray-400 rounded-lg text-sm cursor-not-allowed">
+            <input type="text" name="withdrawal_account_name" value="{{ form.withdrawal_account_name.value }}" readonly class="field !text-gray-400 cursor-not-allowed">
             <p class="mt-1 text-xs text-gray-500">{% trans "Nom enregistré dans votre profil" %}</p>
         </div>
 
-    
-
-        <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
-            {% trans "Demander le retrait" %}
-        </button>
+        <button type="submit" class="app-btn app-btn-primary app-btn-block">{% trans "Demander le retrait" %}</button>
     </form>
 </div>
 {% endblock %}

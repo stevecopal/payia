@@ -1,111 +1,97 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Parrainage{% endblock %}
+{% block title %}PAYIA — {% trans "Parrainage" %}{% endblock %}
 {% block dashboard_content %}
-<div class="space-y-4">
-    <h1 class="text-xl font-display">{% trans "Parrainage" %}</h1>
+<div class="app-stack app-stagger">
+    <header class="app-stagger-item">
+        <a href="{% url 'profile' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Profil" %}</a>
+        <h1 class="app-page-title mt-1">{% trans "Parrainage" %}</h1>
+    </header>
 
-    <div class="bg-green-600/10 border border-green-600/20 rounded-xl p-4">
-        <p class="text-xs text-green-400 mb-1">{% trans "Comment ca marche" %}</p>
-        <p class="text-xs text-gray-400">{% trans "Les commissions sont prelevees sur le revenu genere par les machines de vos filleuls. Plus vos filleuls font travailler leurs machines, plus vous gagnez." %}</p>
-    </div>
+    <section class="app-stagger-item rounded-2xl p-4 border border-green-500/25 bg-green-600/[0.08]">
+        <p class="text-xs font-semibold text-green-400 mb-1">{% trans "Comment ça marche" %}</p>
+        <p class="text-xs text-gray-400 leading-relaxed">{% trans "Les commissions sont prélevées sur le revenu généré par les machines de vos filleuls. Plus vos filleuls font travailler leurs machines, plus vous gagnez." %}</p>
+    </section>
 
-    <!-- Referral Link -->
     {% if has_active_machine %}
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
-        <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">{% trans "Votre lien" %}</p>
+    <section class="app-stagger-item app-card p-4">
+        <p class="text-[11px] text-gray-500 uppercase tracking-wider mb-2">{% trans "Votre lien" %}</p>
         <div class="flex items-center gap-2">
-            <div class="flex-1 min-w-0 bg-gray-800 rounded-lg px-3 py-2.5 overflow-hidden">
+            <div class="flex-1 min-w-0 bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2.5 overflow-hidden">
                 <p class="text-xs font-mono text-green-400 truncate" id="referralLink">{{ referral_link }}</p>
             </div>
-            <button onclick="copyLink()" id="copyBtn" class="px-4 py-2.5 bg-green-600 text-black text-xs font-semibold rounded-lg hover:bg-green-500 transition-colors shrink-0 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <button type="button" onclick="copyLink()" id="copyBtn" class="app-btn app-btn-primary !px-4 !py-2.5 shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 <span id="copyText">{% trans "Copier" %}</span>
             </button>
         </div>
         <p class="text-xs text-gray-600 mt-1.5">{% trans "Partagez pour parrainer de nouveaux utilisateurs." %}</p>
-    </div>
+    </section>
     {% else %}
-    <div class="bg-yellow-600/10 border border-yellow-600/20 rounded-xl p-4">
-        <p class="text-xs text-yellow-400">{% trans "Vous devez avoir une machine active pour partager votre lien de parrainage." %}</p>
-    </div>
+    <section class="app-stagger-item rounded-2xl p-4 border border-yellow-500/25 bg-yellow-500/[0.08]">
+        <p class="text-xs text-yellow-400 leading-relaxed">{% trans "Vous devez avoir une machine active pour partager votre lien de parrainage." %}</p>
+        <a href="{% url 'ai_catalog' %}" class="mt-3 inline-block text-xs font-semibold text-yellow-300 hover:text-yellow-200">{% trans "Voir les machines →" %}</a>
+    </section>
     {% endif %}
 
-    <!-- Referral Stats -->
-    <div class="grid grid-cols-2 gap-2">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
-            <p class="text-xl font-bold font-mono">{{ stats.total }}</p>
-            <p class="text-[10px] text-gray-500 uppercase">{% trans "Total filleuls" %}</p>
+    <div class="app-stagger-item grid grid-cols-2 gap-3">
+        <div class="app-card p-4 text-center">
+            <p class="text-2xl font-bold font-mono">{{ stats.total }}</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">{% trans "Filleuls" %}</p>
         </div>
-        <div class="bg-green-600/10 rounded-xl border border-green-500/20 p-3 text-center">
-            <p class="text-xl font-bold font-mono text-green-400">{{ total_commissions|floatformat:0 }}</p>
-            <p class="text-[10px] text-green-400 uppercase">{% trans "Total gagne" %}</p>
+        <div class="app-card p-4 text-center border-green-500/25 bg-green-600/[0.06]">
+            <p class="text-2xl font-bold font-mono text-green-400">{{ total_commissions|floatformat:0 }}</p>
+            <p class="text-[10px] text-green-400 uppercase tracking-wider mt-1">{% trans "Gagné" %}</p>
         </div>
-    </div>
-    <div class="grid grid-cols-2 gap-2">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
-            <p class="text-lg font-bold font-mono">{{ stats.level_1 }}</p>
-            <p class="text-[10px] text-gray-500 uppercase">{% trans "Niveau 1 (10%)" %}</p>
+        <div class="app-card p-4 text-center">
+            <p class="text-xl font-bold font-mono">{{ stats.level_1 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">{% trans "Niveau 1 · 10%" %}</p>
         </div>
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3 text-center">
-            <p class="text-lg font-bold font-mono">{{ stats.level_2 }}</p>
-            <p class="text-[10px] text-gray-500 uppercase">{% trans "Niveau 2 (5%)" %}</p>
+        <div class="app-card p-4 text-center">
+            <p class="text-xl font-bold font-mono">{{ stats.level_2 }}</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">{% trans "Niveau 2 · 5%" %}</p>
         </div>
     </div>
 
-    <!-- Commission Breakdown by Level -->
-    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-800">
-            <h2 class="text-sm font-semibold">{% trans "Commissions par niveau" %}</h2>
+    <section class="app-stagger-item app-card overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/[0.06]">
+            <h2 class="app-section-title">{% trans "Commissions par niveau" %}</h2>
         </div>
-        <div class="divide-y divide-gray-800">
-            <div class="px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono">
-                        1
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium">{% trans "Niveau 1 - Filleul direct" %}</p>
-                        <p class="text-[10px] text-gray-500">{% trans "10% du revenu de la machine" %}</p>
+        <div class="divide-y divide-white/[0.06]">
+            <div class="px-5 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-8 h-8 bg-green-600/15 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">1</div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">{% trans "Niveau 1 — Filleul direct" %}</p>
+                        <p class="text-[11px] text-gray-500">{% trans "10% du revenu machine" %}</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm font-bold font-mono text-green-400">
-                        {{ commission_stats.level_1|floatformat:2 }}
-                    </p>
-                </div>
+                <p class="font-mono text-sm font-bold text-green-400 shrink-0">{{ commission_stats.level_1|floatformat:2 }}</p>
             </div>
-            <div class="px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono">
-                        2
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium">{% trans "Niveau 2 - Filleul du filleul" %}</p>
-                        <p class="text-[10px] text-gray-500">{% trans "5% du revenu de la machine" %}</p>
+            <div class="px-5 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-8 h-8 bg-green-600/15 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">2</div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">{% trans "Niveau 2 — Filleul du filleul" %}</p>
+                        <p class="text-[11px] text-gray-500">{% trans "5% du revenu machine" %}</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm font-bold font-mono text-green-400">
-                        {{ commission_stats.level_2|floatformat:2 }}
-                    </p>
-                </div>
+                <p class="font-mono text-sm font-bold text-green-400 shrink-0">{{ commission_stats.level_2|floatformat:2 }}</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Referrals List -->
-    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-800">
-            <h2 class="text-sm font-semibold">{% trans "Mes filleuls" %} <span class="text-gray-500 font-normal">({{ referrals_with_data|length }})</span></h2>
+    <section class="app-stagger-item app-card overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/[0.06]">
+            <h2 class="app-section-title">{% trans "Mes filleuls" %} <span class="text-gray-500 font-normal">({{ referrals_with_data|length }})</span></h2>
         </div>
         {% if referrals_with_data %}
-        <div class="divide-y divide-gray-800">
+        <div class="divide-y divide-white/[0.06]">
             {% for item in referrals_with_data %}
-            <div class="px-4 py-3 hover:bg-gray-800/50 transition-colors">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">
+            <div class="px-5 py-3.5">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 bg-green-600/15 border border-green-500/25 rounded-full flex items-center justify-center text-green-400 text-xs font-bold font-mono shrink-0">
                             {{ item.referral.referred_user.profile.first_name|first|upper }}{{ item.referral.referred_user.profile.last_name|first|upper }}
                         </div>
                         <div class="min-w-0">
@@ -117,37 +103,35 @@
                         {% if item.total_revenue > 0 %}
                         <p class="text-sm font-bold font-mono text-green-400">+{{ item.total_revenue|floatformat:2 }}</p>
                         {% else %}
-                        <p class="text-sm text-gray-600">-</p>
+                        <p class="text-sm text-gray-600">—</p>
                         {% endif %}
                     </div>
                 </div>
-                <div class="flex items-center gap-2 ml-[46px]">
-                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-blue-500/15 text-blue-400">{% trans "Niv." %}{{ item.referral.referral_level }}</span>
+                <div class="flex flex-wrap items-center gap-1.5 mt-2 ml-[48px]">
+                    <span class="app-chip app-chip-muted !py-0.5 !px-2 !text-[10px]">{% trans "Niv." %}{{ item.referral.referral_level }}</span>
                     {% if item.referral.referred_user.is_suspended %}
-                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-red-500/15 text-red-400">{% trans "Suspendu" %}</span>
+                    <span class="app-chip app-chip-danger !py-0.5 !px-2 !text-[10px]">{% trans "Suspendu" %}</span>
                     {% elif item.referral.referred_user.is_active %}
-                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400">{% trans "Actif" %}</span>
+                    <span class="app-chip app-chip-signal !py-0.5 !px-2 !text-[10px]">{% trans "Actif" %}</span>
                     {% else %}
-                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-gray-500/15 text-gray-400">{% trans "Inactif" %}</span>
+                    <span class="app-chip app-chip-muted !py-0.5 !px-2 !text-[10px]">{% trans "Inactif" %}</span>
                     {% endif %}
                     {% if item.has_machine %}
-                    <span class="px-1.5 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400">{% trans "Machine" %}</span>
+                    <span class="app-chip app-chip-signal !py-0.5 !px-2 !text-[10px]">{% trans "Machine" %}</span>
                     {% endif %}
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="text-center py-12">
-            <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        <div class="app-empty">
+            <div class="app-empty-icon mb-4">
+                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
-            <p class="text-gray-500 text-sm">{% trans "Aucun filleul pour le moment." %}</p>
+            <p class="text-sm text-gray-500">{% trans "Aucun filleul pour le moment." %}</p>
         </div>
         {% endif %}
-    </div>
-
-   
+    </section>
 </div>
 
 <script>

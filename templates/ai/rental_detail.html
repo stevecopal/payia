@@ -1,139 +1,131 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - {{ offer.name }}{% endblock %}
+{% block title %}PAYIA — {{ offer.name }}{% endblock %}
 {% block dashboard_content %}
-<div class="space-y-4">
-    <a href="{% url 'ai_my_rentals' %}" class="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-        {% trans "Mes locations" %}
-    </a>
-
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
-        <div class="flex items-center justify-between mb-1">
-            <h1 class="text-lg font-semibold">{{ offer.name }}</h1>
-            <span class="px-2 py-0.5 text-xs rounded-full
-                {% if rental.status == 'active' %}bg-green-600/20 text-green-400
-                {% elif rental.status == 'expired' %}bg-gray-700 text-gray-400
-                {% else %}bg-red-500/20 text-red-400{% endif %}">
+<div class="max-w-lg mx-auto app-stack app-stagger">
+    <header class="app-stagger-item">
+        <a href="{% url 'ai_my_rentals' %}" class="inline-flex items-center gap-1.5 text-xs text-green-400 hover:text-green-300 font-semibold">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            {% trans "Mes locations" %}
+        </a>
+        <div class="mt-2 flex items-center justify-between gap-3">
+            <h1 class="text-xl font-display font-bold truncate">{{ offer.name }}</h1>
+            <span class="app-chip shrink-0 {% if rental.status == 'active' %}app-chip-signal{% elif rental.status == 'expired' %}app-chip-muted{% else %}app-chip-danger{% endif %}">
                 {% if rental.status == 'active' %}{% trans "Active" %}{% elif rental.status == 'expired' %}{% trans "Expirée" %}{% else %}{{ rental.get_status_display }}{% endif %}
             </span>
         </div>
-        <p class="text-xs text-gray-500">{{ offer.ai_model }}</p>
-    </div>
+        <p class="text-xs text-gray-500 mt-1">{{ offer.ai_model }}</p>
+    </header>
 
     {% if rental.status == 'active' %}
-    <div class="bg-gray-900 rounded-xl border border-green-600/30 p-4">
+    <section class="app-stagger-item app-card border-green-500/30 p-5">
         <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Prochain paiement" %}</p>
         <p class="text-xs text-gray-400 mb-3" id="countdown-label"></p>
         <div class="flex items-center justify-center gap-3 mb-3">
             <div class="text-center">
                 <p class="text-3xl font-bold font-mono text-green-400" id="countdown-hours">--</p>
-                <p class="text-[10px] text-gray-500 uppercase">{% trans "Heures" %}</p>
+                <p class="text-[10px] text-gray-500 uppercase">{% trans "H" %}</p>
             </div>
-            <p class="text-2xl font-bold text-green-400/50">:</p>
+            <p class="text-2xl font-bold text-green-400/40">:</p>
             <div class="text-center">
                 <p class="text-3xl font-bold font-mono text-green-400" id="countdown-minutes">--</p>
-                <p class="text-[10px] text-gray-500 uppercase">{% trans "Minutes" %}</p>
+                <p class="text-[10px] text-gray-500 uppercase">{% trans "Min" %}</p>
             </div>
-            <p class="text-2xl font-bold text-green-400/50">:</p>
+            <p class="text-2xl font-bold text-green-400/40">:</p>
             <div class="text-center">
                 <p class="text-3xl font-bold font-mono text-green-400" id="countdown-seconds">--</p>
-                <p class="text-[10px] text-gray-500 uppercase">{% trans "Secondes" %}</p>
+                <p class="text-[10px] text-gray-500 uppercase">{% trans "Sec" %}</p>
             </div>
         </div>
-        <p class="text-xs text-center text-gray-500" id="countdown-date"></p>
-    </div>
+        <p class="text-xs text-center text-gray-500 font-mono" id="countdown-date"></p>
+    </section>
     {% endif %}
 
-    <div class="grid grid-cols-2 gap-3">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Montant investi" %}</p>
-            <p class="text-lg font-bold font-mono">{{ rental.amount_paid|floatformat:2 }} XAF</p>
+    <div class="app-stagger-item grid grid-cols-2 gap-3">
+        <div class="app-card p-4">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Investi" %}</p>
+            <p class="text-lg font-bold font-mono">{{ rental.amount_paid|floatformat:2 }}</p>
         </div>
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Revenu net / periode" %}</p>
-            <p class="text-lg font-bold font-mono text-green-400 cd-earning">+{{ revenue_breakdown.net|floatformat:2 }} XAF</p>
+        <div class="app-card p-4">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Revenu net / période" %}</p>
+            <p class="text-lg font-bold font-mono text-green-400">+{{ revenue_breakdown.net|floatformat:2 }}</p>
+        </div>
+        <div class="app-card p-4">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Fréquence" %}</p>
+            <p class="text-lg font-bold">{{ frequency_label }}</p>
+        </div>
+        <div class="app-card p-4">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Total gagné" %}</p>
+            <p class="text-lg font-bold font-mono text-green-400 cd-total-earned">{{ rental.total_revenue_earned|floatformat:2 }}</p>
         </div>
     </div>
 
-    <div class="bg-green-600/10 border border-green-600/20 rounded-xl p-4">
-        <p class="text-[10px] text-green-400 uppercase tracking-wider mb-2">{% trans "Detail du revenu par periode" %}</p>
-        <div class="space-y-1.5">
+    <section class="app-stagger-item rounded-2xl p-4 border border-green-500/25 bg-green-600/[0.08]">
+        <p class="text-[10px] text-green-400 uppercase tracking-wider mb-2.5">{% trans "Détail du revenu" %}</p>
+        <div class="space-y-2">
             <div class="flex justify-between items-center">
-                <span class="text-xs text-green-400">{% trans "Revenu brut" %}</span>
+                <span class="text-xs text-green-400/90">{% trans "Revenu brut" %}</span>
                 <span class="text-sm font-mono">{{ revenue_breakdown.gross|floatformat:2 }} XAF</span>
             </div>
-           
-            <div class="border-t border-green-600/20 pt-1.5 flex justify-between items-center">
+            <div class="border-t border-green-500/20 pt-2 flex justify-between items-center">
                 <span class="text-xs font-semibold text-green-400">{% trans "Revenu net" %}</span>
                 <span class="text-sm font-mono font-bold text-green-400">{{ revenue_breakdown.net|floatformat:2 }} XAF</span>
             </div>
         </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Fréquence" %}</p>
-            <p class="text-lg font-bold font-mono">{{ frequency_label }}</p>
-        </div>
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Total gagné" %}</p>
-            <p class="text-lg font-bold font-mono text-green-400 cd-total-earned">{{ rental.total_revenue_earned|floatformat:2 }} XAF</p>
-        </div>
-    </div>
+    </section>
 
     {% if rental.status == 'active' %}
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-3">
-        <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-2">{% trans "Paiements" %}</p>
-        <div class="flex items-center gap-3">
-            <div class="flex-1">
-                <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-500 rounded-full transition-all cd-progress-bar" style="width: {{ payment_progress }}%"></div>
-                </div>
-            </div>
+    <section class="app-stagger-item app-card p-4">
+        <div class="flex items-center justify-between mb-2">
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider">{% trans "Paiements" %}</p>
             <span class="text-xs font-mono text-gray-400 cd-payment-count">{{ payments_received }}/{{ total_periods }}</span>
         </div>
-        <p class="text-xs text-gray-500 mt-1.5">{% trans "paiements reçus" %}</p>
-    </div>
+        <div class="app-progress">
+            <span class="app-progress-fill cd-progress-bar" style="width: {{ payment_progress }}%"></span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-2">{% trans "paiements reçus" %}</p>
+    </section>
     {% endif %}
 
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
-        <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-3">{% trans "Détails" %}</p>
-        <div class="space-y-2.5">
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Montant payé" %}</span>
+    <section class="app-stagger-item app-card overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-white/[0.06]">
+            <h2 class="app-section-title">{% trans "Détails" %}</h2>
+        </div>
+        <div class="divide-y divide-white/[0.06]">
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Montant payé" %}</span>
                 <span class="text-sm font-mono font-semibold">{{ rental.amount_paid|floatformat:2 }} XAF</span>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Durée" %}</span>
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Durée" %}</span>
                 <span class="text-sm font-mono">{{ offer.duration_days }} {% trans "jours" %}</span>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Début" %}</span>
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Début" %}</span>
                 <span class="text-sm font-mono">{{ rental.start_date|date:"d/m/Y H:i" }}</span>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Fin" %}</span>
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Fin" %}</span>
                 <span class="text-sm font-mono">{{ rental.end_date|date:"d/m/Y H:i" }}</span>
             </div>
             {% if rental.last_payment_at %}
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Dernier paiement" %}</span>
-                <span class="text-sm font-mono text-green-400 cd-last-payment">{{ rental.last_payment_at|date:"d/m/Y H:i" }}</span>
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Dernier paiement" %}</span>
+                <span class="text-sm font-mono text-green-400">{{ rental.last_payment_at|date:"d/m/Y H:i" }}</span>
             </div>
             {% endif %}
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Nombre de paiements" %}</span>
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Nombre de paiements" %}</span>
                 <span class="text-sm font-mono cd-detail-payment-count">{{ rental.payment_count }}</span>
             </div>
             {% if rental.status == 'active' %}
-            <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-400">{% trans "Temps restant" %}</span>
+            <div class="px-5 py-3 flex justify-between gap-4">
+                <span class="text-xs text-gray-500">{% trans "Temps restant" %}</span>
                 <span class="text-sm font-mono text-green-400">{{ remaining_days }}j {{ remaining_hours }}h {{ remaining_minutes }}m</span>
             </div>
             {% endif %}
         </div>
-    </div>
+    </section>
 </div>
 {% endblock %}
 
@@ -153,19 +145,13 @@
         var hours = Math.floor(diff / 3600000);
         var minutes = Math.floor((diff % 3600000) / 60000);
         var seconds = Math.floor((diff % 60000) / 1000);
-        var parts = [];
-        if (hours > 0) parts.push(hours + 'h');
-        parts.push(pad(minutes) + 'min');
-        parts.push(pad(seconds) + 's');
-
         var d = new Date(nextPaymentTs);
         var dateStr = '{% trans "Le" %} ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-
         return {
             hours: pad(hours),
             minutes: pad(minutes),
             seconds: pad(seconds),
-            label: '{% trans "Prochain paiement dans" %} ' ,
+            label: '{% trans "Prochain paiement dans" %} ',
             date: dateStr
         };
     }
@@ -173,7 +159,6 @@
     function triggerPayment() {
         if (isProcessing) return;
         isProcessing = true;
-
         fetch(triggerUrl, {
             method: 'POST',
             headers: {
@@ -186,7 +171,7 @@
                 var earnedEl = document.querySelector('.cd-total-earned');
                 var countEl = document.querySelector('.cd-payment-count');
                 var detailCountEl = document.querySelector('.cd-detail-payment-count');
-                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2) + ' XAF';
+                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2);
                 if (countEl) countEl.textContent = data.payment_count + '/' + countEl.textContent.split('/')[1];
                 if (detailCountEl) detailCountEl.textContent = data.payment_count;
                 if (data.next_payment_ts > 0) {
@@ -205,13 +190,11 @@
     function updateCountdown() {
         var now = Date.now();
         var diff = nextPaymentTs - now;
-
         var hEl = document.getElementById('countdown-hours');
         var mEl = document.getElementById('countdown-minutes');
         var sEl = document.getElementById('countdown-seconds');
         var labelEl = document.getElementById('countdown-label');
         var dateEl = document.getElementById('countdown-date');
-
         if (!hEl) return;
 
         if (nextPaymentTs === 0) {
@@ -229,27 +212,19 @@
         sEl.textContent = cd.seconds;
         if (labelEl) labelEl.textContent = cd.label;
         if (dateEl) dateEl.textContent = cd.date;
-
-        if (diff <= 0) {
-            triggerPayment();
-        }
+        if (diff <= 0) triggerPayment();
     }
 
     function syncWithBackend() {
         fetch(syncUrl)
             .then(function(resp) { return resp.json(); })
             .then(function(data) {
-                if (data.status !== 'active') {
-                    location.reload();
-                    return;
-                }
-                if (data.next_payment_ts && data.next_payment_ts > 0) {
-                    nextPaymentTs = data.next_payment_ts;
-                }
+                if (data.status !== 'active') { location.reload(); return; }
+                if (data.next_payment_ts && data.next_payment_ts > 0) nextPaymentTs = data.next_payment_ts;
                 var earnedEl = document.querySelector('.cd-total-earned');
                 var countEl = document.querySelector('.cd-payment-count');
                 var detailCountEl = document.querySelector('.cd-detail-payment-count');
-                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2) + ' XAF';
+                if (earnedEl) earnedEl.textContent = parseFloat(data.total_revenue_earned).toFixed(2);
                 if (countEl) countEl.textContent = data.payment_count + '/' + countEl.textContent.split('/')[1];
                 if (detailCountEl) detailCountEl.textContent = data.payment_count;
             })

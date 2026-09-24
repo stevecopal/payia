@@ -1,66 +1,78 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Mes locations IA{% endblock %}
+{% block title %}PAYIA — {% trans "Mes locations" %}{% endblock %}
 {% block dashboard_content %}
-<div class="space-y-6">
-    <h1 class="text-xl font-display">{% trans "Mes locations IA" %}</h1>
+<div class="app-stack app-stagger">
+    <header class="app-stagger-item flex items-end justify-between gap-3">
+        <div>
+            <a href="{% url 'ai_catalog' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Machines" %}</a>
+            <h1 class="app-page-title mt-1">{% trans "Mes locations" %}</h1>
+        </div>
+    </header>
 
-    <div>
-        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{% trans "Actives" %}</h2>
+    <section class="app-stagger-item space-y-3">
+        <h2 class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">{% trans "Actives" %}</h2>
         {% if active_data %}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {% for item in active_data %}
-            <a href="{% url 'ai_rental_detail' pk=item.rental.pk %}" class="block bg-gray-900 rounded-xl border border-green-600/30 p-4 hover:border-green-500/50 transition-colors">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="font-semibold text-sm">{{ item.rental.offer.name }}</h3>
-                    <span class="px-2 py-0.5 bg-green-600/20 text-green-400 text-xs rounded-full">{% trans "Active" %}</span>
+            <a href="{% url 'ai_rental_detail' pk=item.rental.pk %}" class="app-card border-green-500/30 p-4 hover:border-green-500/60 transition-colors block">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <h3 class="font-display font-bold text-sm truncate">{{ item.rental.offer.name }}</h3>
+                    <span class="app-chip app-chip-signal shrink-0">{% trans "Active" %}</span>
                 </div>
-                <p class="text-xs text-gray-500 mb-2">{{ item.rental.offer.ai_model }}</p>
-                <div class="bg-gray-800 rounded-lg p-3 mb-2">
-                    <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{% trans "Prochain paiement" %}</p>
-                    <p class="text-xs text-gray-400 mb-1 cd-label" data-rental="{{ item.rental.pk }}" data-sync-url="{% url 'ai_rental_sync' pk=item.rental.pk %}" data-trigger-url="{% url 'ai_rental_trigger_payment' pk=item.rental.pk %}"></p>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl font-bold font-mono text-green-400 cd-h" data-rental="{{ item.rental.pk }}">--</span>
-                        <span class="text-xl font-bold text-green-400/50">:</span>
-                        <span class="text-xl font-bold font-mono text-green-400 cd-m" data-rental="{{ item.rental.pk }}">--</span>
-                        <span class="text-xl font-bold text-green-400/50">:</span>
-                        <span class="text-xl font-bold font-mono text-green-400 cd-s" data-rental="{{ item.rental.pk }}">--</span>
+                <p class="text-xs text-gray-500 mb-3">{{ item.rental.offer.ai_model }}</p>
+
+                <div class="rounded-xl bg-white/[0.04] border border-white/[0.06] p-3 mb-3">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1 cd-label" data-rental="{{ item.rental.pk }}" data-sync-url="{% url 'ai_rental_sync' pk=item.rental.pk %}" data-trigger-url="{% url 'ai_rental_trigger_payment' pk=item.rental.pk %}"></p>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-2xl font-bold font-mono text-green-400 cd-h" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-2xl font-bold text-green-400/40">:</span>
+                        <span class="text-2xl font-bold font-mono text-green-400 cd-m" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-2xl font-bold text-green-400/40">:</span>
+                        <span class="text-2xl font-bold font-mono text-green-400 cd-s" data-rental="{{ item.rental.pk }}">--</span>
                     </div>
                 </div>
+
                 <div class="flex justify-between text-xs">
-                    <span class="text-gray-500">{% trans "Expire:" %} {{ item.rental.end_date|date:"d/m/Y" }}</span>
-                    <span class="text-green-400 font-semibold cd-earned" data-rental="{{ item.rental.pk }}">{{ item.rental.total_revenue_earned|floatformat:2 }} XAF</span>
+                    <span class="text-gray-500">{% trans "Expire" %} <span class="font-mono">{{ item.rental.end_date|date:"d/m/Y" }}</span></span>
+                    <span class="text-green-400 font-semibold font-mono cd-earned" data-rental="{{ item.rental.pk }}">{{ item.rental.total_revenue_earned|floatformat:2 }} XAF</span>
                 </div>
                 <div class="flex justify-between text-xs mt-1">
                     <span class="text-gray-500">{% trans "Paiements" %}</span>
-                    <span class="text-gray-400 cd-payments" data-rental="{{ item.rental.pk }}">{{ item.rental.payment_count }}</span>
+                    <span class="text-gray-400 font-mono cd-payments" data-rental="{{ item.rental.pk }}">{{ item.rental.payment_count }}</span>
                 </div>
             </a>
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-gray-500 text-sm">{% trans "Aucune location active" %}</p>
+        <div class="app-card app-empty">
+            <div class="app-empty-icon mb-4">
+                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">{% trans "Aucune location active" %}</p>
+            <a href="{% url 'ai_catalog' %}" class="app-btn app-btn-primary">{% trans "Explorer les machines" %}</a>
+        </div>
         {% endif %}
-    </div>
+    </section>
 
-    <div>
-        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{% trans "Expirées" %}</h2>
+    <section class="app-stagger-item space-y-3">
+        <h2 class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">{% trans "Expirées" %}</h2>
         {% if expired_rentals %}
-        <div class="space-y-2">
+        <div class="app-card overflow-hidden divide-y divide-white/[0.06]">
             {% for rental in expired_rentals %}
-            <div class="bg-gray-900 rounded-xl border border-gray-800 px-4 py-3 flex items-center justify-between">
-                <div>
-                    <p class="text-sm">{{ rental.offer.name }}</p>
-                    <p class="text-xs text-gray-500">{{ rental.end_date|date:"d/m/Y" }}</p>
+            <div class="app-list-row justify-between">
+                <div class="min-w-0">
+                    <p class="text-sm font-medium truncate">{{ rental.offer.name }}</p>
+                    <p class="text-xs text-gray-500 font-mono">{{ rental.end_date|date:"d/m/Y" }}</p>
                 </div>
-                <span class="px-2 py-0.5 bg-gray-800 text-gray-500 text-xs rounded-full">{% trans "Expirée" %}</span>
+                <span class="app-chip app-chip-muted shrink-0">{% trans "Expirée" %}</span>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-gray-500 text-sm">{% trans "Aucune location expirée" %}</p>
+        <p class="text-sm text-gray-500">{% trans "Aucune location expirée" %}</p>
         {% endif %}
-    </div>
+    </section>
 </div>
 {% endblock %}
 
@@ -82,10 +94,6 @@
         var hours = Math.floor(diff / 3600000);
         var minutes = Math.floor((diff % 3600000) / 60000);
         var seconds = Math.floor((diff % 60000) / 1000);
-        var parts = [];
-        if (hours > 0) parts.push(hours + 'h');
-        parts.push(pad(minutes) + 'min');
-        parts.push(pad(seconds) + 's');
         return {
             hours: pad(hours),
             minutes: pad(minutes),
@@ -182,9 +190,11 @@
         }
     }
 
-    updateAll();
-    setInterval(updateAll, 1000);
-    setInterval(syncWithBackend, 30000);
+    if (rentals.length) {
+        updateAll();
+        setInterval(updateAll, 1000);
+        setInterval(syncWithBackend, 30000);
+    }
 })();
 </script>
 {% endblock %}

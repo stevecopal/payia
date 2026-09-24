@@ -1,72 +1,77 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - Historique des transactions{% endblock %}
+{% block title %}PAYIA — {% trans "Transactions" %}{% endblock %}
 {% block dashboard_content %}
-<div class="space-y-4">
-    <h1 class="text-xl font-display">{% trans "Historique des transactions" %}</h1>
+<div class="app-stack app-stagger">
+    <header class="app-stagger-item">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <a href="{% url 'wallet' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Portefeuille" %}</a>
+                <h1 class="app-page-title mt-1">{% trans "Transactions" %}</h1>
+            </div>
+        </div>
+    </header>
 
-    <div class="flex flex-wrap gap-2">
-        <a href="{% url 'transaction_list' %}" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if not current_type %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Tous" %}</a>
-        <a href="?type=deposit" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_type == 'deposit' %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Dépôts" %}</a>
-        <a href="?type=withdrawal" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_type == 'withdrawal' %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Retraits" %}</a>
-        <a href="?type=ai_purchase" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_type == 'ai_purchase' %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Achats IA" %}</a>
+    <div class="app-stagger-item app-pills">
+        <a href="{% url 'transaction_list' %}" class="app-pill {% if not current_type %}is-active{% endif %}">{% trans "Tous" %}</a>
+        <a href="?type=deposit" class="app-pill {% if current_type == 'deposit' %}is-active{% endif %}">{% trans "Dépôts" %}</a>
+        <a href="?type=withdrawal" class="app-pill {% if current_type == 'withdrawal' %}is-active{% endif %}">{% trans "Retraits" %}</a>
+        <a href="?type=ai_purchase" class="app-pill {% if current_type == 'ai_purchase' %}is-active{% endif %}">{% trans "Achats IA" %}</a>
     </div>
 
-    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+    <section class="app-stagger-item app-card overflow-hidden">
         {% if entries %}
-            <div class="divide-y divide-gray-800">
+        <div class="divide-y divide-white/[0.06]">
             {% for tx in entries %}
-            <a href="{{ tx.url }}" class="block px-4 py-4 hover:bg-gray-800/50 transition-colors">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 {% if tx.type == 'deposit' %}bg-green-600/20 text-green-400{% elif tx.type == 'withdrawal' %}bg-yellow-600/20 text-yellow-400{% else %}bg-purple-600/20 text-purple-400{% endif %}">
+            <a href="{{ tx.url }}" class="block px-4 sm:px-5 py-4 hover:bg-white/[0.03] transition-colors">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="app-tile {% if tx.type == 'deposit' %}bg-green-600/15 text-green-400{% elif tx.type == 'withdrawal' %}bg-yellow-500/15 text-yellow-400{% else %}bg-purple-500/15 text-purple-400{% endif %}">
                             {% if tx.type == 'deposit' %}
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                             {% elif tx.type == 'withdrawal' %}
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                             {% else %}
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             {% endif %}
                         </div>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs px-1.5 py-0.5 rounded {% if tx.type == 'deposit' %}bg-green-600/20 text-green-400{% elif tx.type == 'withdrawal' %}bg-yellow-600/20 text-yellow-400{% else %}bg-purple-600/20 text-purple-400{% endif %}">{{ tx.type_display }}</span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-0.5">{{ tx.detail }}</p>
-                            <p class="text-xs text-gray-600 mt-0.5">{{ tx.date|date:"d/m/Y" }} {{ tx.date|date:"H:i:s" }}</p>
+                            <span class="app-chip {% if tx.type == 'deposit' %}app-chip-signal{% elif tx.type == 'withdrawal' %}app-chip-warn{% else %}app-chip-muted{% endif %}">{{ tx.type_display }}</span>
+                            <p class="text-xs text-gray-500 mt-1 truncate">{{ tx.detail }}</p>
+                            <p class="text-[11px] font-mono text-gray-600 mt-0.5">{{ tx.date|date:"d/m/Y H:i" }}</p>
                         </div>
                     </div>
-                    <div class="text-right shrink-0 ml-4">
-                        <p class="text-sm font-semibold font-mono {% if tx.amount > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+                    <div class="text-right shrink-0">
+                        <p class="font-mono text-sm font-bold {% if tx.amount > 0 %}text-green-400{% else %}text-red-400{% endif %}">
                             {% if tx.amount > 0 %}+{% endif %}{{ tx.amount|floatformat:2 }}
                         </p>
                         {% if tx.fee %}
-                        <p class="text-xs text-gray-600">{% trans "Frais" %}: {{ tx.fee|floatformat:2 }}</p>
+                        <p class="text-[11px] font-mono text-gray-600">{% trans "Frais" %} {{ tx.fee|floatformat:2 }}</p>
                         {% endif %}
-                        <span class="px-2 py-0.5 text-xs font-medium rounded-full mt-1 inline-block {% if tx.status == 'completed' or tx.status == 'approved' or tx.status == 'active' %}bg-green-600/20 text-green-400{% elif tx.status == 'pending_review' or tx.status == 'pending' or tx.status == 'under_review' %}bg-yellow-600/20 text-yellow-400{% elif tx.status == 'rejected' %}bg-red-600/20 text-red-400{% else %}bg-gray-700 text-gray-400{% endif %}">
+                        <span class="app-chip mt-1 {% if tx.status == 'completed' or tx.status == 'approved' or tx.status == 'active' %}app-chip-signal{% elif tx.status == 'pending_review' or tx.status == 'pending' or tx.status == 'under_review' %}app-chip-warn{% elif tx.status == 'rejected' %}app-chip-danger{% else %}app-chip-muted{% endif %}">
                             {{ tx.status_display }}
                         </span>
                     </div>
                 </div>
             </a>
             {% endfor %}
-            </div>
+        </div>
 
-            {% if entries.has_other_pages %}
-            <div class="px-4 py-3 border-t border-gray-800 flex justify-center gap-2">
-                {% if entries.has_previous %}<a href="?page={{ entries.previous_page_number }}&type={{ current_type }}" class="px-3 py-1 text-xs bg-gray-800 text-gray-400 rounded hover:text-white">{% trans "Précédent" %}</a>{% endif %}
-                <span class="px-3 py-1 text-xs text-gray-500">{{ entries.number }}/{{ entries.paginator.num_pages }}</span>
-                {% if entries.has_next %}<a href="?page={{ entries.next_page_number }}&type={{ current_type }}" class="px-3 py-1 text-xs bg-gray-800 text-gray-400 rounded hover:text-white">{% trans "Suivant" %}</a>{% endif %}
-            </div>
-            {% endif %}
-        {% else %}
-            <div class="text-center py-16">
-                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                </div>
-                <p class="text-gray-500 text-sm">{% trans "Aucune transaction trouvée" %}</p>
-            </div>
+        {% if entries.has_other_pages %}
+        <div class="px-4 py-3 border-t border-white/[0.06] flex justify-center gap-2">
+            {% if entries.has_previous %}<a href="?page={{ entries.previous_page_number }}&type={{ current_type }}" class="app-pill">{% trans "Précédent" %}</a>{% endif %}
+            <span class="app-pill is-active">{{ entries.number }}/{{ entries.paginator.num_pages }}</span>
+            {% if entries.has_next %}<a href="?page={{ entries.next_page_number }}&type={{ current_type }}" class="app-pill">{% trans "Suivant" %}</a>{% endif %}
+        </div>
         {% endif %}
-    </div>
+        {% else %}
+        <div class="app-empty">
+            <div class="app-empty-icon mb-4">
+                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+            <p class="text-sm text-gray-500">{% trans "Aucune transaction trouvée" %}</p>
+        </div>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}

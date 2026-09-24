@@ -1,81 +1,82 @@
 {% extends "base/dashboard.html" %}
 {% load i18n %}
-{% block title %}PAYIA - {{ offer.name }}{% endblock %}
+{% block title %}PAYIA — {{ offer.name }}{% endblock %}
 {% block dashboard_content %}
-<div class="max-w-lg mx-auto space-y-4">
-    <a href="{% url 'ai_catalog' %}" class="text-xs text-green-500 hover:text-green-400">{% trans "Retour au catalogue" %}</a>
+<div class="max-w-lg mx-auto app-stack app-stagger">
+    <header class="app-stagger-item">
+        <a href="{% url 'ai_catalog' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Machines" %}</a>
+    </header>
 
-    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+    <article class="app-stagger-item app-card overflow-hidden">
         {% if offer.image %}
-        <div class="h-48 bg-gray-800 overflow-hidden">
+        <div class="h-48 bg-white/[0.03] overflow-hidden">
             <img src="{{ offer.image.url }}" alt="{{ offer.name }}" class="w-full h-full object-cover">
         </div>
         {% endif %}
         <div class="p-5">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs rounded-full">{{ offer.ai_model }}</span>
-                {% if offer.category %}<span class="px-2 py-0.5 bg-gray-800 text-gray-400 text-xs rounded-full">{{ offer.category }}</span>{% endif %}
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span class="app-chip app-chip-muted">{{ offer.ai_model }}</span>
+                {% if offer.category %}<span class="app-chip app-chip-muted">{{ offer.category }}</span>{% endif %}
+                {% if offer.is_featured %}<span class="app-chip app-chip-signal">{% trans "Populaire" %}</span>{% endif %}
             </div>
-            <h1 class="text-xl font-display mb-3">{{ offer.name }}</h1>
-            <p class="text-sm text-gray-400 mb-5">{{ offer.description }}</p>
+            <h1 class="text-xl font-display font-bold">{{ offer.name }}</h1>
+            <p class="mt-2 text-sm text-gray-400 leading-relaxed">{{ offer.description }}</p>
 
-            <div class="grid grid-cols-2 gap-3 mb-5">
-                <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xs text-gray-500">Prix de location</p>
-                    <p class="text-xl font-bold text-green-400">{{ offer.price|floatformat:0 }} XAF</p>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                    <p class="text-[11px] text-gray-500">{% trans "Prix" %}</p>
+                    <p class="mt-1 font-mono text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }}</p>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xs text-gray-500">Durée de location</p>
-                    <p class="text-xl font-bold">{{ offer.duration_days }} jours</p>
+                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                    <p class="text-[11px] text-gray-500">{% trans "Durée" %}</p>
+                    <p class="mt-1 font-mono text-lg font-bold">{{ offer.duration_days }} {% trans "jours" %}</p>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xs text-gray-500">Revenu net / période</p>
-                    <p class="text-xl font-bold">{{ revenue_breakdown.net|floatformat:0 }} XAF</p>
+                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                    <p class="text-[11px] text-gray-500">{% trans "Revenu net / période" %}</p>
+                    <p class="mt-1 font-mono text-lg font-bold">{{ revenue_breakdown.net|floatformat:0 }}</p>
                 </div>
-                <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xs text-gray-500">Période de calcul</p>
-                    <p class="text-xl font-bold">{{ frequency_label }}</p>
+                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                    <p class="text-[11px] text-gray-500">{% trans "Fréquence" %}</p>
+                    <p class="mt-1 text-lg font-bold">{{ frequency_label }}</p>
                 </div>
             </div>
 
-            <div class="bg-green-600/10 border border-green-600/20 rounded-lg p-4 mb-4">
-                <p class="text-[10px] text-green-400 uppercase tracking-wider mb-2">{% trans "Detail du revenu" %}</p>
-                <div class="space-y-1.5">
+            <div class="mt-5 rounded-2xl p-4 border border-green-500/25 bg-green-600/[0.08]">
+                <p class="text-[10px] text-green-400 uppercase tracking-wider mb-2.5">{% trans "Détail du revenu" %}</p>
+                <div class="space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-green-400">{% trans "Revenu brut" %}</span>
+                        <span class="text-xs text-green-400/90">{% trans "Revenu brut" %}</span>
                         <span class="text-sm font-mono">{{ revenue_breakdown.gross|floatformat:2 }} XAF</span>
                     </div>
-                    
-                    <div class="border-t border-green-600/20 pt-1.5 flex justify-between items-center">
-                        <span class="text-xs font-semibold text-green-400">{% trans "Revenu net " %}</span>
+                    <div class="border-t border-green-500/20 pt-2 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-green-400">{% trans "Revenu net" %}</span>
                         <span class="text-sm font-mono font-bold text-green-400">{{ revenue_breakdown.net|floatformat:2 }} XAF</span>
                     </div>
                 </div>
             </div>
 
-            <p class="text-[10px] text-gray-500 mb-4">{% trans "Le revenu net est calcule apres la contribution au programme de parrainage. Ce meme systeme vous permet de gagner des commissions sur les machines de vos filleuls." %}</p>
+            <p class="mt-4 text-[11px] text-gray-600 leading-relaxed">{% trans "Le revenu net est calculé après la contribution au programme de parrainage. Ce même système vous permet de gagner des commissions sur les machines de vos filleuls." %}</p>
 
-            
-
-            {% if user.is_authenticated %}
-                {% if has_active_rental %}
-                    <div class="bg-green-600/10 border border-green-600/20 rounded-lg p-3 text-center">
-                        <p class="text-xs text-green-400">{% trans "Location active" %}</p>
+            <div class="mt-5">
+                {% if user.is_authenticated %}
+                    {% if has_active_rental %}
+                    <div class="app-btn app-btn-secondary w-full justify-center !cursor-default !text-green-400 !border-green-500/40">
+                        {% trans "Location active" %}
                     </div>
-                {% else %}
+                    <a href="{% url 'ai_my_rentals' %}" class="mt-3 text-center block text-xs font-semibold text-green-400 hover:text-green-300">{% trans "Voir mes locations" %}</a>
+                    {% else %}
                     <form method="post" action="{% url 'ai_rent' slug=offer.slug %}">
                         {% csrf_token %}
-                        <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
-                            {% trans "Louer" %} - {{ offer.price|floatformat:0 }} XAF
+                        <button type="submit" class="app-btn app-btn-primary app-btn-block">
+                            {% trans "Louer" %} — {{ offer.price|floatformat:0 }} XAF
                         </button>
                     </form>
+                    {% endif %}
+                {% else %}
+                <a href="{% url 'login' %}" class="app-btn app-btn-secondary app-btn-block">{% trans "Connectez-vous pour louer" %}</a>
                 {% endif %}
-            {% else %}
-                <a href="{% url 'login' %}" class="block w-full py-3 bg-gray-800 text-white font-semibold rounded-lg text-center text-sm">
-                    {% trans "Connectez-vous pour louer" %}
-                </a>
-            {% endif %}
+            </div>
         </div>
-    </div>
+    </article>
 </div>
 {% endblock %}

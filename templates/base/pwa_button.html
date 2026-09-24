@@ -2,10 +2,10 @@
    affiché par pwa.js quand l'app est installable et pas déjà installée. {% endcomment %}
 {% load i18n %}
 <button type="button" data-pwa-install
-        class="hidden inline-flex items-center gap-2 px-4 py-2 bg-green-600/15 text-green-400 text-sm font-medium rounded-lg border border-green-500/30 hover:bg-green-600/25 transition-colors duration-200">
+        class="hidden sm:inline-flex items-center gap-2 px-3 py-2 bg-green-600/15 text-green-400 text-[13px] font-semibold rounded-xl border border-green-500/30 hover:bg-green-600/25 transition-colors duration-200">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
     </svg>
-    <span class="hidden sm:inline">{% trans "Installer l'app" %}</span>
+    <span class="hidden md:inline">{% trans "Installer l'app" %}</span>
 </button>
