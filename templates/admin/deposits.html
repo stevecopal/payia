@@ -48,8 +48,14 @@
             {% endif %}
         </div>
 
+        {% empty %}
+        <p class="text-gray-500 text-center py-12">{% trans "Aucun dépôt trouvé." %}</p>
+        {% endfor %}
+    </div>
+
+{% for deposit in deposits %}
         <div id="approveModal{{ deposit.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
-            <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <h3 class="text-lg font-bold mb-2">{% trans "Approuver le dépôt" %}</h3>
                 <p class="text-sm text-gray-400 mb-4">{% trans "Le montant sera crédité au portefeuille de l'utilisateur." %}</p>
                 <div class="bg-white/5 rounded-lg p-4 mb-4 border border-gray-800/50 space-y-3">
@@ -95,7 +101,7 @@
         </div>
 
         <div id="rejectModal{{ deposit.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
-            <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <h3 class="text-lg font-bold mb-4">{% trans "Rejeter le dépôt" %}</h3>
                 <form method="post" action="{% url 'admin_deposit_reject' pk=deposit.pk %}" class="space-y-4">
                     {% csrf_token %}
@@ -110,10 +116,7 @@
                 </form>
             </div>
         </div>
-        {% empty %}
-        <p class="text-gray-500 text-center py-12">{% trans "Aucun dépôt trouvé." %}</p>
-        {% endfor %}
-    </div>
+{% endfor %}
 
     {% if deposits.has_other_pages %}
     <div class="flex justify-center gap-2">

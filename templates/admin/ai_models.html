@@ -56,6 +56,16 @@
                         </td>
                     </tr>
 
+                    {% empty %}
+                    <tr><td colspan="7" class="p-12 text-center text-gray-500">{% trans "Aucun modèle IA." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% for model in models %}
                     <div id="editModelModal{{ model.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
                         <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
                             <h3 class="text-lg font-bold mb-4">{% trans "Modifier le modèle" %}</h3>
@@ -97,9 +107,8 @@
                             </form>
                         </div>
                     </div>
-
                     <div id="deleteModelModal{{ model.pk }}" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
-                        <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+                        <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
                             <h3 class="text-lg font-bold mb-2">{% trans "Supprimer le modèle" %}</h3>
                             <p class="text-sm text-gray-400 mb-4">{% trans "Êtes-vous sûr de vouloir supprimer" %} <strong>{{ model.name }}</strong> ? {% trans "Cette action est irréversible." %}</p>
                             <form method="post" action="{% url 'admin_ai_model_delete' pk=model.pk %}" class="flex gap-3 justify-end">
@@ -109,14 +118,7 @@
                             </form>
                         </div>
                     </div>
-                    {% empty %}
-                    <tr><td colspan="7" class="p-12 text-center text-gray-500">{% trans "Aucun modèle IA." %}</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+{% endfor %}
 
 <div id="createModelModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-4">
     <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
