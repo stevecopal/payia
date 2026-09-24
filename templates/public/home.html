@@ -1,87 +1,31 @@
 {% extends "base/public.html" %}
 {% load static i18n %}
-{% block title %}PAYIA - {% trans "Intelligence Artificielle et Finance" %}{% endblock %}
+
+{% block title %}PAYIA - {% trans "Plateforme d'intelligence artificielle" %}{% endblock %}
+{% block meta_description %}{% trans "PAYIA connecte ses membres à des solutions d'IA : parcours clair, cycles aux conditions explicites et suivi complet depuis votre espace." %}{% endblock %}
+{% block og_title %}PAYIA - {% trans "Plateforme d'intelligence artificielle" %}{% endblock %}
+{% block og_description %}{% trans "L'intelligence artificielle, rendue accessible. Découvrez PAYIA et rejoignez la plateforme." %}{% endblock %}
 
 {% block body_class %}home-page{% endblock %}
-{% block footer %}{% endblock %}
+{% block main_class %}{% endblock %}
+
+{% block extra_css %}
+<link rel="preload" as="image" href="{% static 'images/landing/hero.webp' %}" type="image/webp" fetchpriority="high">
+{% endblock %}
+
 {% block content %}
-<section class="hero-section" data-home-hero>
-
-    <!-- BG image -->
-    <div class="hero-bg" style="background-image:url('{% static "images/hero.png" %}')"></div>
-    <div class="hero-overlay"></div>
-
-    <!-- Animated grid -->
-    <div class="hero-grid"></div>
-
-    <!-- Accent circles -->
-    <div class="hero-accent hero-accent-tl"></div>
-    <div class="hero-accent hero-accent-br"></div>
-
-    <!-- Particles -->
-    <div class="hero-particles" id="heroParticles"></div>
-
-    <!-- Glow -->
-    <div class="hero-glow"></div>
-
-    <!-- Bottom border -->
-    <div class="hero-border-bottom"></div>
-
-    <!-- Content -->
-    <div class="hero-content">
-        <div class="max-w-3xl mx-auto px-5 sm:px-8 text-center">
-
-            
-
-            <!-- Title -->
-            <h1 class="hero-title mt-6">
-               
-                <span class="hero-brand">
-                    <span class="hero-brand-text" data-hero-brand>POWERED BY <span class="text-green-400">PAYIA</span></span>
-                </span>
-            </h1>
-
-            <!-- Accent line -->
-            <span class="hero-line" data-hero-line></span>
-
-            <!-- Subtitle -->
-            <p class="hero-subtitle mx-auto" data-hero-subtitle>
-                {% trans "Prenez une longueur d'avance. Construisez votre avenir avec la puissance de l'intelligence artificielle. Rejoignez une communauté qui fait le choix de la sérénité et de l'innovation." %}            </p>
-
-            <!-- CTA -->
-            <a href="{% url 'register' %}" class="hero-cta mx-auto" data-hero-cta>
-                <span>{% trans "Commencer Maintenant" %}</span>
-                <svg class="hero-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
-
-            <!-- Stats -->
-            <div class="hero-stats justify-center" data-hero-stats>
-                <div class="hero-stat">
-                    <div class="hero-stat-value">10K+</div>
-                    <div class="hero-stat-label">{% trans "Utilisateurs" %}</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value">99.9%</div>
-                    <div class="hero-stat-label">{% trans "Uptime" %}</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value">24/7</div>
-                    <div class="hero-stat-label">{% trans "Support IA" %}</div>
-                </div>
-            </div>
-
-            
-
-        </div>
-    </div>
-
-    
-
-</section>
+{% include "public/sections/hero.html" %}
+{% include "public/sections/about.html" %}
+{% include "public/sections/how_it_works.html" %}
+{% include "public/sections/why_payia.html" %}
+{% include "public/sections/proof.html" %}
+{% include "public/sections/partners.html" %}
+{% include "public/sections/trust.html" %}
+{% include "public/sections/faq.html" %}
+{% include "public/sections/cta_final.html" %}
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/hero.js' %}"></script>
+<script src="{% static 'js/home.js' %}" defer></script>
+<noscript><style>[data-reveal]{opacity:1 !important;transform:none !important}</style></noscript>
 {% endblock %}

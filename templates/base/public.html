@@ -16,9 +16,10 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="font-sans bg-black text-white antialiased min-h-screen flex flex-col {% block body_class %}{% endblock %}">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:px-4 focus:py-2.5 focus:bg-green-600 focus:text-white focus:text-sm focus:font-bold focus:rounded-lg">{% trans "Aller au contenu principal" %}</a>
     {% include "base/nav.html" %}
 
-    <main class="pt-16 flex-1">
+    <main id="main-content" class="{% block main_class %}pt-16{% endblock %} flex-1">
         {% include "base/toasts.html" %}
         {% block content %}{% endblock %}
     </main>
@@ -26,6 +27,7 @@
     {% include "base/footer.html" %}
 
     {% include "base/pwa.html" %}
+    <script src="{% static 'js/nav.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

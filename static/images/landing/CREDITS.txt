@@ -1,0 +1,18 @@
+PAYIA — Crédits des visuels de la landing page (static/images/landing/)
+======================================================================
+
+Ces photographies sont issues d'Unsplash et sont utilisées conformément
+à la licence Unsplash (https://unsplash.com/license) :
+utilisation libre, y compris commerciale, sans obligation d'attribution
+(attribution appréciée).
+
+hero.webp  — https://images.unsplash.com/photo-1558494949-ef010cbdcc31
+             (infrastructure de salle serveurs)
+about.webp — https://images.unsplash.com/photo-1522071820081-009f0129c71c
+             (équipe en collaboration)
+why.webp   — https://images.unsplash.com/photo-1581091226825-a6a2a5aee158
+             (ingénieures en environnement technique)
+cta.webp   — https://images.unsplash.com/photo-1497366216548-37526070297c
+             (bureaux modernes)
+
+Traitement : redimensionnement et conversion WebP (qualité 80).

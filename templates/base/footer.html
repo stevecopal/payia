@@ -1,11 +1,19 @@
-{% load i18n %}
-<footer class="bg-black border-t border-white/5 py-8">
+{% load static i18n %}
+<footer class="bg-black border-t border-white/10 py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center space-x-6 text-sm text-gray-400">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <a href="{% url 'home' %}" class="flex items-center" aria-label="PAYIA">
+                <img src="{% static 'images/logo.png' %}" alt="PAYIA" class="h-10 w-auto opacity-90">
+            </a>
+
+            <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-400" aria-label="{% trans "Navigation pied de page" %}">
+                <a href="{% url 'about' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "À propos" %}</a>
+                <a href="{% url 'faq' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "FAQ" %}</a>
+                <a href="{% url 'contact' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Contact" %}</a>
                 <a href="{% url 'terms' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Conditions" %}</a>
                 <a href="{% url 'privacy' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Confidentialite" %}</a>
-            </div>
+            </nav>
         </div>
+        <p class="mt-6 text-center text-xs text-gray-600">&copy; {% now "Y" %} PAYIA. {% trans "Tous droits réservés." %}</p>
     </div>
 </footer>

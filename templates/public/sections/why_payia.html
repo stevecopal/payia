@@ -1,0 +1,64 @@
+{% load static i18n %}
+{% comment %} POURQUOI PAYIA — arguments éditoriaux (pas de cartes génériques) {% endcomment %}
+<section id="why" class="scroll-mt-20 py-24 md:py-32 bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+            <div class="lg:col-span-7">
+                <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
+                    {% trans "Pourquoi PAYIA" %}
+                </p>
+                <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.12] text-white" data-reveal style="--reveal-delay: 80ms">
+                    {% trans "Ce qui nous distingue" %}
+                </h2>
+            </div>
+            <div class="lg:col-span-5">
+                <p class="text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 140ms">
+                    {% trans "PAYIA ne cherche pas à impressionner : nous construisons un accès à l'IA qui tient ses promesses opérationnelles, sans promesse de rendement." %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Bandeau visuel -->
+        <div class="mt-12 overflow-hidden rounded-2xl border border-white/10" data-reveal="zoom">
+            <img src="{% static 'images/landing/why.webp' %}"
+                 alt="{% trans "Ingénieurs travaillant sur des solutions technologiques dans un environnement professionnel" %}"
+                 width="1400" height="934" loading="lazy" decoding="async"
+                 class="w-full h-auto object-cover aspect-[16/9] md:aspect-[21/9]">
+        </div>
+
+        <!-- Arguments -->
+        <div class="mt-4 border-t border-white/10">
+            <div class="group grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-8 border-b border-white/10 transition-colors duration-300 hover:bg-white/[0.015]" data-reveal>
+                <p class="md:col-span-1 text-sm font-bold text-green-500">01</p>
+                <h3 class="md:col-span-4 text-lg font-bold text-white">{% trans "Technologie réelle" %}</h3>
+                <p class="md:col-span-7 text-sm leading-relaxed text-gray-400">{% trans "Des solutions d'IA réellement opérées : modèles référencés, cycles paramétrés, activités enregistrées dans un système traçable." %}</p>
+            </div>
+            <div class="group grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-8 border-b border-white/10 transition-colors duration-300 hover:bg-white/[0.015]" data-reveal style="--reveal-delay: 60ms">
+                <p class="md:col-span-1 text-sm font-bold text-green-500">02</p>
+                <h3 class="md:col-span-4 text-lg font-bold text-white">{% trans "Accessibilité" %}</h3>
+                <p class="md:col-span-7 text-sm leading-relaxed text-gray-400">{% trans "Un parcours pensé pour débuter sans profil technique : inscription par téléphone, espace clair, étapes guidées." %}</p>
+            </div>
+            <div class="group grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-8 border-b border-white/10 transition-colors duration-300 hover:bg-white/[0.015]" data-reveal style="--reveal-delay: 120ms">
+                <p class="md:col-span-1 text-sm font-bold text-green-500">03</p>
+                <h3 class="md:col-span-4 text-lg font-bold text-white">{% trans "Simplicité" %}</h3>
+                <p class="md:col-span-7 text-sm leading-relaxed text-gray-400">{% trans "De la création du compte à la fin du cycle, chaque action est explicite et accessible depuis un seul espace." %}</p>
+            </div>
+            <div class="group grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-8 border-b border-white/10 transition-colors duration-300 hover:bg-white/[0.015]" data-reveal style="--reveal-delay: 180ms">
+                <p class="md:col-span-1 text-sm font-bold text-green-500">04</p>
+                <h3 class="md:col-span-4 text-lg font-bold text-white">{% trans "Transparence" %}</h3>
+                <p class="md:col-span-7 text-sm leading-relaxed text-gray-400">{% trans "Durées, conditions et étapes sont affichées avant toute confirmation. PAYIA ne garantit aucun rendement : les conditions de chaque offre font foi." %}</p>
+            </div>
+            <div class="group grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-8 border-b border-white/10 transition-colors duration-300 hover:bg-white/[0.015]" data-reveal style="--reveal-delay: 240ms">
+                <p class="md:col-span-1 text-sm font-bold text-green-500">05</p>
+                <h3 class="md:col-span-4 text-lg font-bold text-white">{% trans "Suivi de bout en bout" %}</h3>
+                <p class="md:col-span-7 text-sm leading-relaxed text-gray-400">{% trans "Activité, cycles, distributions et notifications sont consolidés dans votre tableau de bord, à jour en permanence." %}</p>
+            </div>
+            <div class="group grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-8 border-b border-white/10 transition-colors duration-300 hover:bg-white/[0.015]" data-reveal style="--reveal-delay: 300ms">
+                <p class="md:col-span-1 text-sm font-bold text-green-500">06</p>
+                <h3 class="md:col-span-4 text-lg font-bold text-white">{% trans "Accompagnement" %}</h3>
+                <p class="md:col-span-7 text-sm leading-relaxed text-gray-400">{% trans "Un support intégré à la plateforme et des ressources pour comprendre chaque étape, avant comme après l'inscription." %}</p>
+            </div>
+        </div>
+    </div>
+</section>

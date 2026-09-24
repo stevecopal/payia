@@ -1,13 +1,19 @@
 {% load static i18n %}
-<header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+<header data-public-nav class="public-nav fixed top-0 left-0 right-0 z-50 border-b border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
-            <a href="{% url 'home' %}" class="flex items-center space-x-2">
+            <a href="{% url 'home' %}" class="flex items-center space-x-2 shrink-0" aria-label="PAYIA">
                 <img src="{% static 'images/logo.png' %}" alt="PAYIA" class="h-14 w-auto">
             </a>
 
-            
+            <!-- Navigation sections (desktop) -->
+            <nav class="hidden lg:flex items-center gap-8" aria-label="{% trans "Navigation principale" %}">
+                <a href="{% url 'home' %}#about" data-nav-section="about" class="public-nav-link text-sm text-gray-300 hover:text-white">{% trans "À propos" %}</a>
+                <a href="{% url 'home' %}#how" data-nav-section="how" class="public-nav-link text-sm text-gray-300 hover:text-white">{% trans "Comment ça marche" %}</a>
+                <a href="{% url 'home' %}#why" data-nav-section="why" class="public-nav-link text-sm text-gray-300 hover:text-white">{% trans "Pourquoi PAYIA" %}</a>
+                <a href="{% url 'home' %}#faq" data-nav-section="faq" class="public-nav-link text-sm text-gray-300 hover:text-white">{% trans "FAQ" %}</a>
+            </nav>
 
             <!-- Auth buttons -->
             <div class="flex items-center space-x-2 sm:space-x-3">
@@ -15,10 +21,34 @@
                 {% if user.is_authenticated %}
                     <a href="{% url 'dashboard' %}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "Tableau de bord" %}</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">{% trans "Connexion" %}</a>
+                    <a href="{% url 'login' %}" class="hidden sm:inline text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">{% trans "Connexion" %}</a>
                     <a href="{% url 'register' %}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
                 {% endif %}
+
+                <button type="button" data-nav-toggle aria-expanded="false" aria-controls="public-nav-menu"
+                        data-label-open="{% trans "Ouvrir le menu" %}" data-label-close="{% trans "Fermer le menu" %}"
+                        aria-label="{% trans "Ouvrir le menu" %}"
+                        class="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500">
+                    <svg data-icon-open class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <svg data-icon-close class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
         </div>
+    </div>
+
+    <!-- Menu mobile -->
+    <div id="public-nav-menu" data-nav-menu class="public-nav-menu lg:hidden absolute inset-x-0 top-full border-b border-white/5 bg-black/95 backdrop-blur-xl" >
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col" aria-label="{% trans "Navigation mobile" %}">
+            <a href="{% url 'home' %}#about" class="py-3 text-sm text-gray-300 hover:text-white border-b border-white/5">{% trans "À propos" %}</a>
+            <a href="{% url 'home' %}#how" class="py-3 text-sm text-gray-300 hover:text-white border-b border-white/5">{% trans "Comment ça marche" %}</a>
+            <a href="{% url 'home' %}#why" class="py-3 text-sm text-gray-300 hover:text-white border-b border-white/5">{% trans "Pourquoi PAYIA" %}</a>
+            <a href="{% url 'home' %}#faq" class="py-3 text-sm text-gray-300 hover:text-white border-b border-white/5">{% trans "FAQ" %}</a>
+            {% if not user.is_authenticated %}
+            <div class="flex gap-3 pt-4 pb-1">
+                <a href="{% url 'login' %}" class="flex-1 text-center px-4 py-2.5 text-sm font-medium text-gray-300 border border-white/15 rounded-lg hover:border-white/30 hover:text-white transition-colors duration-200">{% trans "Connexion" %}</a>
+                <a href="{% url 'register' %}" class="flex-1 text-center px-4 py-2.5 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
+            </div>
+            {% endif %}
+        </nav>
     </div>
 </header>

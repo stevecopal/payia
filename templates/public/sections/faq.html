@@ -1,0 +1,126 @@
+{% load i18n %}
+{% comment %} FAQ — accordéon accessible (piloté par home.js) {% endcomment %}
+<section id="faq" class="scroll-mt-20 py-24 md:py-32 bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+
+            <!-- En-tête -->
+            <div class="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
+                <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
+                    {% trans "Questions fréquentes" %}
+                </p>
+                <h2 class="mt-4 font-display text-3xl sm:text-4xl leading-[1.12] text-white" data-reveal style="--reveal-delay: 80ms">
+                    {% trans "Les réponses essentielles" %}
+                </h2>
+                <p class="mt-5 text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 140ms">
+                    {% trans "Des réponses factuelles aux questions les plus courantes sur PAYIA, ses cycles et son fonctionnement." %}
+                </p>
+                <a href="{% url 'faq' %}" class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" data-reveal>
+                    {% trans "Voir toutes les questions" %}
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <!-- Accordéon -->
+            <div class="lg:col-span-8 border-t border-white/10" data-faq>
+
+                <div class="faq-item is-open border-b border-white/10" data-faq-item data-reveal>
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="true" aria-controls="faq-a-1" id="faq-q-1">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Qu'est-ce que PAYIA ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-1" role="region" aria-labelledby="faq-q-1">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "PAYIA est une plateforme qui met en relation ses membres avec des solutions d'intelligence artificielle. Elle permet de créer un compte, de suivre son activité et de participer à des cycles dont les conditions sont affichées sur la plateforme." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 40ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-2" id="faq-q-2">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Comment fonctionne la plateforme ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-2" role="region" aria-labelledby="faq-q-2">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "Vous créez un compte avec votre numéro de téléphone, vous accédez à votre espace, puis vous participez à un cycle. Tout est suivi depuis votre tableau de bord : activité, cycles et notifications." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 80ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-3" id="faq-q-3">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Comment fonctionne un cycle ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-3" role="region" aria-labelledby="faq-q-3">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "Un cycle correspond à la participation à une solution d'IA pour une durée définie. La durée, le fonctionnement et les conditions de l'offre sont affichés avant confirmation. Une fois le cycle lancé, sa progression est visible dans votre espace." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 120ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-4" id="faq-q-4">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Comment suivre mon activité ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-4" role="region" aria-labelledby="faq-q-4">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "Votre tableau de bord centralise l'essentiel : cycles en cours, activités enregistrées, portefeuille et notifications. Les informations sont mises à jour au fil des opérations." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 160ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-5" id="faq-q-5">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Que se passe-t-il à la fin d'un cycle ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-5" role="region" aria-labelledby="faq-q-5">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "À la fin du cycle, la distribution est enregistrée selon les conditions applicables à l'offre concernée, puis consultable dans votre historique d'activité." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 200ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-6" id="faq-q-6">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "PAYIA garantit-elle un rendement ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-6" role="region" aria-labelledby="faq-q-6">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "Non. PAYIA ne garantit pas de rendement spécifique et aucune condition d'absence de risque n'est promise. Les performances passées ne garantissent pas les résultats futurs : seules les conditions publiées pour chaque offre font foi." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 240ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-7" id="faq-q-7">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Mes données et mon compte sont-ils protégés ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-7" role="region" aria-labelledby="faq-q-7">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "L'accès à votre compte repose sur un numéro vérifié et des mécanismes de protection des accès sensibles. Vous restez responsable de la sécurité de vos identifiants, comme précisé dans nos conditions d'utilisation." %}</p></div>
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-white/10" data-faq-item data-reveal style="--reveal-delay: 280ms">
+                    <h3>
+                        <button type="button" class="faq-trigger w-full flex items-start justify-between gap-6 py-5 text-left group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" aria-expanded="false" aria-controls="faq-a-8" id="faq-q-8">
+                            <span class="text-base font-bold text-white group-hover:text-green-300 transition-colors duration-200">{% trans "Qui peut s'inscrire et comment contacter le support ?" %}</span>
+                            <svg class="faq-chevron w-5 h-5 shrink-0 mt-0.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </h3>
+                    <div class="faq-answer" id="faq-a-8" role="region" aria-labelledby="faq-q-8">
+                        <div><p class="pb-5 pr-8 text-sm leading-relaxed text-gray-400">{% trans "L'inscription est réservée aux personnes majeures et à un seul compte par personne. Pour toute question, contactez-nous depuis la page Contact ou depuis la section Assistance de votre tableau de bord." %}</p></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
