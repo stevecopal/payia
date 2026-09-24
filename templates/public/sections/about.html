@@ -1,24 +1,9 @@
 {% load static i18n %}
-{% comment %} À PROPOS — section institutionnelle éditoriale {% endcomment %}
-<section id="about" class="scroll-mt-20 py-24 md:py-32 bg-black">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+{% comment %} À PROPOS — section institutionnelle éditoriale (visuel plein largeur) {% endcomment %}
+<section id="about" class="scroll-mt-20 bg-black pt-24 md:pt-32">
 
-            <!-- Visuel -->
-            <div class="lg:col-span-5 lg:sticky lg:top-24" data-reveal="left">
-                <figure class="relative overflow-hidden rounded-2xl border border-white/10">
-                    <img src="{% static 'images/landing/about.webp' %}"
-                         alt="{% trans "Équipe professionnelle en réunion de travail dans un environnement moderne" %}"
-                         width="1400" height="934" loading="lazy" decoding="async"
-                         class="w-full h-auto object-cover aspect-[4/3] lg:aspect-[4/5]">
-                    <figcaption class="absolute left-4 right-4 bottom-4 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 px-4 py-3">
-                        <p class="text-[11px] uppercase tracking-[0.18em] text-green-400 font-bold">{% trans "Notre mission" %}</p>
-                        <p class="mt-1 text-sm text-white/85">{% trans "Rendre l'accès à l'IA simple, structuré et suivi." %}</p>
-                    </figcaption>
-                </figure>
-            </div>
-
-            <!-- Contenu éditorial -->
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end lg:gap-16">
             <div class="lg:col-span-7">
                 <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
                     {% trans "À propos" %}
@@ -26,39 +11,64 @@
                 <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.12] text-white" data-reveal style="--reveal-delay: 80ms">
                     {% trans "Une entreprise construite autour d'une conviction : l'IA doit être accessible." %}
                 </h2>
-                <p class="mt-6 text-base leading-relaxed text-gray-400 max-w-2xl" data-reveal style="--reveal-delay: 140ms">
+            </div>
+            <div class="lg:col-span-5">
+                <p class="text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 140ms">
                     {% trans "PAYIA est une plateforme d'intelligence artificielle. Nous mettons en relation nos membres avec des solutions d'IA et nous rendons chaque étape lisible : de l'inscription à la fin du cycle, rien n'est laissé dans l'ombre." %}
                 </p>
+            </div>
+        </div>
+    </div>
 
-                <div class="mt-10 space-y-0 border-t border-white/10">
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-6 py-7 border-b border-white/10" data-reveal style="--reveal-delay: 60ms">
-                        <p class="sm:col-span-3 text-xs font-bold uppercase tracking-[0.16em] text-green-500 pt-1">{% trans "01 — Mission" %}</p>
-                        <div class="sm:col-span-9">
-                            <h3 class="text-base font-bold text-white">{% trans "Démocratiser l'accès à l'intelligence artificielle" %}</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Offrir un accès aux solutions d'IA sans supposer de l'utilisateur une expertise technique, avec un parcours guidé de bout en bout." %}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-6 py-7 border-b border-white/10" data-reveal style="--reveal-delay: 120ms">
-                        <p class="sm:col-span-3 text-xs font-bold uppercase tracking-[0.16em] text-green-500 pt-1">{% trans "02 — Vision" %}</p>
-                        <div class="sm:col-span-9">
-                            <h3 class="text-base font-bold text-white">{% trans "Une plateforme où l'activité se comprend et se suit" %}</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Nous croyons que l'IA doit être accessible à tous. PAYIA est née de cette conviction : créer un cadre clair, dans lequel chaque membre voit ce qu'il fait, quand et selon quelles conditions." %}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-6 py-7 border-b border-white/10" data-reveal style="--reveal-delay: 180ms">
-                        <p class="sm:col-span-3 text-xs font-bold uppercase tracking-[0.16em] text-green-500 pt-1">{% trans "03 — Exigence" %}</p>
-                        <div class="sm:col-span-9">
-                            <h3 class="text-base font-bold text-white">{% trans "De la crédibilité, pas des promesses" %}</h3>
-                            <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Conditions explicites, activité enregistrée, espace de suivi : nous préférons un cadre vérifiable aux discours commerciaux." %}</p>
-                        </div>
+    <!-- Visuel pleine largeur (bord à bord) -->
+    <figure class="lp-band mt-12 aspect-[4/3] sm:aspect-[16/9] md:mt-16 lg:aspect-[21/9]">
+        <img src="{% static 'images/landing/about.webp' %}"
+             alt="{% trans "Équipe professionnelle en réunion de travail dans un environnement moderne" %}"
+             width="1400" height="934" loading="lazy" decoding="async" data-reveal="zoom">
+        <span class="lp-band-scrim" aria-hidden="true"></span>
+        <figcaption class="lp-band-caption">
+            <div class="mx-auto max-w-7xl px-4 pb-6 sm:px-6 sm:pb-8 lg:px-8">
+                <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-green-400" data-reveal style="--reveal-delay: 120ms">
+                    {% trans "Notre mission" %}
+                </p>
+                <p class="mt-1.5 max-w-2xl font-display text-lg leading-snug text-white sm:text-2xl" data-reveal style="--reveal-delay: 200ms">
+                    {% trans "Rendre l'accès à l'IA simple, structuré et suivi." %}
+                </p>
+            </div>
+        </figcaption>
+    </figure>
+
+    <!-- Contenu éditorial -->
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="pt-14 md:pt-20">
+            <div class="border-t border-white/10">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-6 py-7 border-b border-white/10" data-reveal style="--reveal-delay: 60ms">
+                    <p class="sm:col-span-3 text-xs font-bold uppercase tracking-[0.16em] text-green-500 pt-1">{% trans "01 — Mission" %}</p>
+                    <div class="sm:col-span-9">
+                        <h3 class="text-base font-bold text-white">{% trans "Démocratiser l'accès à l'intelligence artificielle" %}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Offrir un accès aux solutions d'IA sans supposer de l'utilisateur une expertise technique, avec un parcours guidé de bout en bout." %}</p>
                     </div>
                 </div>
-
-                <a href="{% url 'about' %}" class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition-colors duration-200 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" data-reveal>
-                    {% trans "En savoir plus sur PAYIA" %}
-                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-6 py-7 border-b border-white/10" data-reveal style="--reveal-delay: 120ms">
+                    <p class="sm:col-span-3 text-xs font-bold uppercase tracking-[0.16em] text-green-500 pt-1">{% trans "02 — Vision" %}</p>
+                    <div class="sm:col-span-9">
+                        <h3 class="text-base font-bold text-white">{% trans "Une plateforme où l'activité se comprend et se suit" %}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Nous croyons que l'IA doit être accessible à tous. PAYIA est née de cette conviction : créer un cadre clair, dans lequel chaque membre voit ce qu'il fait, quand et selon quelles conditions." %}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-6 py-7 border-b border-white/10" data-reveal style="--reveal-delay: 180ms">
+                    <p class="sm:col-span-3 text-xs font-bold uppercase tracking-[0.16em] text-green-500 pt-1">{% trans "03 — Exigence" %}</p>
+                    <div class="sm:col-span-9">
+                        <h3 class="text-base font-bold text-white">{% trans "De la crédibilité, pas des promesses" %}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Conditions explicites, activité enregistrée, espace de suivi : nous préférons un cadre vérifiable aux discours commerciaux." %}</p>
+                    </div>
+                </div>
             </div>
+
+            <a href="{% url 'about' %}" class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition-colors duration-200 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded" data-reveal>
+                {% trans "En savoir plus sur PAYIA" %}
+                <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
         </div>
     </div>
 </section>

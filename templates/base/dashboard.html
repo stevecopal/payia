@@ -68,40 +68,45 @@
             </div>
         </main>
 
-        {# ============ BOTTOM NAV (mobile) ============ #}
+        {# ============ BOTTOM NAV (mobile) — fixe, pleine largeur, style WhatsApp ============ #}
+        {% with account_routes='settings,security_settings,password_change,profile,profile_edit,profile_complete,withdrawal_info,referrals,support_list,support_create,support_ticket_detail,support_ticket_close' machine_routes='ai_catalog,ai_offer_detail,ai_rent,ai_my_rentals,ai_rental_detail,ai_rental_sync,ai_rental_trigger_payment' money_routes='wallet,ledger,transaction_list,deposit_list,deposit_create,deposit_detail,withdrawal_list,withdrawal_create,withdrawal_detail' alert_routes='notifications,notification_mark_read,notification_mark_all_read,message_list,message_detail' %}
         <nav class="app-bottomnav" aria-label="{% trans 'Navigation principale' %}">
-            <a href="{% url 'dashboard' %}" class="app-bottomnav-item {% if rn == 'dashboard' %}is-active{% endif %}">
+            <a href="{% url 'dashboard' %}" class="app-bottomnav-item {% if rn == 'dashboard' %}is-active{% endif %}"{% if rn == 'dashboard' %} aria-current="page"{% endif %}>
                 <span class="app-bottomnav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 </span>
                 <span class="app-bottomnav-label">{% trans "Accueil" %}</span>
             </a>
-            <a href="{% url 'ai_catalog' %}" class="app-bottomnav-item {% if rn in 'ai_catalog,ai_offer_detail,ai_rent,ai_my_rentals,ai_rental_detail,ai_rental_sync,ai_rental_trigger_payment' %}is-active{% endif %}">
+            <a href="{% url 'ai_catalog' %}" class="app-bottomnav-item {% if rn in machine_routes %}is-active{% endif %}"{% if rn in machine_routes %} aria-current="page"{% endif %}>
                 <span class="app-bottomnav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </span>
                 <span class="app-bottomnav-label">{% trans "Machines" %}</span>
             </a>
-            <a href="{% url 'wallet' %}" class="app-bottomnav-item {% if rn in 'wallet,ledger,transaction_list,deposit_list,deposit_create,deposit_detail,withdrawal_list,withdrawal_create,withdrawal_detail' %}is-active{% endif %}">
+            <a href="{% url 'wallet' %}" class="app-bottomnav-item {% if rn in money_routes %}is-active{% endif %}"{% if rn in money_routes %} aria-current="page"{% endif %}>
                 <span class="app-bottomnav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                 </span>
                 <span class="app-bottomnav-label">{% trans "Portefeuille" %}</span>
             </a>
-            <a href="{% url 'notifications' %}" class="app-bottomnav-item {% if rn in 'notifications,notification_mark_read,notification_mark_all_read,message_list,message_detail' %}is-active{% endif %}">
+            <a href="{% url 'notifications' %}" class="app-bottomnav-item {% if rn in alert_routes %}is-active{% endif %}"{% if rn in alert_routes %} aria-current="page"{% endif %}>
                 <span class="app-bottomnav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                    {% if unread_notifications_count %}<span class="app-nav-badge">{{ unread_notifications_count }}</span>{% endif %}
+                    <span class="relative inline-flex">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        {% if unread_notifications_count %}<span class="app-nav-badge">{{ unread_notifications_count }}</span>{% endif %}
+                    </span>
                 </span>
                 <span class="app-bottomnav-label">{% trans "Alertes" %}</span>
             </a>
-            <a href="{% url 'profile' %}" class="app-bottomnav-item {% if rn in 'profile,profile_edit,profile_complete,withdrawal_info,settings,security_settings,password_change,referrals,support_list,support_create,support_ticket_detail,support_ticket_close' %}is-active{% endif %}">
+            {# Onglet compte : Paramètres (couvre aussi profil, sécurité, parrainage, support…) #}
+            <a href="{% url 'settings' %}" class="app-bottomnav-item {% if rn in account_routes %}is-active{% endif %}"{% if rn in account_routes %} aria-current="page"{% endif %}>
                 <span class="app-bottomnav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </span>
-                <span class="app-bottomnav-label">{% trans "Profil" %}</span>
+                <span class="app-bottomnav-label">{% trans "Paramètres" %}</span>
             </a>
         </nav>
+        {% endwith %}
     </div>
 
     {% endwith %}

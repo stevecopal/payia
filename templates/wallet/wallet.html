@@ -4,80 +4,120 @@
 {% block dashboard_content %}
 <div class="app-stack app-stagger">
 
+    {# ——— En-tête ——— #}
     <header class="app-stagger-item flex items-center justify-between gap-3">
         <h1 class="app-page-title">{% trans "Portefeuille" %}</h1>
-        <a href="{% url 'transaction_list' %}" class="app-pill">{% trans "Transactions" %}</a>
+        <a href="{% url 'transaction_list' %}" class="app-pill text-green-400">{% trans "Transactions" %}</a>
     </header>
 
-    {# Solde principal #}
-    <section class="app-stagger-item app-hero-card">
+    {# ——— Solde & actions ——— #}
+    <section class="app-stagger-item app-hero-card" aria-label="{% trans 'Solde et actions' %}">
         <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-green-400/90">{% trans "Solde disponible" %}</p>
         <p class="mt-2 text-3xl sm:text-4xl font-display font-bold tracking-tight">
             <span class="font-mono">{{ wallet.available_balance|floatformat:2 }}</span>
-            <span class="text-base font-semibold text-white/50 ml-1">{{ user.profile.preferred_currency|default:"XAF" }}</span>
+            <span class="ml-1 text-base font-semibold text-white/50">{{ user.profile.preferred_currency|default:"XAF" }}</span>
         </p>
-       
-    </section>
+        {% if wallet.pending_balance %}
+        <p class="mt-2 text-xs text-gray-500">
+            {% trans "En attente de validation" %} :
+            <span class="font-mono font-semibold text-yellow-400">{{ wallet.pending_balance|floatformat:2 }}</span>
+        </p>
+        {% endif %}
 
-    {# Stats secondaires #}
-    <section class="app-stagger-item grid grid-cols-2 gap-3">
-        <div class="app-card p-3.5">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider">{% trans "Total déposé" %}</p>
-            <p class="mt-1 font-mono text-base font-bold">{{ wallet.total_deposited|floatformat:2 }}</p>
-        </div>
-        <div class="app-card p-3.5">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider">{% trans "Total retiré" %}</p>
-            <p class="mt-1 font-mono text-base font-bold">{{ wallet.total_withdrawn|floatformat:2 }}</p>
-        </div>
-        <div class="app-card p-3.5">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider">{% trans "Revenus IA" %}</p>
-            <p class="mt-1 font-mono text-base font-bold text-green-400">{{ ai_revenue_total|floatformat:2 }}</p>
-        </div>
-        <div class="app-card p-3.5">
-            <p class="text-[10px] text-gray-500 uppercase tracking-wider">{% trans "Parrainage" %}</p>
-            <p class="mt-1 font-mono text-base font-bold text-green-400">{{ referral_total|floatformat:2 }}</p>
+        <div class="mt-4 grid grid-cols-2 gap-2.5">
+            <a href="{% url 'deposit_create' %}" class="app-btn app-btn-primary">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m0 0l-5-5m5 5l5-5"/></svg>
+                {% trans "Déposer" %}
+            </a>
+            <a href="{% url 'withdrawal_create' %}" class="app-btn app-btn-secondary">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-5 5m5-5l5 5"/></svg>
+                {% trans "Retirer" %}
+            </a>
         </div>
     </section>
 
-    {# Accès rapides #}
-    <section class="app-stagger-item grid grid-cols-2 gap-3 ">
+    {# ——— Accès direct aux demandes ——— #}
+    <nav class="app-stagger-item grid grid-cols-2 gap-3" aria-label="{% trans 'Mes demandes' %}">
         <a href="{% url 'deposit_list' %}" class="app-quick-link">
-            <span class="app-quick-icon text-green-600">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            <span class="app-quick-icon text-green-400">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
             </span>
-            <span class="text-sm font-semibold">{% trans "Dépôts" %}</span>
+            <span class="text-sm font-semibold">{% trans "Mes dépôts" %}</span>
         </a>
         <a href="{% url 'withdrawal_list' %}" class="app-quick-link">
-            <span class="app-quick-icon text-red-400 ">
+            <span class="app-quick-icon text-yellow-400">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
             </span>
-            <span class="text-sm font-semibold">{% trans "Retraits" %}</span>
+            <span class="text-sm font-semibold">{% trans "Mes retraits" %}</span>
         </a>
+    </nav>
+
+    {# ——— Repères du portefeuille ——— #}
+    <section class="app-stagger-item grid grid-cols-2 gap-3" aria-label="{% trans 'Repères du portefeuille' %}">
+        <div class="app-tile-stat">
+            <span class="app-tile-stat-label">{% trans "Revenus IA" %}</span>
+            <span class="app-tile-stat-value text-green-400">{{ ai_revenue_total|floatformat:2 }}</span>
+        </div>
+        <div class="app-tile-stat">
+            <span class="app-tile-stat-label">{% trans "Parrainage" %}</span>
+            <span class="app-tile-stat-value text-green-400">{{ referral_total|floatformat:2 }}</span>
+        </div>
+        <div class="app-tile-stat">
+            <span class="app-tile-stat-label">{% trans "Total déposé" %}</span>
+            <span class="app-tile-stat-value">{{ wallet.total_deposited|floatformat:2 }}</span>
+        </div>
+        <div class="app-tile-stat">
+            <span class="app-tile-stat-label">{% trans "Total retiré" %}</span>
+            <span class="app-tile-stat-value">{{ wallet.total_withdrawn|floatformat:2 }}</span>
+        </div>
     </section>
 
-    {# Historique #}
-    <section class="app-stagger-item app-card overflow-hidden">
-        <div class="flex items-center justify-between px-4 sm:px-5 py-3.5">
-            <h2 class="app-section-title">{% trans "Historique" %}</h2>
+    {# ——— Écritures récentes ——— #}
+    <section class="app-stagger-item app-card overflow-hidden" aria-label="{% trans 'Écritures récentes' %}">
+        <div class="flex items-center justify-between gap-3 px-4 sm:px-5 py-3.5">
+            <h2 class="app-section-title">{% trans "Dernières écritures" %}</h2>
             <a href="{% url 'ledger' %}" class="text-xs font-semibold text-green-400 hover:text-green-300">{% trans "Journal" %}</a>
         </div>
         {% if ledger_entries %}
-        <div class="divide-y divide-white/[0.06]">
+        <ul class="divide-y divide-white/[0.06] border-t border-white/[0.06]">
             {% for entry in ledger_entries %}
-            <div class="px-4 sm:px-5 py-3 flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <p class="text-sm font-medium">{{ entry.get_entry_type_display }}</p>
-                    <p class="text-xs text-gray-500 truncate">{{ entry.description|truncatewords:8 }}</p>
-                    <p class="text-[11px] font-mono text-gray-600 mt-0.5">{{ entry.created_at|date:"d/m H:i" }}</p>
+            {% with t=entry.entry_type|upper %}
+            <li class="flex items-center gap-3 px-4 sm:px-5 py-3">
+                <span class="app-tile w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.09]">
+                    {% if 'DEPOSIT' in t %}
+                    <svg class="w-[18px] h-[18px] text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>
+                    {% elif 'WITHDRAWAL' in t %}
+                    <svg class="w-[18px] h-[18px] text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20V9m0 0l-4 4m4-4l4 4M5 4h14"/></svg>
+                    {% elif 'AI_REVENUE' in t %}
+                    <svg class="w-[18px] h-[18px] text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    {% elif 'AI_' in t %}
+                    <svg class="w-[18px] h-[18px] text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M7 7h10v10H7z"/></svg>
+                    {% elif 'COMMISSION' in t %}
+                    <svg class="w-[18px] h-[18px] text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    {% elif 'BONUS' in t %}
+                    <svg class="w-[18px] h-[18px] text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                    {% elif 'REFUND' in t %}
+                    <svg class="w-[18px] h-[18px] text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a5 5 0 010 10H7m-4-10l4-4m-4 4l4 4"/></svg>
+                    {% else %}
+                    <svg class="w-[18px] h-[18px] text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    {% endif %}
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-white">{{ entry.get_entry_type_display }}</p>
+                    {% if entry.description %}
+                    <p class="truncate text-xs text-gray-500">{{ entry.description|truncatewords:8 }}</p>
+                    {% endif %}
+                    <p class="mt-0.5 font-mono text-[11px] text-gray-600">{{ entry.created_at|date:"d/m/Y H:i" }}</p>
                 </div>
-                <span class="font-mono text-sm font-bold shrink-0 {% if entry.amount > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+                <span class="shrink-0 font-mono text-sm font-bold {% if entry.amount > 0 %}text-green-400{% else %}text-red-400{% endif %}">
                     {% if entry.amount > 0 %}+{% endif %}{{ entry.amount|floatformat:2 }}
                 </span>
-            </div>
+            </li>
+            {% endwith %}
             {% endfor %}
-        </div>
+        </ul>
         {% else %}
-        <div class="app-empty">
+        <div class="app-empty border-t border-white/[0.06]">
             <div class="app-empty-icon mb-3">
                 <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
             </div>

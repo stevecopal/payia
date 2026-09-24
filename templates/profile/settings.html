@@ -4,7 +4,6 @@
 {% block dashboard_content %}
 <div class="max-w-lg mx-auto app-stack app-stagger">
     <header class="app-stagger-item">
-        <a href="{% url 'profile' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Profil" %}</a>
         <h1 class="app-page-title mt-1">{% trans "Paramètres" %}</h1>
     </header>
 
@@ -23,13 +22,7 @@
             </span>
             <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </a>
-        <a href="{% url 'notifications' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
-            <span class="min-w-0 flex-1">
-                <span class="block text-sm font-semibold">{% trans "Notifications" %}</span>
-                <span class="block text-xs text-gray-500 mt-0.5">{% trans "Voir toutes les alertes" %}</span>
-            </span>
-            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        </a>
+        
         <a href="{% url 'withdrawal_info' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
             <span class="min-w-0 flex-1">
                 <span class="block text-sm font-semibold">{% trans "Informations de retrait" %}</span>
@@ -48,6 +41,12 @@
             <span class="min-w-0 flex-1">
                 <span class="block text-sm font-semibold">{% trans "Support" %}</span>
                 <span class="block text-xs text-gray-500 mt-0.5">{% trans "Nous contacter" %}</span>
+            </span>
+            <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'home' %}" class="app-list-row app-list-row-click border-t border-white/[0.06]">
+            <span class="min-w-0 flex-1">
+                <span class="block text-sm font-semibold text-green-400">{% trans "retour au site" %}</span>
             </span>
             <svg class="w-4 h-4 text-gray-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </a>
