@@ -24,7 +24,7 @@
                 {% if target_user.is_suspended %}
                 <form method="post" action="{% url 'admin_user_toggle_suspend' pk=target_user.pk %}">
                     {% csrf_token %}
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Réactiver" %}</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Réactiver" %}</button>
                 </form>
                 {% else %}
                 <button onclick="openModal('suspendModal')" class="px-4 py-2 bg-red-500/15 text-red-400 text-sm rounded-lg hover:bg-red-500/25 transition-colors font-medium border border-red-500/20">{% trans "Suspendre" %}</button>

@@ -5,14 +5,14 @@
 <div class="space-y-4">
     <div class="flex items-center justify-between gap-3">
         <h1 class="text-lg sm:text-xl font-display">{% trans "Mes dépôts" %}</h1>
-        <a href="{% url 'deposit_create' %}" class="px-3 py-2 sm:px-4 sm:py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-500 shrink-0">{% trans "Nouveau dépôt" %}</a>
+        <a href="{% url 'deposit_create' %}" class="px-3 py-2 sm:px-4 sm:py-2 bg-green-600 text-black text-xs font-semibold rounded-lg hover:bg-green-500 shrink-0">{% trans "Nouveau dépôt" %}</a>
     </div>
 
     <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" style="-ms-overflow-style:none;scrollbar-width:none;">
-        <a href="{% url 'deposit_list' %}" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if not current_status %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Tous" %}</a>
+        <a href="{% url 'deposit_list' %}" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if not current_status %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Tous" %}</a>
         <a href="?status=pending_review" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'pending_review' %}bg-yellow-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "En attente" %}</a>
         <a href="?status=approved" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'approved' %}bg-blue-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Approuvé" %}</a>
-        <a href="?status=completed" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'completed' %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Crédité" %}</a>
+        <a href="?status=completed" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'completed' %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Crédité" %}</a>
         <a href="?status=rejected" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors {% if current_status == 'rejected' %}bg-red-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Refusé" %}</a>
     </div>
 

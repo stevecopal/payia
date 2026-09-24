@@ -16,3 +16,9 @@ cta.webp   — https://images.unsplash.com/photo-1497366216548-37526070297c
              (bureaux modernes)
 
 Traitement : redimensionnement et conversion WebP (qualité 80).
+
+cta-loop.mp4 — https://mixkit.co/free-stock-video/bluish-data-center-hallway-23282/
+              (Mixkit Free License — utilisation libre, y compris
+               commerciale, sans obligation d'attribution :
+               https://mixkit.co/license/#videoFree)
+              Source 720p, transcodée H.264 CRF 28 sans audio (~2.2 Mo).

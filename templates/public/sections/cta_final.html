@@ -1,14 +1,14 @@
 {% load static i18n %}
 {% comment %} CTA FINAL — conversion {% endcomment %}
 <section id="join" class="relative isolate overflow-hidden scroll-mt-20">
-    <!-- Visuel plein cadre -->
+    <!-- Visuel plein cadre : image de secours + vidéo en boucle -->
     <div class="absolute inset-0" aria-hidden="true">
         <img src="{% static 'images/landing/cta.webp' %}"
              alt=""
              width="1920" height="1282" loading="lazy" decoding="async"
              class="h-full w-full object-cover object-center">
+        
     </div>
-    <div class="absolute inset-0 bg-black/80" aria-hidden="true"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/70" aria-hidden="true"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-40 text-center">
@@ -24,13 +24,13 @@
         <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4" data-reveal style="--reveal-delay: 240ms">
             {% if user.is_authenticated %}
             <a href="{% url 'dashboard' %}"
-               class="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-500 transition-all duration-200 shadow-lg shadow-green-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black w-full sm:w-auto">
+               class="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-black text-sm font-bold rounded-lg hover:bg-green-500 transition-all duration-200 shadow-lg shadow-green-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black w-full sm:w-auto">
                 {% trans "Accéder à mon espace" %}
                 <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             {% else %}
             <a href="{% url 'register' %}"
-               class="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-500 transition-all duration-200 shadow-lg shadow-green-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black w-full sm:w-auto">
+               class="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-black text-sm font-bold rounded-lg hover:bg-green-500 transition-all duration-200 shadow-lg shadow-green-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black w-full sm:w-auto">
                 {% trans "Créer mon compte" %}
                 <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>

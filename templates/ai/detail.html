@@ -65,7 +65,7 @@
                 {% else %}
                     <form method="post" action="{% url 'ai_rent' slug=offer.slug %}">
                         {% csrf_token %}
-                        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+                        <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
                             {% trans "Louer" %} - {{ offer.price|floatformat:0 }} XAF
                         </button>
                     </form>

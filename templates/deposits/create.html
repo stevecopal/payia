@@ -8,17 +8,17 @@
     <!-- Progress Steps -->
     <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {% if step == 1 %}bg-green-600 text-white{% elif step == 2 or step == 3 %}bg-green-600/20 text-green-400{% else %}bg-gray-800 text-gray-500{% endif %}">1</div>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {% if step == 1 %}bg-green-600 text-black{% elif step == 2 or step == 3 %}bg-green-600/20 text-green-400{% else %}bg-gray-800 text-gray-500{% endif %}">1</div>
             <span class="text-xs {% if step == 1 %}text-white{% else %}text-gray-500{% endif %} hidden sm:inline">{% trans "Informations" %}</span>
         </div>
         <div class="flex-1 h-px bg-gray-800 mx-2"></div>
         <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {% if step == 2 %}bg-green-600 text-white{% elif step == 3 %}bg-green-600/20 text-green-400{% else %}bg-gray-800 text-gray-500{% endif %}">2</div>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {% if step == 2 %}bg-green-600 text-black{% elif step == 3 %}bg-green-600/20 text-green-400{% else %}bg-gray-800 text-gray-500{% endif %}">2</div>
             <span class="text-xs {% if step == 2 %}text-white{% else %}text-gray-500{% endif %} hidden sm:inline">{% trans "Paiement" %}</span>
         </div>
         <div class="flex-1 h-px bg-gray-800 mx-2"></div>
         <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {% if step == 3 %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-500{% endif %}">3</div>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {% if step == 3 %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-500{% endif %}">3</div>
             <span class="text-xs {% if step == 3 %}text-white{% else %}text-gray-500{% endif %} hidden sm:inline">{% trans "Confirmation" %}</span>
         </div>
     </div>
@@ -73,7 +73,7 @@
             {% if errors.amount %}<p class="mt-1 text-xs text-red-400">{{ errors.amount }}</p>{% endif %}
         </div>
 
-        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+        <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
             {% trans "Suivant" %}
         </button>
     </form>
@@ -109,7 +109,7 @@
             <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">{% trans "Code à composer" %}</p>
             <div class="flex items-center gap-2">
                 <p class="text-lg font-mono font-bold text-green-400 flex-1 break-all" id="ussdCode">{{ deposit_data.ussd_code }}</p>
-                <button type="button" onclick="copyUssd()" class="px-3 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-500 transition-colors shrink-0 flex items-center gap-1.5">
+                <button type="button" onclick="copyUssd()" class="px-3 py-2 bg-green-600 text-black text-xs font-semibold rounded-lg hover:bg-green-500 transition-colors shrink-0 flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                     <span id="copyText">{% trans "Copier" %}</span>
                 </button>
@@ -143,7 +143,7 @@
     <form method="post">
         {% csrf_token %}
         <input type="hidden" name="step" value="2">
-        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+        <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
             {% trans "J'ai effectué le paiement" %}
         </button>
     </form>
@@ -187,7 +187,7 @@
             {% if errors.tx_phone_digits %}<p class="mt-1 text-xs text-red-400">{{ errors.tx_phone_digits }}</p>{% endif %}
         </div>
 
-        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+        <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
             {% trans "Terminer" %}
         </button>
     </form>

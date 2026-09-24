@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="/static/css/output.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Suez+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     {% include "base/pwa_head.html" %}
     {% block extra_css %}{% endblock %}
 </head>
 <body class="font-sans bg-black text-white antialiased min-h-screen flex flex-col {% block body_class %}{% endblock %}">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:px-4 focus:py-2.5 focus:bg-green-600 focus:text-white focus:text-sm focus:font-bold focus:rounded-lg">{% trans "Aller au contenu principal" %}</a>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:px-4 focus:py-2.5 focus:bg-green-600 focus:text-black focus:text-sm focus:font-bold focus:rounded-lg">{% trans "Aller au contenu principal" %}</a>
     {% include "base/nav.html" %}
 
     <main id="main-content" class="{% block main_class %}pt-16{% endblock %} flex-1">

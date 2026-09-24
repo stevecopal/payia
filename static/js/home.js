@@ -291,6 +291,40 @@
                     img.style.visibility = 'hidden';
                 }, { once: true });
             });
+
+            this.initLazyVideos();
+        },
+
+        initLazyVideos: function () {
+            var videos = doc.querySelectorAll('video[data-lazy-video][data-src]');
+            if (!videos.length) return;
+
+            function loadAndPlay(video) {
+                if (video.dataset.loaded) return;
+                video.dataset.loaded = '1';
+                video.src = video.dataset.src;
+                video.addEventListener('canplay', function () {
+                    video.classList.remove('opacity-0');
+                    video.classList.add('opacity-100');
+                }, { once: true });
+                video.play().catch(function () { /* autoplay bloqué : l'image reste visible */ });
+            }
+
+            if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
+                videos.forEach(function (video) { video.removeAttribute('data-src'); });
+                return;
+            }
+
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        loadAndPlay(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+            videos.forEach(function (video) { observer.observe(video); });
         }
     };
 

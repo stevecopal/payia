@@ -60,13 +60,13 @@
 
         {% if withdrawal.status == 'approved' or withdrawal.status == 'processing' %}
         <div class="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-gray-800">
-            <button onclick="openModal('withdrawalCompleteModal')" class="px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex-1">{% trans "Valider / Déjà payé" %}</button>
+            <button onclick="openModal('withdrawalCompleteModal')" class="px-6 py-2.5 bg-green-600 text-black text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex-1">{% trans "Valider / Déjà payé" %}</button>
         </div>
         {% endif %}
 
         {% if withdrawal.status == 'pending' or withdrawal.status == 'under_review' %}
         <div class="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-gray-800">
-            <button onclick="openModal('withdrawalApproveModal')" class="px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex-1">{% trans "Approuver" %}</button>
+            <button onclick="openModal('withdrawalApproveModal')" class="px-6 py-2.5 bg-green-600 text-black text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex-1">{% trans "Approuver" %}</button>
             <button onclick="openModal('withdrawalRejectModal')" class="px-6 py-2.5 bg-red-500/15 text-red-400 text-sm font-medium rounded-lg hover:bg-red-500/25 transition-colors border border-red-500/20 flex-1">{% trans "Rejeter" %}</button>
         </div>
         {% endif %}
@@ -109,7 +109,7 @@
             {% csrf_token %}
             <div class="flex gap-3 justify-end">
                 <button type="button" onclick="closeModal('withdrawalCompleteModal')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Confirmer le paiement" %}</button>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Confirmer le paiement" %}</button>
             </div>
         </form>
     </div>
@@ -129,7 +129,7 @@
             </div>
             <div class="flex gap-3 justify-end">
                 <button type="button" onclick="closeModal('withdrawalApproveModal')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Confirmer" %}</button>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Confirmer" %}</button>
             </div>
         </form>
     </div>

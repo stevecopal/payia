@@ -5,7 +5,7 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold font-display">{% trans "Offres IA" %}</h1>
-        <button onclick="openModal('createOfferModal')" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
+        <button onclick="openModal('createOfferModal')" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
             {% trans "Ajouter une offre" %}
         </button>
@@ -91,7 +91,7 @@
                             </label>
                         </div>
                         {% endif %}
-                        <input type="file" name="image" accept="image/*" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-green-600 file:text-white file:cursor-pointer">
+                        <input type="file" name="image" accept="image/*" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-green-600 file:text-black file:cursor-pointer">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -137,7 +137,7 @@
                     </div>
                     <div class="flex gap-3 justify-end">
                         <button type="button" onclick="closeModal('editOfferModal{{ offer.pk }}')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Enregistrer" %}</button>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Enregistrer" %}</button>
                     </div>
                 </form>
             </div>
@@ -190,7 +190,7 @@
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">{% trans "Image" %}</label>
-                <input type="file" name="image" accept="image/*" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-green-600 file:text-white file:cursor-pointer">
+                <input type="file" name="image" accept="image/*" class="w-full px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-green-600 file:text-black file:cursor-pointer">
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -236,7 +236,7 @@
             </div>
             <div class="flex gap-3 justify-end">
                 <button type="button" onclick="closeModal('createOfferModal')" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">{% trans "Annuler" %}</button>
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Créer" %}</button>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Créer" %}</button>
             </div>
         </form>
     </div>

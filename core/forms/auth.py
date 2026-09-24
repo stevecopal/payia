@@ -10,7 +10,7 @@ from core.validators import normalize_phone_number, validate_cameroun_phone_numb
 
 User = get_user_model()
 
-INPUT_CLASSES = 'w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all placeholder:text-gray-500'
+INPUT_CLASSES = 'w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white rounded-lg outline-none transition-all duration-200 placeholder:text-gray-500 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40'
 
 
 class RegisterForm(forms.Form):

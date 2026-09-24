@@ -19,10 +19,10 @@
             <div class="flex items-center space-x-2 sm:space-x-3">
                 {% include "base/pwa_button.html" %}
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "Tableau de bord" %}</a>
+                    <a href="{% url 'dashboard' %}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-black text-xs sm:text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "Tableau de bord" %}</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="hidden sm:inline text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">{% trans "Connexion" %}</a>
-                    <a href="{% url 'register' %}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
+                    <a href="{% url 'register' %}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 text-black text-xs sm:text-sm font-medium rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
                 {% endif %}
 
                 <button type="button" data-nav-toggle aria-expanded="false" aria-controls="public-nav-menu"
@@ -46,7 +46,7 @@
             {% if not user.is_authenticated %}
             <div class="flex gap-3 pt-4 pb-1">
                 <a href="{% url 'login' %}" class="flex-1 text-center px-4 py-2.5 text-sm font-medium text-gray-300 border border-white/15 rounded-lg hover:border-white/30 hover:text-white transition-colors duration-200">{% trans "Connexion" %}</a>
-                <a href="{% url 'register' %}" class="flex-1 text-center px-4 py-2.5 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
+                <a href="{% url 'register' %}" class="flex-1 text-center px-4 py-2.5 text-sm font-medium bg-green-600 text-black rounded-lg hover:bg-green-500 transition-colors duration-200">{% trans "S'inscrire" %}</a>
             </div>
             {% endif %}
         </nav>

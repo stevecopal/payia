@@ -6,10 +6,10 @@
     <h1 class="text-2xl font-bold font-display">{% trans "Support" %}</h1>
 
     <div class="flex flex-wrap gap-2">
-        <a href="{% url 'admin_support' %}" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if not current_status %}bg-green-600 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Tous" %}</a>
+        <a href="{% url 'admin_support' %}" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if not current_status %}bg-green-600 text-black{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Tous" %}</a>
         <a href="?status=OPEN" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'OPEN' %}bg-yellow-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Ouverts" %}</a>
         <a href="?status=IN_PROGRESS" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'IN_PROGRESS' %}bg-blue-500 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "En cours" %}</a>
-        <a href="?status=RESOLVED" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'RESOLVED' %}bg-green-600 text-white{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Résolus" %}</a>
+        <a href="?status=RESOLVED" class="px-4 py-2 text-sm rounded-lg font-medium transition-colors {% if current_status == 'RESOLVED' %}bg-green-600 text-black{% else %}bg-white/5 text-gray-400 hover:bg-white/10 border border-gray-800{% endif %}">{% trans "Résolus" %}</a>
     </div>
 
     <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">

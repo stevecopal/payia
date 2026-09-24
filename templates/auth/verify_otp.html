@@ -7,7 +7,7 @@
         <div class="mb-6">
             <a href="{% url 'home' %}" class="inline-flex items-center space-x-2 mb-6">
                 <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold text-sm font-mono">P</span>
+                    <span class="text-black font-bold text-sm font-mono">P</span>
                 </div>
                 <span class="text-xl font-bold font-display">PAYIA</span>
             </a>
@@ -18,7 +18,7 @@
             {% csrf_token %}
             <div>{{ form.code }}</div>
             {% if form.code.errors %}<p class="text-xs text-red-400">{{ form.code.errors.0 }}</p>{% endif %}
-            <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
+            <button type="submit" class="w-full py-3 bg-green-600 text-black font-semibold rounded-lg hover:bg-green-500 transition-colors text-sm">
                 {% trans "Vérifier" %}
             </button>
         </form>

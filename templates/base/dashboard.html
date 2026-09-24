@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PAYIA - Tableau de bord{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/output.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Suez+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     {% include "base/pwa_head.html" %}
 </head>
 <body class="font-sans bg-black text-white antialiased">
@@ -84,7 +84,7 @@
                 <div class="flex items-center space-x-4">
                     <a href="{% url 'notifications' %}" class="relative p-2 text-gray-400 hover:text-green-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                        {% if unread_notifications_count %}<span class="absolute -top-0.5 -right-0.5 bg-green-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">{{ unread_notifications_count }}</span>{% endif %}
+                        {% if unread_notifications_count %}<span class="absolute -top-0.5 -right-0.5 bg-green-600 text-black text-xs w-4 h-4 rounded-full flex items-center justify-center">{{ unread_notifications_count }}</span>{% endif %}
                     </a>
                     <div class="flex items-center space-x-3">
                         <a href="{% url 'profile' %}" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {% if 'profile' in request.path %}bg-green-600/15 text-green-400{% else %}hover:bg-white/5 text-gray-300{% endif %}">

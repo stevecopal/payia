@@ -2,18 +2,19 @@
 {% load i18n %}
 {% block title %}PAYIA - Parrainage{% endblock %}
 {% block content %}
-<section class="py-20 px-4">
-    <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl font-bold mb-6">{% trans "Programme de parrainage" %}</h1>
-        <p class="text-xl text-gray-600 mb-12">{% trans "Invitez vos amis et gagnez des commissions sur 5 niveaux" %}</p>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-12">
-            <div class="p-6 bg-black text-white rounded-xl"><span class="text-3xl font-bold text-green-400">10%</span><p class="text-sm mt-2">{% trans "Niveau 1" %}</p></div>
-            <div class="p-6 bg-black text-white rounded-xl"><span class="text-3xl font-bold text-green-400">5%</span><p class="text-sm mt-2">{% trans "Niveau 2" %}</p></div>
-            <div class="p-6 bg-black text-white rounded-xl"><span class="text-3xl font-bold text-green-400">3%</span><p class="text-sm mt-2">{% trans "Niveau 3" %}</p></div>
-            <div class="p-6 bg-black text-white rounded-xl"><span class="text-3xl font-bold text-green-400">2%</span><p class="text-sm mt-2">{% trans "Niveau 4" %}</p></div>
-            <div class="p-6 bg-black text-white rounded-xl"><span class="text-3xl font-bold text-green-400">1%</span><p class="text-sm mt-2">{% trans "Niveau 5" %}</p></div>
+<section class="py-20 md:py-28 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+        <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400">{% trans "Communauté" %}</p>
+        <h1 class="mt-4 text-4xl sm:text-5xl text-white">{% trans "Programme de parrainage" %}</h1>
+        <p class="text-xl text-gray-400 mt-5 mb-14 max-w-2xl mx-auto leading-relaxed">{% trans "Invitez vos amis et gagnez des commissions sur 5 niveaux" %}</p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-14">
+            <div class="card py-8 px-4"><span class="block text-3xl font-display font-bold text-green-400 tabular-nums">10%</span><p class="text-sm mt-2 text-gray-400">{% trans "Niveau 1" %}</p></div>
+            <div class="card py-8 px-4"><span class="block text-3xl font-display font-bold text-green-400 tabular-nums">5%</span><p class="text-sm mt-2 text-gray-400">{% trans "Niveau 2" %}</p></div>
+            <div class="card py-8 px-4"><span class="block text-3xl font-display font-bold text-green-400 tabular-nums">3%</span><p class="text-sm mt-2 text-gray-400">{% trans "Niveau 3" %}</p></div>
+            <div class="card py-8 px-4"><span class="block text-3xl font-display font-bold text-green-400 tabular-nums">2%</span><p class="text-sm mt-2 text-gray-400">{% trans "Niveau 4" %}</p></div>
+            <div class="card py-8 px-4 col-span-2 md:col-span-1"><span class="block text-3xl font-display font-bold text-green-400 tabular-nums">1%</span><p class="text-sm mt-2 text-gray-400">{% trans "Niveau 5" %}</p></div>
         </div>
-        <a href="{% url 'register' %}" class="px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all">{% trans "Rejoindre PAYIA" %}</a>
+        <a href="{% url 'register' %}" class="btn btn-primary">{% trans "Rejoindre PAYIA" %}</a>
     </div>
 </section>
 {% endblock %}

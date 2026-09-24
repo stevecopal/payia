@@ -2,15 +2,16 @@
 {% load i18n %}
 {% block title %}PAYIA - Nos offres IA{% endblock %}
 {% block content %}
-<section class="py-20 px-4">
+<section class="py-20 md:py-28 px-4">
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-            <h1 class="text-4xl font-bold mb-4">{% trans "Catalogue IA" %}</h1>
-            <p class="text-gray-600 max-w-2xl mx-auto">{% trans "Découvrez nos offres d'intelligence artificielle et commencez à générer des revenus" %}</p>
+            <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400">{% trans "Solutions" %}</p>
+            <h1 class="mt-4 text-4xl sm:text-5xl text-white">{% trans "Catalogue IA" %}</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto mt-5 leading-relaxed">{% trans "Découvrez nos offres d'intelligence artificielle et commencez à générer des revenus" %}</p>
         </div>
-        <div class="text-center py-20">
-            <p class="text-gray-500">{% trans "Connectez-vous pour accéder au catalogue complet." %}</p>
-            <a href="{% url 'register' %}" class="inline-block mt-4 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">{% trans "Commencer" %}</a>
+        <div class="card max-w-xl mx-auto text-center py-16 px-6">
+            <p class="text-gray-400 leading-relaxed">{% trans "Connectez-vous pour accéder au catalogue complet." %}</p>
+            <a href="{% url 'register' %}" class="btn btn-primary mt-6">{% trans "Commencer" %}</a>
         </div>
     </div>
 </section>

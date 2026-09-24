@@ -25,19 +25,19 @@
         <!-- Chiffres réels -->
         <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden" data-reveal>
             <div class="bg-black px-6 py-8 sm:px-8 sm:py-10 text-center sm:text-left">
-                <p class="font-display text-4xl lg:text-5xl text-white tabular-nums">
+                <p class="font-mono text-4xl lg:text-5xl font-bold text-white tabular-nums">
                     <span data-count="{{ landing_stats.members }}">{{ landing_stats.members }}</span>
                 </p>
                 <p class="mt-2 text-xs uppercase tracking-[0.14em] text-gray-500 font-bold">{% trans "Membres enregistrés" %}</p>
             </div>
             <div class="bg-black px-6 py-8 sm:px-8 sm:py-10 text-center sm:text-left">
-                <p class="font-display text-4xl lg:text-5xl text-green-400 tabular-nums">
+                <p class="font-mono text-4xl lg:text-5xl font-bold text-green-400 tabular-nums">
                     <span data-count="{{ landing_stats.active_cycles }}">{{ landing_stats.active_cycles }}</span>
                 </p>
                 <p class="mt-2 text-xs uppercase tracking-[0.14em] text-gray-500 font-bold">{% trans "Cycles IA actifs" %}</p>
             </div>
             <div class="bg-black px-6 py-8 sm:px-8 sm:py-10 text-center sm:text-left">
-                <p class="font-display text-4xl lg:text-5xl text-white tabular-nums">
+                <p class="font-mono text-4xl lg:text-5xl font-bold text-white tabular-nums">
                     <span data-count="{{ landing_stats.distributions }}">{{ landing_stats.distributions }}</span>
                 </p>
                 <p class="mt-2 text-xs uppercase tracking-[0.14em] text-gray-500 font-bold">{% trans "Distributions enregistrées" %}</p>
@@ -68,7 +68,7 @@
                         <span class="mt-[7px] h-2 w-2 shrink-0 rounded-full {% if event.type == 'distribution' %}bg-green-400{% elif event.type == 'member' %}bg-white/70{% else %}bg-green-600{% endif %}" aria-hidden="true"></span>
                         <div class="min-w-0">
                             <p class="text-sm text-white/90">{{ event.label }}</p>
-                            <p class="mt-0.5 text-xs text-gray-500">{{ event.when }}</p>
+                            <p class="mt-0.5 text-xs font-mono text-gray-500">{{ event.when }}</p>
                         </div>
                     </li>
                     {% empty %}

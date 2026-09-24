@@ -5,14 +5,14 @@
 <div class="space-y-4">
     <div class="flex items-center justify-between">
         <h1 class="text-xl font-display">{% trans "Mes retraits" %}</h1>
-        <a href="{% url 'withdrawal_create' %}" class="px-4 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-500">{% trans "Nouveau retrait" %}</a>
+        <a href="{% url 'withdrawal_create' %}" class="px-4 py-2 bg-green-600 text-black text-xs font-semibold rounded-lg hover:bg-green-500">{% trans "Nouveau retrait" %}</a>
     </div>
 
     <div class="flex flex-wrap gap-2">
-        <a href="{% url 'withdrawal_list' %}" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if not current_status %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Tous" %}</a>
+        <a href="{% url 'withdrawal_list' %}" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if not current_status %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Tous" %}</a>
         <a href="?status=pending" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_status == 'pending' %}bg-yellow-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "En attente" %}</a>
         <a href="?status=approved" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_status == 'approved' %}bg-blue-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Approuvé" %}</a>
-        <a href="?status=completed" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_status == 'completed' %}bg-green-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Terminé" %}</a>
+        <a href="?status=completed" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_status == 'completed' %}bg-green-600 text-black{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Terminé" %}</a>
         <a href="?status=rejected" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if current_status == 'rejected' %}bg-red-600 text-white{% else %}bg-gray-800 text-gray-400 hover:text-white{% endif %}">{% trans "Refusé" %}</a>
     </div>
 

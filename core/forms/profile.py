@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from core.models import UserProfile
 
-DARK_INPUT = 'w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all placeholder:text-gray-500'
+DARK_INPUT = 'w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white rounded-lg outline-none transition-all duration-200 placeholder:text-gray-500 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40'
 
 
 class ProfileForm(forms.ModelForm):
