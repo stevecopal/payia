@@ -22,19 +22,19 @@ def _static_partners():
     return [
         {'name': 'Microsoft', 'tagline': _('Logiciels et cloud'),
          'logo': static('images/partners/microsoft.svg'),
-         'url': 'https://www.microsoft.com'},
+         'url': ''},
         {'name': 'NVIDIA', 'tagline': _('Calcul pour l’IA'),
          'logo': static('images/partners/nvidia.svg'),
-         'url': 'https://www.nvidia.com'},
+         'url': ''},
         {'name': 'Google Cloud', 'tagline': _('Infrastructure cloud'),
          'logo': static('images/partners/googlecloud.svg'),
-         'url': 'https://cloud.google.com'},
+         'url': ''},
         {'name': 'HUMAIN', 'tagline': _('Intelligence artificielle · Arabie saoudite'),
          'logo': static('images/partners/humain.svg'),
-         'url': 'https://www.humain.ai'},
+         'url': ''},
         {'name': 'stc', 'tagline': _('Télécoms et numérique · Arabie saoudite'),
          'logo': static('images/partners/stc.svg'),
-         'url': 'https://www.stc.com.sa'},
+         'url': ''},
     ]
 
 
