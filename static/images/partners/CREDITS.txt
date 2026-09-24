@@ -1,0 +1,22 @@
+PAYIA — Crédits des logos partenaires (static/images/partners/)
+===============================================================
+
+Logos officiels téléchargés depuis Wikimedia Commons, à des fins de
+démonstration d'intégration (bandeau partenaires de la landing).
+
+Fichier                  Entreprise        Source (Wikimedia Commons)
+---------                ---------         --------------------------
+microsoft.svg            Microsoft         File:Microsoft_logo_(2012).svg
+nvidia.svg               NVIDIA            File:Nvidia_logo.svg
+googlecloud.svg          Google Cloud      File:Google_Cloud_logo.svg
+humain.svg               HUMAIN            File:HUMAIN.svg
+stc.svg                  stc group         File:STC-01.svg
+
+MENTIONS IMPORTANTES
+- Les marques et logos ci-dessus sont la propriété de leurs titulaires
+  respectifs (Microsoft, NVIDIA, Google, HUMAIN, stc). Ils sont utilisés
+  ici uniquement à titre illustratif dans un bandeau de démonstration.
+- Avant toute mise en production, remplacer ces éléments par les
+  partenaires réels de PAYIA (voir `_static_partners` dans
+  core/views/home.py) et obtenir les autorisations nécessaires.
+- Aucun fichier de ce dossier n'a été modifié (SVG/PNG d'origine).

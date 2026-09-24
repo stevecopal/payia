@@ -1,0 +1,25 @@
+PAYIA — Crédits des portraits témoignages (static/images/testimonials/)
+=======================================================================
+
+Ces photographies proviennent de Pexels et sont utilisées conformément
+à la licence Pexels (https://www.pexels.com/license/) : utilisation libre,
+y compris commerciale, sans obligation d'attention (attribution appréciée).
+
+moussa-ouedraogo.jpg     — https://www.pexels.com/photo/34592823/
+                           (portrait studio d'un jeune homme africain)
+sokhna-diop.jpg          — https://www.pexels.com/photo/34769120/
+                           (femme africaine en tailleur et hijab)
+ibrahim-coulibaly.jpg    — https://www.pexels.com/photo/38123030/
+                           (homme africain en costume et lunettes)
+nadia-hassan.jpg         — https://www.pexels.com/photo/36605385/
+                           (femme africaine en tailleur et lunettes)
+marie-josee-kouassi.jpg  — https://www.pexels.com/photo/20209020/
+                           (femme professionnelle en veste à carreaux)
+
+Traitement : recadrage carré 400×400 via le CDN Pexels (fit=crop),
+utilisé comme photo de profil (40 px) dans les cartes témoignages.
+
+ATTENTION : les noms et fonctions associés à ces portraits dans
+core/views/home.py (`_static_testimonials`) sont des données de
+démonstration. Avant toute mise en production, les remplacer par les
+vrais témoignages (et photos) des membres PAYIA, avec leur accord.

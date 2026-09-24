@@ -906,6 +906,62 @@
   transform: translateY(-10px);
 }
 
+/* ========== BANDEAUX DÉROULANTS (partenaires & témoignages) ========== */
+/* Boucle infinie sans couture : la piste contient 3 groupes identiques et
+   glisse de -33.333% (exactement la largeur d'un groupe) par cycle.
+   Le sens va de la droite vers la gauche. La durée est pilotée par la
+   variable --lp-marquee-duration posée côté template. */
+.lp-marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+
+.lp-marquee__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: lpMarqueeScroll var(--lp-marquee-duration, 45s) linear infinite;
+}
+
+.lp-marquee__group {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  padding-right: 1rem; /* même rythme qu'entre les cartes d'un groupe */
+  flex-shrink: 0;
+}
+
+/* Pause au survol / au focus clavier, reprise au départ */
+.lp-marquee:hover .lp-marquee__track,
+.lp-marquee:focus-within .lp-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes lpMarqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.3333%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .lp-marquee__track {
+    animation: none !important;
+    transform: none;
+    will-change: auto;
+  }
+}
+
 /* ========== MOUVEMENT RÉDUIT ========== */
 @media (prefers-reduced-motion: reduce) {
   html {

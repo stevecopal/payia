@@ -1,11 +1,15 @@
 {% load i18n %}
-{% comment %} PARTENAIRES — uniquement des partenaires réels fournis via le
-    contexte `partners` (liste de {"name": ..., "logo": ..., "url": ...}).
-    Aucun logo inventé : sans partenaires fournis, la section présente
-    simplement l'écosystème dans lequel PAYIA s'inscrit. {% endcomment %}
+{% comment %} PARTENAIRES — bandeau déroulant (droite → gauche, boucle infinie).
+    Alimenté par le contexte `partners` (liste de {"name": ..., "tagline": ...,
+    "logo": ..., "url": ...}). Données statiques de démarrage définies dans
+    core/views/home.py (_static_partners) : logos officiels des entreprises
+    affichées sur fond blanc pour rester lisibles sur la page noire (crédits
+    dans static/images/partners/CREDITS.txt). À remplacer par les partenaires
+    réels de PAYIA dès qu'ils sont fournis. Sans partenaires, la section
+    présente simplement l'écosystème dans lequel PAYIA s'inscrit. {% endcomment %}
 <section id="partners" class="scroll-mt-20 py-20 md:py-24 bg-black border-b border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
             <div class="lg:col-span-5">
                 <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
                     {% trans "Écosystème" %}
@@ -13,41 +17,54 @@
                 <h2 class="mt-4 font-display text-2xl sm:text-3xl leading-[1.15] text-white" data-reveal style="--reveal-delay: 60ms">
                     {% trans "Nos partenaires" %}
                 </h2>
-                <p class="mt-4 text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 120ms">
+            </div>
+            <div class="lg:col-span-7">
+                <p class="text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 120ms">
                     {% trans "PAYIA s'inscrit dans un écosystème technologique et entrepreneurial : infrastructures, innovation et terrain de l'entrepreneuriat." %}
                 </p>
             </div>
+        </div>
 
-            <div class="lg:col-span-7">
-                {% if partners %}
-                <ul class="grid grid-cols-2 sm:grid-cols-3 gap-4" data-reveal>
-                    {% for partner in partners %}
-                    <li class="flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-6 py-7 min-h-[96px]">
-                        {% if partner.url %}<a href="{{ partner.url }}" rel="noopener" class="w-full">{% endif %}
+        {% if not partners %}
+        <ul class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden" data-reveal>
+            <li class="bg-black px-5 py-7">
+                <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Infrastructure" %}</p>
+                <p class="mt-2 text-sm text-gray-400">{% trans "Technologies et capacités de calcul au service des solutions d'IA." %}</p>
+            </li>
+            <li class="bg-black px-5 py-7">
+                <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Innovation" %}</p>
+                <p class="mt-2 text-sm text-gray-400">{% trans "Un travail continu sur la qualité des modèles et de l'expérience." %}</p>
+            </li>
+            <li class="bg-black px-5 py-7">
+                <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Entrepreneuriat" %}</p>
+                <p class="mt-2 text-sm text-gray-400">{% trans "Une communauté de membres et d'acteurs qui construisent dans la durée." %}</p>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+
+    {% if partners %}
+    {% comment %} Bandeau plein cadre : 3 groupes identiques pour une boucle
+        sans couture (translation de -33.333% = exactement un groupe).
+        Seul le premier groupe est annoncé aux lecteurs d'écran. {% endcomment %}
+    <div class="lp-marquee mt-10 md:mt-14" style="--lp-marquee-duration: 36s">
+        <div class="lp-marquee__track">
+            {% for copy in "abc"|make_list %}
+            <ul class="lp-marquee__group" {% if not forloop.first %}aria-hidden="true"{% endif %}>
+                {% for partner in partners %}
+                <li class="shrink-0">
+                    <div class="flex h-16 w-[180px] sm:w-[210px] items-center justify-center rounded-xl bg-white px-5 py-3 transition-transform duration-200 hover:-translate-y-0.5">
+                        {% if partner.url %}<a href="{{ partner.url }}" target="_blank" rel="noopener noreferrer" class="flex h-full w-full items-center justify-center" title="{{ partner.name }}{% if partner.tagline %} — {{ partner.tagline }}{% endif %}">{% endif %}
                         <img src="{{ partner.logo }}" alt="{{ partner.name }}"
-                             class="max-h-12 w-auto max-w-full object-contain mx-auto opacity-80 hover:opacity-100 transition-opacity duration-200"
+                             class="max-h-8 sm:max-h-9 w-auto max-w-full object-contain"
                              loading="lazy" decoding="async">
                         {% if partner.url %}</a>{% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <ul class="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden" data-reveal>
-                    <li class="bg-black px-5 py-7">
-                        <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Infrastructure" %}</p>
-                        <p class="mt-2 text-sm text-gray-400">{% trans "Technologies et capacités de calcul au service des solutions d'IA." %}</p>
-                    </li>
-                    <li class="bg-black px-5 py-7">
-                        <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Innovation" %}</p>
-                        <p class="mt-2 text-sm text-gray-400">{% trans "Un travail continu sur la qualité des modèles et de l'expérience." %}</p>
-                    </li>
-                    <li class="bg-black px-5 py-7">
-                        <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Entrepreneuriat" %}</p>
-                        <p class="mt-2 text-sm text-gray-400">{% trans "Une communauté de membres et d'acteurs qui construisent dans la durée." %}</p>
-                    </li>
-                </ul>
-                {% endif %}
-            </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
         </div>
     </div>
+    {% endif %}
 </section>

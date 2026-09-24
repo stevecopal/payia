@@ -22,23 +22,10 @@
                     <span class="ml-1 text-base font-semibold text-white/45">{{ user.profile.preferred_currency|default:"XAF" }}</span>
                 </p>
             </div>
-            {% if wallet.pending_balance %}
-            <span class="app-chip app-chip-warn shrink-0" title="{% trans 'Montant en attente de validation' %}">
-                <span class="font-mono">{{ wallet.pending_balance|floatformat:2 }}</span>
-            </span>
-            {% endif %}
+            
         </div>
 
-        <div class="mt-4 grid grid-cols-2 gap-2.5">
-            <a href="{% url 'deposit_create' %}" class="app-btn app-btn-primary">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m0 0l-5-5m5 5l5-5"/></svg>
-                {% trans "Déposer" %}
-            </a>
-            <a href="{% url 'withdrawal_create' %}" class="app-btn app-btn-secondary">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-5 5m5-5l5 5"/></svg>
-                {% trans "Retirer" %}
-            </a>
-        </div>
+       
     </section>
 
     {# ——— Repères du compte ——— #}
