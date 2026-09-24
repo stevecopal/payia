@@ -11,7 +11,7 @@
 <div id="pwaInstallModal" class="hidden fixed inset-0 bg-black/70 z-[60] items-center justify-center p-4" style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm p-6 text-center">
         <!-- Icône app -->
-        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-green-600 flex items-center justify-center shadow-lg shadow-green-600/30">
+        <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
             <img src="{% static 'icons/192.png' %}" alt="PAYIA" class="w-14 h-14 rounded-xl">
         </div>
 
@@ -22,10 +22,10 @@
 
         <!-- Instructions manuelles (affichées uniquement si le prompt natif est indisponible) -->
         <div id="pwaManualIos" class="hidden text-xs text-gray-400 bg-white/5 border border-gray-800 rounded-lg p-3 mb-4 text-left leading-relaxed">
-            {% trans "Sur iPhone : touchez l'icône" %} <span class="text-green-400 font-medium">{% trans "Partager" %}</span> {% trans "en bas de Safari, puis" %} <span class="text-green-400 font-medium">« {% trans "Sur l'écran d'accueil" %} »</span>.
+            {% trans "Sur iPhone : touchez l'icône" %} <span class="text-white font-medium">{% trans "Partager" %}</span> {% trans "en bas de Safari, puis" %} <span class="text-white font-medium">« {% trans "Sur l'écran d'accueil" %} »</span>.
         </div>
         <div id="pwaManualOther" class="hidden text-xs text-gray-400 bg-white/5 border border-gray-800 rounded-lg p-3 mb-4 text-left leading-relaxed">
-            {% trans "Ouvrez le menu de votre navigateur" %} <span class="text-green-400 font-bold">⋮</span> {% trans "puis choisissez" %} <span class="text-green-400 font-medium">« {% trans "Installer l'application" %} »</span> {% trans "ou" %} <span class="text-green-400 font-medium">« {% trans "Ajouter à l'écran d'accueil" %} »</span>.
+            {% trans "Ouvrez le menu de votre navigateur" %} <span class="text-white font-bold">⋮</span> {% trans "puis choisissez" %} <span class="text-white font-medium">« {% trans "Installer l'application" %} »</span> {% trans "ou" %} <span class="text-white font-medium">« {% trans "Ajouter à l'écran d'accueil" %} »</span>.
         </div>
 
         <!-- Actions -->

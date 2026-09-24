@@ -7,6 +7,21 @@ from referrals.services.referral_service import ReferralService
 from notifications.services.notification_service import NotificationService
 
 
+def _cycle_progress(rental):
+    if not (rental and rental.start_date and rental.end_date):
+        return None
+    total_days = max((rental.end_date - rental.start_date).days, 1)
+    elapsed_days = max((timezone.now() - rental.start_date).days, 0)
+    remaining_days = max(total_days - elapsed_days, 0)
+    percent = min(int(elapsed_days * 100 / total_days), 100)
+    return {
+        'total_days': total_days,
+        'elapsed_days': min(elapsed_days, total_days),
+        'remaining_days': remaining_days,
+        'percent': percent,
+    }
+
+
 @login_required_custom
 def dashboard_view(request):
     if request.user.is_superuser or (
@@ -21,30 +36,22 @@ def dashboard_view(request):
     unread_notifications = NotificationService.get_unread_count(request.user)
 
     profile = request.user.profile
-
     recent_notifications = NotificationService.get_notifications(request.user)[:5]
 
-    primary_rental = active_rentals.first() if active_rentals else None
-    cycle_progress = None
-    if primary_rental and primary_rental.start_date and primary_rental.end_date:
-        total_days = max((primary_rental.end_date - primary_rental.start_date).days, 1)
-        elapsed_days = max((timezone.now() - primary_rental.start_date).days, 0)
-        remaining_days = max(total_days - elapsed_days, 0)
-        percent = min(int(elapsed_days * 100 / total_days), 100)
-        cycle_progress = {
-            'total_days': total_days,
-            'elapsed_days': min(elapsed_days, total_days),
-            'remaining_days': remaining_days,
-            'percent': percent,
-        }
+    machines = []
+    for rental in active_rentals:
+        machines.append({
+            'rental': rental,
+            'progress': _cycle_progress(rental),
+        })
 
     return render(request, 'dashboard/index.html', {
         'wallet': wallet,
         'active_rentals': active_rentals,
+        'machines': machines,
+        'machine_count': len(machines),
         'referral_stats': referral_stats,
         'unread_notifications': unread_notifications,
         'profile': profile,
         'recent_notifications': recent_notifications,
-        'primary_rental': primary_rental,
-        'cycle_progress': cycle_progress,
     })

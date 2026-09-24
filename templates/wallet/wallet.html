@@ -16,13 +16,7 @@
             <span class="font-mono">{{ wallet.available_balance|floatformat:2 }}</span>
             <span class="text-base font-semibold text-white/50 ml-1">{{ user.profile.preferred_currency|default:"XAF" }}</span>
         </p>
-        {% if wallet.pending_balance > 0 %}
-        <p class="mt-1.5 text-sm text-yellow-400 font-mono">{% trans "En attente" %} : {{ wallet.pending_balance|floatformat:2 }}</p>
-        {% endif %}
-        <div class="mt-4 flex gap-2.5">
-            <a href="{% url 'deposit_create' %}" class="app-btn app-btn-primary flex-1">{% trans "Déposer" %}</a>
-            <a href="{% url 'withdrawal_create' %}" class="app-btn app-btn-secondary flex-1">{% trans "Retirer" %}</a>
-        </div>
+       
     </section>
 
     {# Stats secondaires #}
@@ -46,15 +40,15 @@
     </section>
 
     {# Accès rapides #}
-    <section class="app-stagger-item grid grid-cols-2 gap-3">
+    <section class="app-stagger-item grid grid-cols-2 gap-3 ">
         <a href="{% url 'deposit_list' %}" class="app-quick-link">
-            <span class="app-quick-icon">
+            <span class="app-quick-icon text-green-600">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
             </span>
             <span class="text-sm font-semibold">{% trans "Dépôts" %}</span>
         </a>
         <a href="{% url 'withdrawal_list' %}" class="app-quick-link">
-            <span class="app-quick-icon">
+            <span class="app-quick-icon text-red-400 ">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
             </span>
             <span class="text-sm font-semibold">{% trans "Retraits" %}</span>
