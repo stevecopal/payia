@@ -21,31 +21,20 @@
 
             <div class="grid grid-cols-2 gap-3 mb-5">
                 <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xl font-bold text-green-400">{{ offer.price|floatformat:0 }}</p>
-                    <p class="text-xs text-gray-500">{% trans "Prix" %}</p>
+                    <p class="text-xs text-gray-500">Prix de location</p>
+                    <p class="text-xl font-bold text-green-400">{{ offer.price|floatformat:0 }} XAF</p>
                 </div>
                 <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xl font-bold">{{ offer.duration_days }}</p>
-                    <p class="text-xs text-gray-500">{% trans "Jours" %}</p>
+                    <p class="text-xs text-gray-500">Durée de location</p>
+                    <p class="text-xl font-bold">{{ offer.duration_days }} jours</p>
                 </div>
                 <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xl font-bold">{{ revenue_breakdown.net|floatformat:0 }}</p>
-                    <p class="text-xs text-gray-500">{% trans "Revenu net / periode" %}</p>
+                    <p class="text-xs text-gray-500">Revenu net / période</p>
+                    <p class="text-xl font-bold">{{ revenue_breakdown.net|floatformat:0 }} XAF</p>
                 </div>
                 <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-xl font-bold">{{ offer.total_rentals }}</p>
-                    <p class="text-xs text-gray-500">{% trans "Locations" %}</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 mb-5">
-                <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-sm font-bold text-blue-400">{{ frequency_label }}</p>
-                    <p class="text-xs text-gray-500">{% trans "Frequency" %}</p>
-                </div>
-                <div class="bg-gray-800 rounded-lg p-3 text-center">
-                    <p class="text-sm font-bold text-purple-400">{{ revenue_type_label }}</p>
-                    <p class="text-xs text-gray-500">{% trans "Type" %}</p>
+                    <p class="text-xs text-gray-500">Période de calcul</p>
+                    <p class="text-xl font-bold">{{ frequency_label }}</p>
                 </div>
             </div>
 
@@ -53,19 +42,12 @@
                 <p class="text-[10px] text-green-400 uppercase tracking-wider mb-2">{% trans "Detail du revenu" %}</p>
                 <div class="space-y-1.5">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-400">{% trans "Revenu brut" %}</span>
+                        <span class="text-xs text-green-400">{% trans "Revenu brut" %}</span>
                         <span class="text-sm font-mono">{{ revenue_breakdown.gross|floatformat:2 }} XAF</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-400">{% trans "- Commission parrain (Niv.1, 10%)" %}</span>
-                        <span class="text-sm font-mono text-yellow-400">{{ revenue_breakdown.commission_l1|floatformat:2 }} XAF</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-400">{% trans "- Commission parrain (Niv.2, 5%)" %}</span>
-                        <span class="text-sm font-mono text-yellow-400">{{ revenue_breakdown.commission_l2|floatformat:2 }} XAF</span>
-                    </div>
+                    
                     <div class="border-t border-green-600/20 pt-1.5 flex justify-between items-center">
-                        <span class="text-xs font-semibold text-green-400">{% trans "Revenu net pour vous" %}</span>
+                        <span class="text-xs font-semibold text-green-400">{% trans "Revenu net " %}</span>
                         <span class="text-sm font-mono font-bold text-green-400">{{ revenue_breakdown.net|floatformat:2 }} XAF</span>
                     </div>
                 </div>

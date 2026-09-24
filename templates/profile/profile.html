@@ -28,34 +28,6 @@
         </div>
     </div>
 
-    {% if wallet %}
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-5">
-        <h2 class="text-sm font-semibold mb-4">{% trans "Mon portefeuille" %}</h2>
-        <div class="grid grid-cols-2 gap-3">
-            <div class="bg-gray-800 rounded-lg p-3 text-center">
-                <p class="text-lg font-bold font-mono">{{ wallet.available_balance|floatformat:2 }}</p>
-                <p class="text-xs text-gray-500 mt-0.5">{% trans "Solde disponible" %}</p>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-3 text-center">
-                <p class="text-lg font-bold font-mono text-green-400">{{ wallet.total_deposited|floatformat:2 }}</p>
-                <p class="text-xs text-gray-500 mt-0.5">{% trans "Total déposé" %}</p>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-3 text-center">
-                <p class="text-lg font-bold font-mono text-red-400">{{ wallet.total_withdrawn|floatformat:2 }}</p>
-                <p class="text-xs text-gray-500 mt-0.5">{% trans "Total retiré" %}</p>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-3 text-center">
-                <p class="text-lg font-bold font-mono text-green-400">{{ wallet.total_earnings|floatformat:2 }}</p>
-                <p class="text-xs text-gray-500 mt-0.5">{% trans "Total revenus" %}</p>
-            </div>
-        </div>
-        {% if wallet.referral_earnings %}
-        <div class="mt-3 bg-gray-800 rounded-lg p-3 text-center">
-            <p class="text-sm font-bold font-mono text-green-400">{{ wallet.referral_earnings|floatformat:2 }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">{% trans "Revenus parrainage" %}</p>
-        </div>
-        {% endif %}
-    </div>
-    {% endif %}
+    
 </div>
 {% endblock %}
