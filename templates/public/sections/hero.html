@@ -1,14 +1,13 @@
 {% load static i18n %}
 {% comment %} HERO — image IA + message + CTA (thème clair) {% endcomment %}
-<section id="top" data-hero class="relative isolate flex min-h-screen items-center overflow-hidden bg-white" style="min-height: 100svh">
+<section id="top" data-hero class="relative isolate flex min-h-screen items-center overflow-hidden " style="min-height: 100svh">
 
     <div class="absolute inset-0" aria-hidden="true">
-        <img src="{% static 'images/landing/hero.webp' %}"
+        <img src="{% static 'images/landing/ii.png' %}"
              alt=""
              width="1920" height="1280" loading="lazy" decoding="async"
              class="h-full w-full object-cover object-center">
         <!-- Voile clair : lisibilité du texte sur toute la largeur -->
-        <div class="absolute inset-0 bg-gradient-to-b from-white via-white/30 to-white/40 md:bg-gradient-to-r md:from-white md:via-white/85 md:to-transparent"></div>
     </div>
 
     <!-- Contenu -->
@@ -17,11 +16,11 @@
 
             
 
-            <h1 class="mt-6 font-display text-4xl leading-[1.08] sm:text-5xl lg:text-6xl text-black">
+            <h1 class="mt-6 font-display text-4xl leading-[1.08] sm:text-5xl lg:text-6xl text-white ">
                 {% trans "L'intelligence artificielle, rendue accessible." %}
             </h1>
 
-            <p class="mt-6 max-w-xl text-base leading-relaxed sm:text-lg text-black" data-reveal style="--reveal-delay: 180ms">
+            <p class="mt-6 max-w-xl text-base leading-relaxed sm:text-lg text-white" data-reveal style="--reveal-delay: 180ms">
                 {% trans "PAYIA connecte ses membres à des solutions d'IA : un parcours clair, des cycles aux conditions explicites et un suivi complet depuis votre espace." %}
             </p>
 
