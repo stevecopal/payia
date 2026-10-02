@@ -15,12 +15,12 @@
         {% for offer in offers %}
         <a href="{% url 'ai_offer_detail' slug=offer.slug %}" class="app-card overflow-hidden hover:border-green-500/40 transition-all group">
             {% if offer.image %}
-            <div class="h-40 bg-white/[0.03] overflow-hidden">
+            <div class="h-40 bg-white overflow-hidden">
                 <img src="{{ offer.image.url }}" alt="{{ offer.name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
             </div>
             {% else %}
             <div class="h-40 bg-gradient-to-br from-green-600/10 to-white/[0.03] flex items-center justify-center">
-                <span class="text-green-400/80 text-4xl font-display font-bold">{{ offer.name|first }}</span>
+                <span class="text-green-900/80 text-4xl font-display font-bold">{{ offer.name|first }}</span>
             </div>
             {% endif %}
             <div class="p-4">
@@ -31,7 +31,7 @@
                 <h3 class="font-display font-bold text-sm mb-1 truncate">{{ offer.name }}</h3>
                 <p class="text-xs text-gray-500 line-clamp-2 mb-3">{{ offer.description|truncatewords:15 }}</p>
                 <div class="flex items-center justify-between">
-                    <span class="font-mono text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }} <span class="text-xs text-gray-500">XAF</span></span>
+                    <span class="font-mono text-lg font-bold text-green-900">{{ offer.price|floatformat:0 }} <span class="text-xs text-gray-500">XAF</span></span>
                     <span class="text-xs text-gray-500 font-mono">{{ offer.duration_days }} {% trans "jours" %}</span>
                 </div>
             </div>

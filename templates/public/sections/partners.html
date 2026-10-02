@@ -7,37 +7,37 @@
     dans static/images/partners/CREDITS.txt). À remplacer par les partenaires
     réels de PAYIA dès qu'ils sont fournis. Sans partenaires, la section
     présente simplement l'écosystème dans lequel PAYIA s'inscrit. {% endcomment %}
-<section id="partners" class="scroll-mt-20 py-20 md:py-24 bg-black border-b border-white/5">
+<section id="partners" class="scroll-mt-20 py-20 md:py-24 bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
             <div class="lg:col-span-5">
-                <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
+                <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-900" data-reveal>
                     {% trans "Écosystème" %}
                 </p>
-                <h2 class="mt-4 font-display text-2xl sm:text-3xl leading-[1.15] text-white" data-reveal style="--reveal-delay: 60ms">
+                <h2 class="mt-4 font-display text-2xl sm:text-3xl leading-[1.15] text-gray-900" data-reveal style="--reveal-delay: 60ms">
                     {% trans "Nos partenaires" %}
                 </h2>
             </div>
             <div class="lg:col-span-7">
-                <p class="text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 120ms">
+                <p class="text-sm leading-relaxed text-gray-600" data-reveal style="--reveal-delay: 120ms">
                     {% trans "PAYIA s'inscrit dans un écosystème technologique et entrepreneurial : infrastructures, innovation et terrain de l'entrepreneuriat." %}
                 </p>
             </div>
         </div>
 
         {% if not partners %}
-        <ul class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden" data-reveal>
-            <li class="bg-black px-5 py-7">
-                <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Infrastructure" %}</p>
-                <p class="mt-2 text-sm text-gray-400">{% trans "Technologies et capacités de calcul au service des solutions d'IA." %}</p>
+        <ul class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-200 border border-gray-200 rounded-2xl overflow-hidden" data-reveal>
+            <li class="bg-white px-5 py-7">
+                <p class="text-xs uppercase tracking-[0.16em] text-green-900 font-bold">{% trans "Infrastructure" %}</p>
+                <p class="mt-2 text-sm text-gray-600">{% trans "Technologies et capacités de calcul au service des solutions d'IA." %}</p>
             </li>
-            <li class="bg-black px-5 py-7">
-                <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Innovation" %}</p>
-                <p class="mt-2 text-sm text-gray-400">{% trans "Un travail continu sur la qualité des modèles et de l'expérience." %}</p>
+            <li class="bg-white px-5 py-7">
+                <p class="text-xs uppercase tracking-[0.16em] text-green-900 font-bold">{% trans "Innovation" %}</p>
+                <p class="mt-2 text-sm text-gray-600">{% trans "Un travail continu sur la qualité des modèles et de l'expérience." %}</p>
             </li>
-            <li class="bg-black px-5 py-7">
-                <p class="text-xs uppercase tracking-[0.16em] text-green-500 font-bold">{% trans "Entrepreneuriat" %}</p>
-                <p class="mt-2 text-sm text-gray-400">{% trans "Une communauté de membres et d'acteurs qui construisent dans la durée." %}</p>
+            <li class="bg-white px-5 py-7">
+                <p class="text-xs uppercase tracking-[0.16em] text-green-900 font-bold">{% trans "Entrepreneuriat" %}</p>
+                <p class="mt-2 text-sm text-gray-600">{% trans "Une communauté de membres et d'acteurs qui construisent dans la durée." %}</p>
             </li>
         </ul>
         {% endif %}

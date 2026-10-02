@@ -4,12 +4,12 @@
 {% block dashboard_content %}
 <div class="max-w-lg mx-auto app-stack app-stagger">
     <header class="app-stagger-item">
-        <a href="{% url 'ai_catalog' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Machines" %}</a>
+        <a href="{% url 'ai_catalog' %}" class="text-xs text-green-900 hover:text-green-800 font-semibold">&larr; {% trans "Machines" %}</a>
     </header>
 
     <article class="app-stagger-item app-card overflow-hidden">
         {% if offer.image %}
-        <div class="h-48 bg-white/[0.03] overflow-hidden">
+        <div class="h-48 bg-white overflow-hidden">
             <img src="{{ offer.image.url }}" alt="{{ offer.name }}" class="w-full h-full object-cover">
         </div>
         {% endif %}
@@ -20,37 +20,37 @@
                 {% if offer.is_featured %}<span class="app-chip app-chip-signal">{% trans "Populaire" %}</span>{% endif %}
             </div>
             <h1 class="text-xl font-display font-bold">{{ offer.name }}</h1>
-            <p class="mt-2 text-sm text-gray-400 leading-relaxed">{{ offer.description }}</p>
+            <p class="mt-2 text-sm text-gray-600 leading-relaxed">{{ offer.description }}</p>
 
             <div class="mt-5 grid grid-cols-2 gap-3">
-                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                <div class="app-card p-3.5 text-center bg-white">
                     <p class="text-[11px] text-gray-500">{% trans "Prix" %}</p>
-                    <p class="mt-1 font-mono text-lg font-bold text-green-400">{{ offer.price|floatformat:0 }}</p>
+                    <p class="mt-1 font-mono text-lg font-bold text-green-900">{{ offer.price|floatformat:0 }}</p>
                 </div>
-                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                <div class="app-card p-3.5 text-center bg-white">
                     <p class="text-[11px] text-gray-500">{% trans "Durée" %}</p>
                     <p class="mt-1 font-mono text-lg font-bold">{{ offer.duration_days }} {% trans "jours" %}</p>
                 </div>
-                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                <div class="app-card p-3.5 text-center bg-white">
                     <p class="text-[11px] text-gray-500">{% trans "Revenu net / période" %}</p>
                     <p class="mt-1 font-mono text-lg font-bold">{{ revenue_breakdown.net|floatformat:0 }}</p>
                 </div>
-                <div class="app-card p-3.5 text-center bg-white/[0.04]">
+                <div class="app-card p-3.5 text-center bg-white">
                     <p class="text-[11px] text-gray-500">{% trans "Fréquence" %}</p>
                     <p class="mt-1 text-lg font-bold">{{ frequency_label }}</p>
                 </div>
             </div>
 
             <div class="mt-5 rounded-2xl p-4 border border-green-500/25 bg-green-600/[0.08]">
-                <p class="text-[10px] text-green-400 uppercase tracking-wider mb-2.5">{% trans "Détail du revenu" %}</p>
+                <p class="text-[10px] text-green-900 uppercase tracking-wider mb-2.5">{% trans "Détail du revenu" %}</p>
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-green-400/90">{% trans "Revenu brut" %}</span>
+                        <span class="text-xs text-green-900/90">{% trans "Revenu brut" %}</span>
                         <span class="text-sm font-mono">{{ revenue_breakdown.gross|floatformat:2 }} XAF</span>
                     </div>
                     <div class="border-t border-green-500/20 pt-2 flex justify-between items-center">
-                        <span class="text-xs font-semibold text-green-400">{% trans "Revenu net" %}</span>
-                        <span class="text-sm font-mono font-bold text-green-400">{{ revenue_breakdown.net|floatformat:2 }} XAF</span>
+                        <span class="text-xs font-semibold text-green-900">{% trans "Revenu net" %}</span>
+                        <span class="text-sm font-mono font-bold text-green-900">{{ revenue_breakdown.net|floatformat:2 }} XAF</span>
                     </div>
                 </div>
             </div>
@@ -60,10 +60,10 @@
             <div class="mt-5">
                 {% if user.is_authenticated %}
                     {% if has_active_rental %}
-                    <div class="app-btn app-btn-secondary w-full justify-center !cursor-default !text-green-400 !border-green-500/40">
+                    <div class="app-btn app-btn-secondary w-full justify-center !cursor-default !text-green-900 !border-green-500/40">
                         {% trans "Location active" %}
                     </div>
-                    <a href="{% url 'ai_my_rentals' %}" class="mt-3 text-center block text-xs font-semibold text-green-400 hover:text-green-300">{% trans "Voir mes locations" %}</a>
+                    <a href="{% url 'ai_my_rentals' %}" class="mt-3 text-center block text-xs font-semibold text-green-900 hover:text-green-800">{% trans "Voir mes locations" %}</a>
                     {% else %}
                     <form method="post" action="{% url 'ai_rent' slug=offer.slug %}">
                         {% csrf_token %}

@@ -4,14 +4,14 @@
 {% block dashboard_content %}
 <div class="max-w-lg mx-auto app-stack app-stagger">
     <header class="app-stagger-item">
-        <a href="{% url 'profile' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Profil" %}</a>
+        <a href="{% url 'profile' %}" class="text-xs text-green-900 hover:text-green-800 font-semibold">&larr; {% trans "Profil" %}</a>
         <h1 class="app-page-title mt-1">{% trans "Informations de retrait" %}</h1>
     </header>
     <form method="post" class="app-stagger-item app-card p-5 space-y-4">
         {% csrf_token %}
         {% for field in form %}
         <div>
-            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">{{ field.label }}</label>
+            <label class="block text-xs text-gray-600 uppercase tracking-wider mb-1.5">{{ field.label }}</label>
             {{ field }}
             {% if field.name == 'withdrawal_phone_number' %}
             <p class="mt-1 text-xs text-gray-500">{% trans "Numéro sans le +237, en commençant par 6 (ex : 691234567)." %}</p>

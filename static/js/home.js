@@ -204,7 +204,7 @@
 
             function showToast(event) {
                 var toast = doc.createElement('div');
-                toast.className = 'lp-toast rounded-xl border border-white/10 bg-black/90 backdrop-blur-md px-4 py-3 shadow-lg shadow-black/40';
+                toast.className = 'lp-toast rounded-xl border border-gray-200 bg-white backdrop-blur-md px-4 py-3 shadow-lg shadow-gray-300';
 
                 var row = doc.createElement('div');
                 row.className = 'flex items-start gap-3';
@@ -216,7 +216,7 @@
                 body.className = 'min-w-0';
 
                 var label = doc.createElement('p');
-                label.className = 'text-sm text-white/90';
+                label.className = 'text-sm text-gray-700';
                 label.textContent = event.label || '';
 
                 var when = doc.createElement('p');

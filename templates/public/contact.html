@@ -4,30 +4,30 @@
 {% block content %}
 <section class="py-20 md:py-28 px-4">
     <div class="max-w-3xl mx-auto">
-        <p class="text-center text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400">{% trans "Contact" %}</p>
-        <h1 class="mt-4 text-4xl sm:text-5xl text-center text-white">{% trans "Contactez-nous" %}</h1>
-        <p class="text-gray-400 text-center mt-5 mb-12 max-w-xl mx-auto leading-relaxed">{% trans "Une question ? Besoin d'aide ? Notre équipe est à votre disposition." %}</p>
+        <p class="text-center text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-900">{% trans "Contact" %}</p>
+        <h1 class="mt-4 text-4xl sm:text-5xl text-center text-gray-900">{% trans "Contactez-nous" %}</h1>
+        <p class="text-gray-600 text-center mt-5 mb-12 max-w-xl mx-auto leading-relaxed">{% trans "Une question ? Besoin d'aide ? Notre équipe est à votre disposition." %}</p>
         <form method="post" class="space-y-6 card p-6 sm:p-8" novalidate>
             {% csrf_token %}
             <div>
-                <label class="block text-xs font-medium text-gray-300 mb-2 uppercase tracking-wider">{% trans "Nom" %}</label>
+                <label class="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wider">{% trans "Nom" %}</label>
                 <input type="text" name="name" required autocomplete="name"
-                       class="w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40">
+                       class="w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40">
             </div>
             <div>
-                <label class="block text-xs font-medium text-gray-300 mb-2 uppercase tracking-wider">{% trans "Email" %}</label>
+                <label class="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wider">{% trans "Email" %}</label>
                 <input type="email" name="email" required autocomplete="email"
-                       class="w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40">
+                       class="w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40">
             </div>
             <div>
-                <label class="block text-xs font-medium text-gray-300 mb-2 uppercase tracking-wider">{% trans "Sujet" %}</label>
+                <label class="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wider">{% trans "Sujet" %}</label>
                 <input type="text" name="subject" required
-                       class="w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40">
+                       class="w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40">
             </div>
             <div>
-                <label class="block text-xs font-medium text-gray-300 mb-2 uppercase tracking-wider">{% trans "Message" %}</label>
+                <label class="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wider">{% trans "Message" %}</label>
                 <textarea name="message" rows="5" required
-                          class="w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40 resize-y"></textarea>
+                          class="w-full px-4 py-3 bg-white border border-gray-200 text-gray-900 placeholder-gray-500 rounded-xl outline-none transition-all duration-200 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40 resize-y"></textarea>
             </div>
             <button type="submit" class="btn btn-primary w-full">
                 {% trans "Envoyer" %}

@@ -8,11 +8,11 @@
     </header>
     <section class="app-stagger-item app-card overflow-hidden">
         {% if messages %}
-        <div class="divide-y divide-white/[0.06]">
+        <div class="divide-y divide-gray-200">
             {% for msg in messages %}
             <a href="{% url 'message_detail' pk=msg.pk %}" class="app-list-row app-list-row-click justify-between">
                 <div class="min-w-0">
-                    <p class="text-sm truncate {% if not msg.is_read %}font-semibold{% else %}text-white/75{% endif %}">{{ msg.subject }}</p>
+                    <p class="text-sm truncate {% if not msg.is_read %}font-semibold{% else %}text-gray-600{% endif %}">{{ msg.subject }}</p>
                     <p class="text-xs text-gray-500 truncate mt-0.5">{{ msg.body|truncatewords:15 }}</p>
                 </div>
                 <span class="text-[11px] font-mono text-gray-600 ml-3 shrink-0">{{ msg.created_at|date:"d/m" }}</span>

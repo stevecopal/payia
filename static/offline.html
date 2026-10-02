@@ -9,8 +9,8 @@
     <style>
         body {
             margin: 0;
-            background: #000;
-            color: #fff;
+            background: #ffffff;
+            color: #111827;
             font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
@@ -38,7 +38,7 @@
             <div class="relative inline-flex items-center justify-center mb-8 float-y">
                 <span class="pulse-ring absolute inline-flex h-24 w-24 rounded-full bg-green-500/30"></span>
                 <div class="relative w-24 h-24 rounded-full offline-badge border border-green-500/30 flex items-center justify-center">
-                    <svg class="w-11 h-11 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-11 h-11 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L12 12m0 0L9.75 9.75M3 3l18 18"/>
                     </svg>
@@ -47,13 +47,13 @@
 
             <!-- Titre -->
             <h1 class="text-3xl sm:text-4xl font-bold mb-3">Vous êtes hors ligne</h1>
-            <p class="text-gray-400 text-sm sm:text-base leading-relaxed mb-2">
+            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-2">
                 Pas de connexion Internet détectée.
             </p>
             
 
             <!-- État de reconnexion -->
-            <div id="reconnect-status" class="hidden mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-gray-800 text-xs text-gray-400">
+            <div id="reconnect-status" class="hidden mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 text-xs text-gray-600">
                 <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 <span id="reconnect-text">Reconnexion en cours…</span>
             </div>

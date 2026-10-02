@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from core.models import Setting
 
-DARK_INPUT = 'w-full px-4 py-3 bg-white/[0.04] border border-white/10 text-white rounded-lg outline-none transition-all duration-200 placeholder:text-gray-500 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40'
+DARK_INPUT = 'w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-lg outline-none transition-all duration-200 placeholder:text-gray-500 focus:border-green-600/60 focus:ring-2 focus:ring-green-500/40'
 
 
 class SettingForm(forms.Form):
@@ -32,7 +32,7 @@ class SettingForm(forms.Form):
                         label=setting.key.replace('_', ' ').title(),
                         initial=setting.value.lower() in ('true', '1', 'yes'),
                         required=False,
-                        widget=forms.CheckboxInput(attrs={'class': 'rounded border-gray-600 bg-gray-900 text-green-600 focus:ring-green-500'}),
+                        widget=forms.CheckboxInput(attrs={'class': 'rounded border-gray-300 bg-white text-green-600 focus:ring-green-500'}),
                     )
                 else:
                     self.fields[field_name] = forms.CharField(

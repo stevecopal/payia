@@ -15,7 +15,7 @@
     {% include "base/pwa_head.html" %}
     {% block extra_css %}{% endblock %}
 </head>
-<body class="font-sans bg-black text-white antialiased min-h-screen flex flex-col {% block body_class %}{% endblock %}">
+<body class="font-sans bg-white text-gray-900 antialiased min-h-screen flex flex-col {% block body_class %}{% endblock %}">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:px-4 focus:py-2.5 focus:bg-green-600 focus:text-black focus:text-sm focus:font-bold focus:rounded-lg">{% trans "Aller au contenu principal" %}</a>
     {% include "base/nav.html" %}
 

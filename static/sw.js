@@ -7,7 +7,7 @@
 
 /* VERSION : à incrémenter dès qu'un fichier précaché change (offline.html,
    CSS, icônes), sinon les clients déjà installés gardent l'ancienne copie. */
-const VERSION = 'payia-v2';
+const VERSION = 'payia-v3';
 const OFFLINE_URL = '/offline/';
 
 /* App shell minimal : uniquement ce dont l'app a réellement besoin
@@ -63,7 +63,7 @@ self.addEventListener('fetch', (event) => {
                 .catch(() =>
                     caches.match(OFFLINE_URL).then(
                         (cached) => cached || new Response(
-                            '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>PAYIA - Hors ligne</title></head><body style="background:#000;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Vous êtes hors ligne.</p></body></html>',
+                            '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>PAYIA - Hors ligne</title></head><body style="background:#fff;color:#111827;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Vous êtes hors ligne.</p></body></html>',
                             { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
                         )
                     )

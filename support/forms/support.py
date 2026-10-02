@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from support.models import SupportTicket, SupportMessage
 
-DARK_INPUT = 'w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all placeholder:text-gray-500'
+DARK_INPUT = 'w-full px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all placeholder:text-gray-500'
 
 
 class SupportTicketForm(forms.Form):
@@ -61,7 +61,7 @@ class SupportReplyForm(forms.Form):
     is_internal_note = forms.BooleanField(
         label=_('Note interne (admin)'),
         required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'rounded border-gray-600 bg-gray-900 text-green-600 focus:ring-green-500'}),
+        widget=forms.CheckboxInput(attrs={'class': 'rounded border-gray-300 bg-white text-green-600 focus:ring-green-500'}),
     )
 
 

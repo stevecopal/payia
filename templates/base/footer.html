@@ -1,16 +1,16 @@
 {% load static i18n %}
-<footer class="bg-black  py-10">
+<footer class="bg-white  py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
             <a href="{% url 'home' %}" class="flex items-center" aria-label="PAYIA">
                 <img src="{% static 'images/logo.png' %}" alt="PAYIA" class="h-20 w-auto opacity-90">
             </a>
 
-            <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-400" aria-label="{% trans "Navigation pied de page" %}">
-                <a href="{% url 'about' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "À propos" %}</a>
+            <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-600" aria-label="{% trans "Navigation pied de page" %}">
+                <a href="{% url 'about' %}" class="hover:text-green-800 transition-colors duration-200">{% trans "À propos" %}</a>
         
-                <a href="{% url 'terms' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Conditions" %}</a>
-                <a href="{% url 'privacy' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Confidentialite" %}</a>
+                <a href="{% url 'terms' %}" class="hover:text-green-800 transition-colors duration-200">{% trans "Conditions" %}</a>
+                <a href="{% url 'privacy' %}" class="hover:text-green-800 transition-colors duration-200">{% trans "Confidentialite" %}</a>
             </nav>
         </div>
         <p class="mt-6 text-center text-xs text-gray-500">&copy; {% now "Y" %} PAYIA. {% trans "Tous droits réservés." %}</p>

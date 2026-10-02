@@ -8,25 +8,25 @@
         <a href="{% url 'admin_payment_method_create' %}" class="px-4 py-2 bg-green-600 text-black text-sm rounded-lg hover:bg-green-700 transition-colors font-medium">{% trans "Ajouter" %}</a>
     </div>
 
-    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+    <div class="bg-white backdrop-blur rounded-xl border border-gray-200 overflow-hidden">
         {% for method in methods %}
-        <div class="p-4 border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+        <div class="p-4 border-b border-gray-200/50 last:border-0 hover:bg-gray-100 transition-colors">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono shrink-0">
+                    <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-900 text-sm font-bold font-mono shrink-0">
                         {{ method.name|first|upper }}
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <p class="font-medium text-sm">{{ method.name }}</p>
                             {% if method.is_active %}
-                            <span class="px-1.5 py-0.5 bg-green-600/20 text-green-400 text-[10px] rounded-full">{% trans "Actif" %}</span>
+                            <span class="px-1.5 py-0.5 bg-green-600/20 text-green-900 text-[10px] rounded-full">{% trans "Actif" %}</span>
                             {% else %}
-                            <span class="px-1.5 py-0.5 bg-gray-700 text-gray-400 text-[10px] rounded-full">{% trans "Inactif" %}</span>
+                            <span class="px-1.5 py-0.5 bg-gray-300 text-gray-600 text-[10px] rounded-full">{% trans "Inactif" %}</span>
                             {% endif %}
                         </div>
                         {% if method.phone_number %}
-                        <p class="text-xs text-gray-400 font-mono">{% trans "Numéro:" %} {{ method.phone_number }}</p>
+                        <p class="text-xs text-gray-600 font-mono">{% trans "Numéro:" %} {{ method.phone_number }}</p>
                         {% endif %}
                         {% if method.ussd_template %}
                         <p class="text-xs text-gray-500 font-mono mt-0.5">{% trans "USSD:" %} {{ method.ussd_template }}</p>

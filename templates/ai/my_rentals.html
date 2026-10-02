@@ -5,7 +5,7 @@
 <div class="app-stack app-stagger">
     <header class="app-stagger-item flex items-end justify-between gap-3">
         <div>
-            <a href="{% url 'ai_catalog' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Machines" %}</a>
+            <a href="{% url 'ai_catalog' %}" class="text-xs text-green-900 hover:text-green-800 font-semibold">&larr; {% trans "Machines" %}</a>
             <h1 class="app-page-title mt-1">{% trans "Mes locations" %}</h1>
         </div>
     </header>
@@ -22,24 +22,24 @@
                 </div>
                 <p class="text-xs text-gray-500 mb-3">{{ item.rental.offer.ai_model }}</p>
 
-                <div class="rounded-xl bg-white/[0.04] border border-white/[0.06] p-3 mb-3">
+                <div class="rounded-xl bg-white border border-gray-200 p-3 mb-3">
                     <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1 cd-label" data-rental="{{ item.rental.pk }}" data-sync-url="{% url 'ai_rental_sync' pk=item.rental.pk %}" data-trigger-url="{% url 'ai_rental_trigger_payment' pk=item.rental.pk %}"></p>
                     <div class="flex items-center gap-1.5">
-                        <span class="text-2xl font-bold font-mono text-green-400 cd-h" data-rental="{{ item.rental.pk }}">--</span>
-                        <span class="text-2xl font-bold text-green-400/40">:</span>
-                        <span class="text-2xl font-bold font-mono text-green-400 cd-m" data-rental="{{ item.rental.pk }}">--</span>
-                        <span class="text-2xl font-bold text-green-400/40">:</span>
-                        <span class="text-2xl font-bold font-mono text-green-400 cd-s" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-2xl font-bold font-mono text-green-900 cd-h" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-2xl font-bold text-green-900/40">:</span>
+                        <span class="text-2xl font-bold font-mono text-green-900 cd-m" data-rental="{{ item.rental.pk }}">--</span>
+                        <span class="text-2xl font-bold text-green-900/40">:</span>
+                        <span class="text-2xl font-bold font-mono text-green-900 cd-s" data-rental="{{ item.rental.pk }}">--</span>
                     </div>
                 </div>
 
                 <div class="flex justify-between text-xs">
                     <span class="text-gray-500">{% trans "Expire" %} <span class="font-mono">{{ item.rental.end_date|date:"d/m/Y" }}</span></span>
-                    <span class="text-green-400 font-semibold font-mono cd-earned" data-rental="{{ item.rental.pk }}">{{ item.rental.total_revenue_earned|floatformat:2 }} XAF</span>
+                    <span class="text-green-900 font-semibold font-mono cd-earned" data-rental="{{ item.rental.pk }}">{{ item.rental.total_revenue_earned|floatformat:2 }} XAF</span>
                 </div>
                 <div class="flex justify-between text-xs mt-1">
                     <span class="text-gray-500">{% trans "Paiements" %}</span>
-                    <span class="text-gray-400 font-mono cd-payments" data-rental="{{ item.rental.pk }}">{{ item.rental.payment_count }}</span>
+                    <span class="text-gray-600 font-mono cd-payments" data-rental="{{ item.rental.pk }}">{{ item.rental.payment_count }}</span>
                 </div>
             </a>
             {% endfor %}
@@ -58,7 +58,7 @@
     <section class="app-stagger-item space-y-3">
         <h2 class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">{% trans "Expirées" %}</h2>
         {% if expired_rentals %}
-        <div class="app-card overflow-hidden divide-y divide-white/[0.06]">
+        <div class="app-card overflow-hidden divide-y divide-gray-200">
             {% for rental in expired_rentals %}
             <div class="app-list-row justify-between">
                 <div class="min-w-0">

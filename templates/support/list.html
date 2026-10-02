@@ -5,7 +5,7 @@
 <div class="app-stack app-stagger">
     <header class="app-stagger-item flex items-center justify-between gap-3">
         <div>
-            <a href="{% url 'profile' %}" class="text-xs text-green-400 hover:text-green-300 font-semibold">&larr; {% trans "Profil" %}</a>
+            <a href="{% url 'profile' %}" class="text-xs text-green-900 hover:text-green-800 font-semibold">&larr; {% trans "Profil" %}</a>
             <h1 class="app-page-title mt-1">{% trans "Support" %}</h1>
         </div>
         <a href="{% url 'support_create' %}" class="app-btn app-btn-primary !px-4 !py-2.5 text-xs shrink-0">{% trans "Nouveau" %}</a>
@@ -13,7 +13,7 @@
 
     <section class="app-stagger-item app-card overflow-hidden">
         {% if tickets %}
-        <div class="divide-y divide-white/[0.06]">
+        <div class="divide-y divide-gray-200">
             {% for ticket in tickets %}
             <a href="{% url 'support_ticket_detail' pk=ticket.pk %}" class="app-list-row app-list-row-click justify-between">
                 <div class="min-w-0">

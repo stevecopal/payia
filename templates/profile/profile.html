@@ -7,7 +7,7 @@
     {# ——— En-tête : titre + accès direct aux paramètres ——— #}
     <header class="app-stagger-item flex items-center justify-between gap-3">
         <h1 class="app-page-title">{% trans "Mon profil" %}</h1>
-        <a href="{% url 'settings' %}" class="app-pill inline-flex items-center gap-1.5 text-green-400">
+        <a href="{% url 'settings' %}" class="app-pill inline-flex items-center gap-1.5 text-green-900">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             <span>{% trans "Paramètres" %}</span>
         </a>
@@ -16,12 +16,12 @@
     {# ——— Identité ——— #}
     <section class="app-stagger-item app-hero-card" aria-label="{% trans 'Identité' %}">
         <h2 class="font-display text-xl font-bold tracking-tight truncate">{{ user.display_name }}</h2>
-        <p class="mt-1.5 text-sm text-gray-400 font-mono">{{ user.phone_number }}</p>
+        <p class="mt-1.5 text-sm text-gray-600 font-mono">{{ user.phone_number }}</p>
         {% if profile.email %}
         <p class="mt-1 text-xs text-gray-500 truncate">{{ profile.email }}</p>
         {% endif %}
 
-        <div class="mt-4 pt-3.5 border-t border-white/[0.07] flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+        <div class="mt-4 pt-3.5 border-t border-gray-200 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
             {% if profile.profile_status == 'VERIFIED' %}
             <span class="app-chip app-chip-signal">{% trans "Profil vérifié" %}</span>
             {% elif profile.profile_status == 'EN_ATTENTE' %}
@@ -37,7 +37,7 @@
     <section class="app-stagger-item app-card p-4 sm:p-5" aria-label="{% trans 'Complétion du profil' %}">
         <div class="flex items-center justify-between gap-3">
             <h2 class="app-section-title">{% trans "Complétion du profil" %}</h2>
-            <span class="font-mono text-xs font-bold text-green-400">{{ completion_percent }}%</span>
+            <span class="font-mono text-xs font-bold text-green-900">{{ completion_percent }}%</span>
         </div>
         <div class="app-progress mt-3.5" role="progressbar" aria-valuenow="{{ completion_percent }}" aria-valuemin="0" aria-valuemax="100">
             <span class="app-progress-fill" style="width: {{ completion_percent }}%"></span>
@@ -45,18 +45,18 @@
         <ul class="mt-4 space-y-2.5">
             {% for step in completion_steps %}
             <li class="flex items-center gap-3">
-                <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 {% if step.done %}bg-green-600/15 border border-green-500/30 text-green-400{% else %}bg-white/[0.05] border border-white/10 text-gray-600{% endif %}">
+                <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 {% if step.done %}bg-green-600/15 border border-green-500/30 text-green-900{% else %}bg-white border border-gray-200 text-gray-600{% endif %}">
                     {% if step.done %}
                     <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                     {% else %}
                     <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
                     {% endif %}
                 </span>
-                <span class="flex-1 min-w-0 text-sm truncate {% if step.done %}text-gray-500 line-through{% else %}text-white/85{% endif %}">
+                <span class="flex-1 min-w-0 text-sm truncate {% if step.done %}text-gray-500 line-through{% else %}text-gray-700{% endif %}">
                     {% if step.key == 'identity' %}{% trans "Nom et prénom" %}{% elif step.key == 'email' %}{% trans "Adresse email" %}{% else %}{% trans "Informations de retrait" %}{% endif %}
                 </span>
                 {% if not step.done %}
-                <a href="{% url step.target %}" class="shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-green-400 hover:text-green-300 transition-colors">
+                <a href="{% url step.target %}" class="shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-green-900 hover:text-green-800 transition-colors">
                     {% trans "Compléter" %}
                     <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </a>
@@ -69,21 +69,21 @@
 
     {# ——— Repères du compte ——— #}
     <section class="app-stagger-item grid grid-cols-2 gap-3" aria-label="{% trans 'Repères du compte' %}">
-        <a href="{% url 'wallet' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-white/15 transition-colors">
+        <a href="{% url 'wallet' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-gray-400 transition-colors">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">{% trans "Solde disponible" %}</p>
-            <p class="font-mono text-lg font-bold leading-none text-green-400 truncate">{{ wallet.available_balance|default:0|floatformat:2 }}</p>
+            <p class="font-mono text-lg font-bold leading-none text-green-900 truncate">{{ wallet.available_balance|default:0|floatformat:2 }}</p>
         </a>
-        <a href="{% url 'ai_my_rentals' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-white/15 transition-colors">
+        <a href="{% url 'ai_my_rentals' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-gray-400 transition-colors">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">{% trans "Machines actives" %}</p>
             <p class="font-mono text-lg font-bold leading-none truncate">{{ active_machines_count }}</p>
         </a>
-        <a href="{% url 'referrals' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-white/15 transition-colors">
+        <a href="{% url 'referrals' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-gray-400 transition-colors">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">{% trans "Filleuls" %}</p>
             <p class="font-mono text-lg font-bold leading-none truncate">{{ referrals_count }}</p>
         </a>
-        <a href="{% url 'referrals' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-white/15 transition-colors">
+        <a href="{% url 'referrals' %}" class="app-card p-3.5 min-h-[84px] flex flex-col justify-between gap-2 hover:border-gray-400 transition-colors">
             <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">{% trans "Revenus parrainage" %}</p>
-            <p class="font-mono text-lg font-bold leading-none text-green-400 truncate">{{ wallet.referral_earnings|default:0|floatformat:2 }}</p>
+            <p class="font-mono text-lg font-bold leading-none text-green-900 truncate">{{ wallet.referral_earnings|default:0|floatformat:2 }}</p>
         </a>
     </section>
 
@@ -98,7 +98,7 @@
             {% endif %}
         </div>
 
-        <dl class="border-t border-white/[0.07] divide-y divide-white/[0.07]">
+        <dl class="border-t border-gray-200 divide-y divide-gray-200">
             <div class="flex items-center justify-between gap-4 px-4 sm:px-5 py-3">
                 <dt class="text-xs text-gray-500 shrink-0">{% trans "Numéro" %}</dt>
                 <dd class="text-sm font-mono text-right truncate">{{ profile.withdrawal_phone_number|default:"—" }}</dd>
@@ -110,11 +110,11 @@
         </dl>
 
         {% if profile.withdrawal_phone_number and profile.withdrawal_account_name %}
-        <p class="px-4 sm:px-5 py-3.5 border-t border-white/[0.07] text-[11px] text-gray-500 leading-relaxed">
+        <p class="px-4 sm:px-5 py-3.5 border-t border-gray-200 text-[11px] text-gray-500 leading-relaxed">
             {% trans "Ces informations sont verrouillées. Contactez le support si vous devez les corriger." %}
         </p>
         {% else %}
-        <div class="p-4 border-t border-white/[0.07]">
+        <div class="p-4 border-t border-gray-200">
             <a href="{% url 'withdrawal_info' %}" class="app-btn app-btn-primary app-btn-block">{% trans "Ajouter mes informations de retrait" %}</a>
         </div>
         {% endif %}

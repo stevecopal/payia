@@ -6,8 +6,8 @@
     <h1 class="text-2xl font-bold font-display">{% trans "Utilisateurs" %}</h1>
 
     <form method="get" class="flex flex-col sm:flex-row gap-3">
-        <input type="text" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher par nom, téléphone, email...' %}" class="flex-1 px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm">
-        <select name="status" class="px-4 py-2.5 bg-white/5 border border-gray-800 rounded-lg text-white text-sm focus:ring-2 focus:ring-green-500 outline-none">
+        <input type="text" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher par nom, téléphone, email...' %}" class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm">
+        <select name="status" class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 text-sm focus:ring-2 focus:ring-green-500 outline-none">
             <option value="">{% trans "Tous" %}</option>
             <option value="active" {% if status == 'active' %}selected{% endif %}>{% trans "Actifs" %}</option>
             <option value="suspended" {% if status == 'suspended' %}selected{% endif %}>{% trans "Suspendus" %}</option>
@@ -16,20 +16,20 @@
         <button type="submit" class="px-6 py-2.5 bg-green-600 text-black text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">{% trans "Filtrer" %}</button>
     </form>
 
-    <div class="bg-white/5 backdrop-blur rounded-xl border border-gray-800 overflow-hidden">
+    <div class="bg-white backdrop-blur rounded-xl border border-gray-200 overflow-hidden">
         {% for u in users %}
-        <a href="{% url 'admin_user_detail' pk=u.pk %}" class="flex items-center justify-between p-4 border-b border-gray-800/50 hover:bg-white/5 transition-colors">
+        <a href="{% url 'admin_user_detail' pk=u.pk %}" class="flex items-center justify-between p-4 border-b border-gray-200/50 hover:bg-gray-100 transition-colors">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-400 text-sm font-bold font-mono">
+                <div class="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center text-green-900 text-sm font-bold font-mono">
                     {{ u.profile.first_name|first|upper }}{{ u.profile.last_name|first|upper }}
                 </div>
                 <div>
                     <p class="font-medium text-sm">{{ u.profile.first_name|default:u.username }} {{ u.profile.last_name }}</p>
-                    <p class="text-xs text-gray-400 font-mono">{{ u.phone_number }}</p>
+                    <p class="text-xs text-gray-600 font-mono">{{ u.phone_number }}</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <span class="px-2.5 py-1 text-xs rounded-full font-medium {% if u.is_suspended %}bg-red-500/15 text-red-400{% elif u.is_active %}bg-green-500/15 text-green-400{% else %}bg-gray-500/15 text-gray-400{% endif %}">
+                <span class="px-2.5 py-1 text-xs rounded-full font-medium {% if u.is_suspended %}bg-red-500/15 text-red-400{% elif u.is_active %}bg-green-500/15 text-green-900{% else %}bg-gray-500/15 text-gray-600{% endif %}">
                     {% if u.is_suspended %}{% trans "Suspendu" %}{% elif u.is_active %}{% trans "Actif" %}{% else %}{% trans "Inactif" %}{% endif %}
                 </span>
                 <span class="text-xs text-gray-500 hidden sm:inline">{{ u.date_joined|date:"d/m/Y" }}</span>
@@ -44,11 +44,11 @@
     {% if users.has_other_pages %}
     <div class="flex justify-center gap-2">
         {% if users.has_previous %}
-        <a href="?page={{ users.previous_page_number }}&q={{ q }}&status={{ status }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Précédent" %}</a>
+        <a href="?page={{ users.previous_page_number }}&q={{ q }}&status={{ status }}" class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-100 transition-colors">{% trans "Précédent" %}</a>
         {% endif %}
-        <span class="px-4 py-2 text-sm text-gray-400">{% trans "Page" %} {{ users.number }} / {{ users.paginator.num_pages }}</span>
+        <span class="px-4 py-2 text-sm text-gray-600">{% trans "Page" %} {{ users.number }} / {{ users.paginator.num_pages }}</span>
         {% if users.has_next %}
-        <a href="?page={{ users.next_page_number }}&q={{ q }}&status={{ status }}" class="px-4 py-2 bg-white/5 border border-gray-800 rounded-lg text-sm hover:bg-white/10 transition-colors">{% trans "Suivant" %}</a>
+        <a href="?page={{ users.next_page_number }}&q={{ q }}&status={{ status }}" class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-100 transition-colors">{% trans "Suivant" %}</a>
         {% endif %}
     </div>
     {% endif %}

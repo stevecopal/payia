@@ -4,49 +4,49 @@
     contexte `testimonials` (données statiques de démarrage définies dans
     core/views/home.py, `_static_testimonials`) : à remplacer par les vrais
     témoignages (photo, prénom, rôle, texte) dès qu'ils sont fournis. {% endcomment %}
-<section id="trust" class="scroll-mt-20 py-24 md:py-32 bg-white/[0.02]">
+<section id="trust" class="scroll-mt-20 py-24 md:py-32 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div class="max-w-3xl">
-            <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
+            <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-900" data-reveal>
                 {% trans "Confiance" %}
             </p>
-            <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.12] text-white" data-reveal style="--reveal-delay: 80ms">
+            <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.12] text-gray-900" data-reveal style="--reveal-delay: 80ms">
                 {% trans "Sur quoi nous nous engageons" %}
             </h2>
         </div>
 
         <!-- Déclaration institutionnelle -->
-        <figure class="mt-12 rounded-2xl border border-white/10 bg-black px-6 py-10 sm:px-12 sm:py-14" data-reveal>
-            <blockquote class="font-display text-2xl sm:text-3xl lg:text-4xl leading-[1.3] text-white max-w-4xl">
+        <figure class="mt-12 rounded-2xl border border-gray-200 bg-white px-6 py-10 sm:px-12 sm:py-14" data-reveal>
+            <blockquote class="font-display text-2xl sm:text-3xl lg:text-4xl leading-[1.3] text-gray-900 max-w-4xl">
                 {% trans "Nous ne promettons pas de rendement. Nous promettons un cadre lisible, des conditions explicites et un suivi réel de votre activité." %}
             </blockquote>
-            <figcaption class="mt-6 text-xs uppercase tracking-[0.18em] text-green-400 font-bold">
+            <figcaption class="mt-6 text-xs uppercase tracking-[0.18em] text-green-900 font-bold">
                 {% trans "PAYIA — notre ligne directrice" %}
             </figcaption>
         </figure>
 
         <!-- Engagements -->
-        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
-            <div class="bg-black p-6 sm:p-8" data-reveal>
-                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                <h3 class="mt-4 text-base font-bold text-white">{% trans "Cadre et conditions explicites" %}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Chaque offre affiche sa durée, son fonctionnement et ses conditions. Vous confirmez en connaissance de cause." %}</p>
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200 border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="bg-white p-6 sm:p-8" data-reveal>
+                <svg class="w-6 h-6 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <h3 class="mt-4 text-base font-bold text-gray-900">{% trans "Cadre et conditions explicites" %}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-gray-600">{% trans "Chaque offre affiche sa durée, son fonctionnement et ses conditions. Vous confirmez en connaissance de cause." %}</p>
             </div>
-            <div class="bg-black p-6 sm:p-8" data-reveal style="--reveal-delay: 60ms">
-                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                <h3 class="mt-4 text-base font-bold text-white">{% trans "Sécurité du compte" %}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Connexion par numéro vérifié, protections sur les accès sensibles et bonnes pratiques rappelées à chaque étape." %}</p>
+            <div class="bg-white p-6 sm:p-8" data-reveal style="--reveal-delay: 60ms">
+                <svg class="w-6 h-6 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <h3 class="mt-4 text-base font-bold text-gray-900">{% trans "Sécurité du compte" %}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-gray-600">{% trans "Connexion par numéro vérifié, protections sur les accès sensibles et bonnes pratiques rappelées à chaque étape." %}</p>
             </div>
-            <div class="bg-black p-6 sm:p-8" data-reveal style="--reveal-delay: 120ms">
-                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                <h3 class="mt-4 text-base font-bold text-white">{% trans "Suivi et transparence" %}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Votre activité, vos cycles et vos enregistrements sont consultables à tout moment dans votre espace." %}</p>
+            <div class="bg-white p-6 sm:p-8" data-reveal style="--reveal-delay: 120ms">
+                <svg class="w-6 h-6 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <h3 class="mt-4 text-base font-bold text-gray-900">{% trans "Suivi et transparence" %}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-gray-600">{% trans "Votre activité, vos cycles et vos enregistrements sont consultables à tout moment dans votre espace." %}</p>
             </div>
-            <div class="bg-black p-6 sm:p-8" data-reveal style="--reveal-delay: 180ms">
-                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                <h3 class="mt-4 text-base font-bold text-white">{% trans "Accompagnement humain" %}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-gray-400">{% trans "Une équipe de support joignable depuis la plateforme pour vos questions, avant comme après votre inscription." %}</p>
+            <div class="bg-white p-6 sm:p-8" data-reveal style="--reveal-delay: 180ms">
+                <svg class="w-6 h-6 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                <h3 class="mt-4 text-base font-bold text-gray-900">{% trans "Accompagnement humain" %}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-gray-600">{% trans "Une équipe de support joignable depuis la plateforme pour vos questions, avant comme après votre inscription." %}</p>
             </div>
         </div>
     </div>
@@ -59,15 +59,15 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
                 <div class="lg:col-span-5">
-                    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-400" data-reveal>
+                    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-green-900" data-reveal>
                         {% trans "Témoignages" %}
                     </p>
-                    <h2 class="mt-4 font-display text-2xl sm:text-3xl leading-[1.15] text-white" data-reveal style="--reveal-delay: 60ms">
+                    <h2 class="mt-4 font-display text-2xl sm:text-3xl leading-[1.15] text-gray-900" data-reveal style="--reveal-delay: 60ms">
                         {% trans "Ce qu'en disent nos membres" %}
                     </h2>
                 </div>
                 <div class="lg:col-span-7">
-                    <p class="text-sm leading-relaxed text-gray-400" data-reveal style="--reveal-delay: 120ms">
+                    <p class="text-sm leading-relaxed text-gray-600" data-reveal style="--reveal-delay: 120ms">
                         {% trans "Des retours de membres sur la clarté des conditions, le suivi de l'activité et l'accompagnement au quotidien." %}
                     </p>
                 </div>
@@ -80,31 +80,31 @@
                 <ul class="lp-marquee__group" {% if not forloop.first %}aria-hidden="true"{% endif %}>
                     {% for t in testimonials %}
                     <li class="shrink-0 w-[300px] sm:w-[360px] lg:w-[400px]">
-                        <figure class="h-full flex flex-col rounded-2xl border border-white/10 bg-black p-6">
+                        <figure class="h-full flex flex-col rounded-2xl border border-gray-200 bg-white p-6">
                             <div class="flex items-center justify-between gap-4">
                                 <div class="flex items-center gap-1" title="{{ t.rating }}/5">
                                     {% for i in "12345"|make_list %}
-                                    <svg class="h-3.5 w-3.5 {% if forloop.counter <= t.rating %}fill-green-400{% else %}fill-white/15{% endif %}" viewBox="0 0 20 20" aria-hidden="true">
+                                    <svg class="h-3.5 w-3.5 {% if forloop.counter <= t.rating %}fill-green-800{% else %}fill-gray-300{% endif %}" viewBox="0 0 20 20" aria-hidden="true">
                                         <path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"/>
                                     </svg>
                                     {% endfor %}
                                     <span class="sr-only">{{ t.rating }}/5</span>
                                 </div>
-                                <svg class="h-5 w-5 shrink-0 text-green-500/40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <svg class="h-5 w-5 shrink-0 text-green-900/40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M7.17 6A5.17 5.17 0 0 0 2 11.17V18h6.5v-6.5H5.6c.2-1.7 1.4-3.1 3.05-3.55L7.17 6zm10 0A5.17 5.17 0 0 0 12 11.17V18h6.5v-6.5h-2.9c.2-1.7 1.4-3.1 3.05-3.55L17.17 6z"/>
                                 </svg>
                             </div>
-                            <blockquote class="mt-4 flex-1 text-sm leading-relaxed text-gray-300">
+                            <blockquote class="mt-4 flex-1 text-sm leading-relaxed text-gray-700">
                                 «&nbsp;{{ t.quote }}&nbsp;»
                             </blockquote>
                             <figcaption class="mt-6 flex items-center gap-3">
                                 {% if t.photo %}
                                 <img src="{{ t.photo }}" alt="" class="h-10 w-10 rounded-full object-cover" loading="lazy">
                                 {% else %}
-                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-green-500/30 bg-green-600/15 text-xs font-bold text-green-400" aria-hidden="true">{{ t.initials }}</span>
+                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-green-500/30 bg-green-600/15 text-xs font-bold text-green-900" aria-hidden="true">{{ t.initials }}</span>
                                 {% endif %}
                                 <span class="min-w-0">
-                                    <span class="block text-sm font-bold text-white truncate">{{ t.name }}</span>
+                                    <span class="block text-sm font-bold text-gray-900 truncate">{{ t.name }}</span>
                                     <span class="block text-xs text-gray-500 truncate">{{ t.role }}</span>
                                 </span>
                             </figcaption>
@@ -120,9 +120,9 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mt-12 flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-500" data-reveal>
-            <a href="{% url 'terms' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Conditions d'utilisation" %}</a>
-            <a href="{% url 'privacy' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Politique de confidentialité" %}</a>
-            <a href="{% url 'contact' %}" class="hover:text-green-400 transition-colors duration-200">{% trans "Nous contacter" %}</a>
+            <a href="{% url 'terms' %}" class="hover:text-green-800 transition-colors duration-200">{% trans "Conditions d'utilisation" %}</a>
+            <a href="{% url 'privacy' %}" class="hover:text-green-800 transition-colors duration-200">{% trans "Politique de confidentialité" %}</a>
+            <a href="{% url 'contact' %}" class="hover:text-green-800 transition-colors duration-200">{% trans "Nous contacter" %}</a>
         </div>
     </div>
 </section>
