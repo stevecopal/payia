@@ -9,10 +9,6 @@
 {% block body_class %}home-page{% endblock %}
 {% block main_class %}{% endblock %}
 
-{% block extra_css %}
-<link rel="preload" as="image" href="{% static 'images/landing/hero.webp' %}" type="image/webp" fetchpriority="high">
-{% endblock %}
-
 {% block content %}
 {% include "public/sections/hero.html" %}
 {% include "public/sections/about.html" %}

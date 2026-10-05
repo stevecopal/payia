@@ -1,49 +1,68 @@
 {% load static i18n %}
-{% comment %} HERO — image IA + message + CTA (thème clair) {% endcomment %}
-<section id="top" data-hero class="relative isolate flex min-h-screen items-center overflow-hidden " style="min-height: 100svh">
+{% comment %} HERO — message + visuel IA animé (réseau neuronal canvas, thème clair) {% endcomment %}
+<section id="top" data-hero class="hero">
 
-    <div class="absolute inset-0" aria-hidden="true">
-        <img src="{% static 'images/landing/ii.png' %}"
-             alt=""
-             width="1920" height="1280" loading="lazy" decoding="async"
-             class="h-full w-full object-cover object-center">
-        <!-- Voile clair : lisibilité du texte sur toute la largeur -->
-    </div>
-
-    <!-- Contenu -->
-    <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 md:pt-32 md:pb-24">
-        <div class="max-w-2xl">
-
+    <!-- Contenu éditorial -->
+    <div class="hero__shell">
+        <div class="hero__content">
             
 
-            <h1 class="mt-6 font-display text-4xl leading-[1.08] sm:text-5xl lg:text-6xl text-white ">
+            <h1 class="hero__title" data-reveal style="--reveal-delay: 90ms">
                 {% trans "L'intelligence artificielle, rendue accessible." %}
             </h1>
 
-            <p class="mt-6 max-w-xl text-base leading-relaxed sm:text-lg text-white" data-reveal style="--reveal-delay: 180ms">
+            <p class="hero__lead" data-reveal style="--reveal-delay: 180ms">
                 {% trans "PAYIA connecte ses membres à des solutions d'IA : un parcours clair, des cycles aux conditions explicites et un suivi complet depuis votre espace." %}
             </p>
 
-            <div class="mt-9 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4" data-reveal style="--reveal-delay: 260ms">
+            <div class="hero__actions" data-reveal style="--reveal-delay: 260ms">
                 {% if user.is_authenticated %}
                 <a href="{% url 'dashboard' %}"
-                   class="group inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-green-600 text-black text-sm font-bold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-lg shadow-green-900/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+                   class="group hero__cta hero__cta--primary">
                     {% trans "Accéder à mon espace" %}
                     <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
                 {% else %}
                 <a href="{% url 'register' %}"
-                   class="group inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-green-600 text-black text-sm font-bold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-lg shadow-green-900/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+                   class="group hero__cta hero__cta--primary">
                     {% trans "Créer mon compte" %}
                     <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
                 {% endif %}
-                <a href="#about"
-                   class="inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-gray-700 border border-gray-300 rounded-lg hover:border-gray-400 hover:text-gray-900 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 focus-visible:ring-offset-white bg-white">
+                <a href="#about" class="hero__cta hero__cta--ghost">
                     {% trans "Découvrir PAYIA" %}
                 </a>
             </div>
 
+            
         </div>
+
+        <!-- Visuel IA : colonne de droite sur desktop, arrière-plan en bas sur mobile -->
+        <figure class="hero__visual" aria-hidden="true">
+            <div class="hero-panel" data-hero-panel>
+                <span class="hero-panel__grid"></span>
+                <span class="hero-panel__glow"></span>
+                <canvas class="hero-panel__canvas" data-hero-canvas></canvas>
+
+                <div class="hero-panel__hud hero-panel__hud--top">
+                    <span class="hero-panel__label">
+                        <span class="hero-panel__signal"></span>
+                        {% trans "PAYIA — signal IA" %}
+                    </span>
+                    <span class="hero-panel__label hero-panel__label--muted">{% trans "Réseau actif" %}</span>
+                </div>
+
+                <div class="hero-panel__hud hero-panel__hud--bottom">
+                    <span class="hero-panel__chip">{% trans "Modèles référencés" %}</span>
+                    <span class="hero-panel__chip">{% trans "Cycles explicites" %}</span>
+                    <span class="hero-panel__chip">{% trans "Suivi de bout en bout" %}</span>
+                </div>
+
+                <span class="hero-panel__corner hero-panel__corner--tl"></span>
+                <span class="hero-panel__corner hero-panel__corner--tr"></span>
+                <span class="hero-panel__corner hero-panel__corner--bl"></span>
+                <span class="hero-panel__corner hero-panel__corner--br"></span>
+            </div>
+        </figure>
     </div>
 </section>
