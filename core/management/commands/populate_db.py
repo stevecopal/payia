@@ -150,7 +150,7 @@ class Command(BaseCommand):
     def create_settings(self):
         settings_data = [
             ('minimum_withdrawal', '3500', 'INTEGER', 'Montant minimum de retrait'),
-            ('minimum_deposit', '2500', 'INTEGER', 'Montant minimum de depot'),
+            ('minimum_deposit', '500', 'INTEGER', 'Montant minimum de depot'),
             ('level_1_percentage', '10', 'DECIMAL', 'Commission parrainage niveau 1 (%)'),
             ('level_2_percentage', '5', 'DECIMAL', 'Commission parrainage niveau 2 (%)'),
             ('platform_name', 'PAYIA', 'STRING', 'Nom de la plateforme'),

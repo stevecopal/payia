@@ -15,4 +15,5 @@ dependencies = [
     # ImageField / ImageField forms (profils, offres IA, preuves de dépôt)
     "pillow>=10.0",
     "psycopg[binary]>=3.3.6",
+    "requests>=2.31",
 ]

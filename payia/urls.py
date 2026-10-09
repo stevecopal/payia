@@ -6,6 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core.views import admin_panel
 from core.views.pwa import service_worker, manifest as pwa_manifest, offline as pwa_offline
+from transactions.views.online_deposits import tara_webhook
 
 
 logger = logging.getLogger(__name__)
@@ -74,6 +75,9 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('support/', include('support.urls')),
     path('dashboard/', include('dashboard.urls')),
+
+    # Notification de paiement Tara Money (authentifiee par jeton + statut API)
+    path('webhooks/tara/', tara_webhook, name='tara_webhook'),
     
     path('admin-panel/', admin_panel.admin_dashboard, name='admin_dashboard'),
     path('admin-panel/users/', admin_panel.admin_users, name='admin_users'),

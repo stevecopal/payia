@@ -31,33 +31,64 @@
         {% csrf_token %}
         <input type="hidden" name="step" value="1">
 
-        <div>
-            <label class="block text-xs text-gray-600 uppercase tracking-wider mb-1.5">{% trans "Moyen de paiement" %}</label>
-            <div class="space-y-2">
-                {% for pm in payment_methods %}
-                <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-200 cursor-pointer hover:border-green-500/50 transition-colors {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}border-green-500/60 bg-green-600/10{% endif %}">
-                    <input type="radio" name="payment_method" value="{{ pm.pk }}" {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}checked{% endif %} class="hidden">
-                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}border-green-500{% else %}border-gray-600{% endif %}">
-                        {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}
-                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
-                        {% endif %}
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium">{{ pm.name }}</p>
-                        {% if pm.phone_number %}
-                        <p class="text-xs text-gray-500 font-mono">{% trans "Numéro:" %} {{ pm.phone_number }}</p>
-                        {% endif %}
-                    </div>
-                </label>
-                {% endfor %}
-            </div>
-            {% if errors.payment_method %}<p class="mt-1 text-xs text-red-400">{{ errors.payment_method }}</p>{% endif %}
-        </div>
+         <div>
+             <label class="block text-xs text-gray-600 uppercase tracking-wider mb-1.5">{% trans "Moyen de paiement" %}</label>
+ 
+             {% if online_channels %}
+             <p class="text-[11px] text-gray-500 mb-2">{% trans "Paiement automatique - crédité dès confirmation par Tara Money" %}</p>
+             <div class="space-y-2">
+                 {% for ch in online_channels %}
+                 <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-200 cursor-pointer hover:border-green-500/50 transition-colors {% if form_data.payment_method_id == ch.value %}border-green-500/60 bg-green-600/10{% endif %}">
+                     <input type="radio" name="payment_method" value="{{ ch.value }}" {% if form_data.payment_method_id == ch.value %}checked{% endif %} class="hidden">
+                     <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 {% if form_data.payment_method_id == ch.value %}border-green-500{% else %}border-gray-600{% endif %}">
+                         {% if form_data.payment_method_id == ch.value %}
+                         <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                         {% endif %}
+                     </div>
+                     <div class="flex-1">
+                         <p class="text-sm font-medium">{{ ch.label }}</p>
+                         {% if ch.description %}
+                         <p class="text-xs text-gray-500 mt-0.5">{{ ch.description }}</p>
+                         {% endif %}
+                     </div>
+                 </label>
+                 {% endfor %}
+             </div>
+             {% endif %}
+ 
+             {% if payment_methods %}
+             <p class="text-[11px] text-gray-500 mt-4 mb-2">{% trans "Autres moyens (vérification manuelle)" %}</p>
+             <div class="space-y-2">
+                 {% for pm in payment_methods %}
+                 <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-200 cursor-pointer hover:border-green-500/50 transition-colors {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}border-green-500/60 bg-green-600/10{% endif %}">
+                     <input type="radio" name="payment_method" value="{{ pm.pk }}" {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}checked{% endif %} class="hidden">
+                     <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}border-green-500{% else %}border-gray-600{% endif %}">
+                         {% if form_data.payment_method_id == pm.pk|stringformat:"d" %}
+                         <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                         {% endif %}
+                     </div>
+                     <div class="flex-1">
+                         <p class="text-sm font-medium">{{ pm.name }}</p>
+                         {% if pm.description %}
+                         <p class="text-xs text-gray-500 mt-0.5">{{ pm.description }}</p>
+                         {% endif %}
+                         {% if pm.phone_number %}
+                         <p class="text-xs text-gray-500 font-mono">{% trans "Numéro:" %} {{ pm.phone_number }}</p>
+                         {% endif %}
+                     </div>
+                 </label>
+                 {% endfor %}
+             </div>
+             {% endif %}
+ 
+             {% if errors.payment_method %}<p class="mt-1 text-xs text-red-400">{{ errors.payment_method }}</p>{% endif %}
+         </div>
 
+        
         <div>
             <label class="block text-xs text-gray-600 uppercase tracking-wider mb-1.5">{% trans "Numéro de téléphone" %}</label>
             <div class="flex items-center gap-0">
-                <span class="px-3 py-3 bg-white border border-gray-200 border-r-0 rounded-l-xl text-sm text-gray-600 font-mono">+237</span>
+                <span class="px-3 py-3 bg-white border border-gray-200 border-r-0 rounded-l-xl text-sm text-gray-600 font-mono">237</span>
                 <input type="text" name="phone_digits" value="{{ form_data.phone_digits|default:'' }}" maxlength="9" pattern="[6][0-9]{8}" inputmode="numeric" class="flex-1 px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-r-xl focus:ring-2 focus:ring-green-500/40 focus:border-green-600/60 outline-none text-sm font-mono placeholder-gray-500" placeholder="6XXXXXXXX">
             </div>
             {% if errors.phone_digits %}<p class="mt-1 text-xs text-red-400">{{ errors.phone_digits }}</p>{% endif %}
@@ -180,7 +211,7 @@
         <div>
             <label class="block text-xs text-gray-600 uppercase tracking-wider mb-1.5">{% trans "Numéro utilisé pour la transaction" %}</label>
             <div class="flex items-center gap-0">
-                <span class="px-3 py-3 bg-white border border-gray-200 border-r-0 rounded-l-xl text-sm text-gray-600 font-mono">+237</span>
+                <span class="px-3 py-3 bg-white border border-gray-200 border-r-0 rounded-l-xl text-sm text-gray-600 font-mono">237</span>
                 <input type="text" name="tx_phone_digits" value="{{ form_data.tx_phone_digits|default:'' }}" maxlength="9" pattern="[6][0-9]{8}" inputmode="numeric" class="flex-1 px-4 py-3 bg-white border border-gray-200 text-gray-900 rounded-r-xl focus:ring-2 focus:ring-green-500/40 focus:border-green-600/60 outline-none text-sm font-mono placeholder-gray-500" placeholder="6XXXXXXXX" required>
             </div>
             <p class="text-xs text-gray-600 mt-1">{% trans "Peut être différent de votre numéro PAYIA" %}</p>

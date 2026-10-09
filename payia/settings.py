@@ -331,10 +331,52 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'ai_services.tasks.daily_commission_summary',
         'schedule': 86400.0,
     },
+    # Tara Money: rattrapage des webhooks non recus + verification des
+    # depots en attente aupres du prestataire (Tara ne rejoue jamais un
+    # webhook en echec).
+    'reconcile-online-payments': {
+        'task': 'transactions.tasks.reconcile_online_payments',
+        'schedule': 60.0,
+    },
+    # Tara Money: expiration des tentatives de paiement abandonnees.
+    'expire-online-payment-attempts': {
+        'task': 'transactions.tasks.expire_online_payment_attempts',
+        'schedule': 120.0,
+    },
 }
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 300
 CELERY_TASK_SOFT_TIME_LIMIT = 240
+
+# ---------------------------------------------------------------------------
+# Tara Money - collecte en ligne (depots automatiques)
+# Toutes les secret sont lus exclusivement cote serveur (variables
+# d'environnement) et ne doivent jamais apparaitre en reponse ni en log.
+# ---------------------------------------------------------------------------
+TARA_API_KEY = config('TARA_API_KEY', default='')
+TARA_BUSINESS_ID = config('TARA_BUSINESS_ID', default='')
+TARA_API_BASE_URL = config('TARA_API_BASE_URL', default='https://www.dklo.co/api/tara')
+# Jeton partage, integre a l'URL du webhook que l'on fournit a Tara.
+# Sans ce jeton, les notifications Tara sont refusees (aucun credit).
+TARA_WEBHOOK_TOKEN = config('TARA_WEBHOOK_TOKEN', default='')
+# URL publique absolue (HTTPS) du site, utilisee pour returnUrl / webHookUrl.
+TARA_SITE_BASE_URL = config('TARA_SITE_BASE_URL', default='https://payia.cohub.site')
+TARA_CURRENCY = 'XAF'
+TARA_HTTP_TIMEOUT = config('TARA_HTTP_TIMEOUT', default=15, cast=int)
+# Duree de vie d'une tentative de paiement avant expiration.
+TARA_ATTEMPT_TTL = config('TARA_ATTEMPT_TTL', default=1800, cast=int)
+# Fenetre de reutilisation d'un depot en attente (anti double-clic).
+TARA_REUSE_WINDOW = config('TARA_REUSE_WINDOW', default=900, cast=int)
+# Limites de depot cote serveur (le minimum est pris sur Setting
+# `minimum_deposit` si present).
+TARA_DEPOSIT_MIN = config('TARA_DEPOSIT_MIN', default=500, cast=int)
+TARA_DEPOSIT_MAX = config('TARA_DEPOSIT_MAX', default=5000000, cast=int)
+# Reconciliation: nombre d'essais verifies par tour + fenetre de recherche.
+TARA_RECONCILE_BATCH = config('TARA_RECONCILE_BATCH', default=20, cast=int)
+TARA_RECONCILE_LOOKBACK_HOURS = config('TARA_RECONCILE_LOOKBACK_HOURS', default=72, cast=int)
+# Anti-spam: delai minimal entre deux interrogations du statut d'une meme
+# tentative.
+TARA_STATUS_THROTTLE = config('TARA_STATUS_THROTTLE', default=5, cast=int)
 
 # Logging for AI services payments
 LOGGING['loggers']['ai_services'] = {

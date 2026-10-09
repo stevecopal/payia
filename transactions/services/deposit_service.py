@@ -44,12 +44,17 @@ class DepositService:
         except Setting.DoesNotExist:
             min_deposit = Decimal('2500')
 
-        
         payment_method = PaymentMethod.objects.filter(
             id=payment_method_id, is_active=True
         ).first()
         if not payment_method:
             raise ValueError("Methode de paiement invalide ou inactive.")
+
+        if min_deposit and amount < min_deposit:
+            raise ValueError(f"Le montant minimum est {min_deposit} XAF.")
+
+        if payment_method.min_amount and amount < payment_method.min_amount:
+            raise ValueError(f"Le montant minimum est {payment_method.min_amount}.")
 
         if payment_method.max_amount and amount > payment_method.max_amount:
             raise ValueError(f"Le montant maximum est {payment_method.max_amount}.")
@@ -94,7 +99,14 @@ class DepositService:
         return deposit
 
     @staticmethod
-    def approve_deposit(deposit, admin_user):
+    def approve_deposit(deposit, admin_user=None, source='admin'):
+        """Approuve et credite un depot (chemin unique de credit).
+
+        Utilise aussi par le paiement automatique Tara Money :
+        `admin_user=None` signifie validation automatique apres confirmation
+        du prestataire (`source` = webhook / reconcile / user / admin).
+        """
+        automatic = admin_user is None
         with transaction.atomic():
             deposit = Deposit.objects.select_for_update().get(pk=deposit.pk)
             if deposit.status != Deposit.Status.PENDING_REVIEW:
@@ -106,7 +118,11 @@ class DepositService:
                 user=deposit.user,
                 amount=deposit.amount,
                 entry_type='DEPOSIT',
-                description=f'Depot approuve via {deposit.payment_method.name}',
+                description=(
+                    f'Depot credite automatiquement via {deposit.payment_method.name}'
+                    if automatic else
+                    f'Depot approuve via {deposit.payment_method.name}'
+                ),
                 reference_type='Deposit',
                 reference_id=deposit.pk,
             )
@@ -120,24 +136,39 @@ class DepositService:
                 message=f'Votre depot de {deposit.amount} XAF a ete approuve. Votre compte a ete credite.',
             )
 
-            Notification.objects.create(
-                user=admin_user,
-                notification_type='DEPOSIT_APPROVED',
-                title='Depot approuve',
-                message=f'Depot #{deposit.pk} de {deposit.amount} XAF approuve pour {deposit.user.phone_number}.',
-                link=f'/admin-panel/deposits/{deposit.pk}/',
-            )
+            if admin_user is not None:
+                Notification.objects.create(
+                    user=admin_user,
+                    notification_type='DEPOSIT_APPROVED',
+                    title='Depot approuve',
+                    message=f'Depot #{deposit.pk} de {deposit.amount} XAF approuve pour {deposit.user.phone_number}.',
+                    link=f'/admin-panel/deposits/{deposit.pk}/',
+                )
 
-            AuditLog.objects.create(
-                actor=admin_user,
-                action='deposit.approved',
-                target_type='Deposit',
-                target_id=str(deposit.pk),
-                description=(
-                    f'Depot de {deposit.amount} XAF approuve pour {deposit.user.phone_number}. '
-                    f'100% alloue a la machine (pas de commission sur depot).'
-                ),
-            )
+            if automatic:
+                AuditLog.objects.create(
+                    actor=None,
+                    action='deposit.auto_approved',
+                    target_type='Deposit',
+                    target_id=str(deposit.pk),
+                    description=(
+                        f'Depot de {deposit.amount} XAF credite automatiquement pour '
+                        f'{deposit.user.phone_number} (source: {source}). '
+                        f'100% alloue a la machine (pas de commission sur depot).'
+                    ),
+                    metadata={'source': source},
+                )
+            else:
+                AuditLog.objects.create(
+                    actor=admin_user,
+                    action='deposit.approved',
+                    target_type='Deposit',
+                    target_id=str(deposit.pk),
+                    description=(
+                        f'Depot de {deposit.amount} XAF approuve pour {deposit.user.phone_number}. '
+                        f'100% alloue a la machine (pas de commission sur depot).'
+                    ),
+                )
 
         return deposit
 

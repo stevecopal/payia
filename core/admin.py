@@ -126,4 +126,4 @@ class SettingAdmin(admin.ModelAdmin):
     list_display = ('key', 'value', 'setting_type', 'is_active', 'updated_at')
     list_filter = ('setting_type', 'is_active')
     search_fields = ('key', 'description')
-    fields = ('key', 'value', 'setting_type', 'description', 'is_active', 'updated_at')
+    fields = ('key', 'value', 'setting_type', 'description', 'is_active', )
