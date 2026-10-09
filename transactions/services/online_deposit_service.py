@@ -60,18 +60,21 @@ class OnlineDepositService:
             "description": "Le debit est effectue directement sur votre numero.",
             "network": "",
             "kind": "push",
+            "icon": "icons/mobile.jpeg",
         },
         DepositAttempt.Channel.WAVE: {
             "label": "Wave",
             "description": "Le debit est effectue directement sur votre compte Wave.",
             "network": "wave",
             "kind": "push",
+            "icon": "icons/wave.png",
         },
         DepositAttempt.Channel.CARD: {
             "label": "Carte bancaire",
             "description": "Vous etes redirige vers la page securisee Tara Money.",
             "network": "",
             "kind": "link",
+            "icon": "icons/carte.jpeg",
         },
     }
 

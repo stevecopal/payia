@@ -6,9 +6,8 @@
 
     {# ——— Salutation ——— #}
     <header class="app-stagger-item">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">{% trans "Espace personnel" %}</p>
         <h1 class="mt-1 truncate text-[1.65rem] sm:text-3xl font-display font-bold tracking-tight leading-tight">
-            {{ user.display_name }}
+            {% trans "Bon retour " %} {{ user.display_name }}
         </h1>
     </header>
 

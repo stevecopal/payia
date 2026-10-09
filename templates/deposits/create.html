@@ -1,5 +1,5 @@
 {% extends "base/dashboard.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}PAYIA - Nouveau dépôt{% endblock %}
 {% block dashboard_content %}
 <div class="max-w-lg mx-auto app-stack app-stagger">
@@ -45,13 +45,18 @@
                          <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
                          {% endif %}
                      </div>
-                     <div class="flex-1">
-                         <p class="text-sm font-medium">{{ ch.label }}</p>
-                         {% if ch.description %}
-                         <p class="text-xs text-gray-500 mt-0.5">{{ ch.description }}</p>
-                         {% endif %}
-                     </div>
-                 </label>
+                      <div class="flex-1 flex items-center gap-3">
+                          {% if ch.icon %}
+                          <img src="{% static ch.icon %}" alt="" class="w-10 h-10 rounded-lg object-cover border border-gray-200 bg-white shrink-0">
+                          {% endif %}
+                          <div class="min-w-0">
+                              <p class="text-sm font-medium">{{ ch.label }}</p>
+                              {% if ch.description %}
+                              <p class="text-xs text-gray-500 mt-0.5">{{ ch.description }}</p>
+                              {% endif %}
+                          </div>
+                      </div>
+                  </label>
                  {% endfor %}
              </div>
              {% endif %}
@@ -72,9 +77,7 @@
                          {% if pm.description %}
                          <p class="text-xs text-gray-500 mt-0.5">{{ pm.description }}</p>
                          {% endif %}
-                         {% if pm.phone_number %}
-                         <p class="text-xs text-gray-500 font-mono">{% trans "Numéro:" %} {{ pm.phone_number }}</p>
-                         {% endif %}
+                        
                      </div>
                  </label>
                  {% endfor %}

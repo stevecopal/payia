@@ -26,6 +26,9 @@
     background-color: #ffffff;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
+    
+    padding-left: 0.85cm;
+    padding-right: 0.85cm;
   }
 
   h1,
@@ -250,19 +253,15 @@
     @apply text-[10px] font-semibold leading-none truncate max-w-full px-0.5;
   }
 
-  /* Onglet actif : icône verte dans sa pastille signal + libellé blanc */
+  /* Onglet actif : seule l'icône change de couleur (pas de pastille) */
   .app-bottomnav-item.is-active {
-    @apply text-gray-900;
+    @apply text-gray-500;
   }
 
   .app-bottomnav-item.is-active .app-bottomnav-icon {
-    background: rgba(0, 250, 154, 0.14);
-    box-shadow: inset 0 0 0 1px rgba(0, 250, 154, 0.24);
+    background: transparent;
+    box-shadow: none;
     color: var(--payia-signal);
-  }
-
-  .app-bottomnav-item.is-active .app-bottomnav-label {
-    @apply font-bold text-gray-900;
   }
 
   /* Badge collé à l'icône (l'icône est centrée dans la pastille) */
